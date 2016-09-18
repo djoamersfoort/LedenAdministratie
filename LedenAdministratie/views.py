@@ -1,9 +1,9 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login as do_login, logout
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth import logout
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import UserPassesTestMixin
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
 import django.http
@@ -27,13 +27,19 @@ def login(request):
     return render(request, 'login.html', {'form': form})
 
 
-@login_required()
+def check_user(user):
+    if user.is_authenticated and user.is_staff and user.is_active:
+        return True
+    return False
+
+
+@user_passes_test(check_user)
 def logoff(request):
     logout(request)
     return redirect('login')
 
 
-@login_required
+@user_passes_test(check_user)
 def ledenlijst(request, speltak='wachtlijst'):
     if speltak == 'wachtlijst':
         leden = Lid.objects.filter(speltak=speltak).order_by('aanmeld_datum')
@@ -42,12 +48,15 @@ def ledenlijst(request, speltak='wachtlijst'):
     return render(request, 'ledenlijst.html', {'leden': leden, 'speltak': speltak, 'speltakken': Lid.LIJST_CHOICES})
 
 
-class LidUpdateView(LoginRequiredMixin, UpdateView):
+class LidUpdateView(UserPassesTestMixin, UpdateView):
     model = Lid
     template_name = 'edit_lid.html'
     fields = ['first_name', 'last_name', 'gebdat', 'speltak', 'email_address', 'straat', 'postcode', 'woonplaats',
               'telnr', 'mobiel', 'mobiel_ouder1', 'mobiel_ouder2', 'email_ouder1', 'email_ouder2', 'inschrijf_datum_sn',
               'scouting_nr', 'tshirt_maat', 'jub_badge', 'verzekerings_nr', 'opmerkingen', 'bijzonderheden', 'geslacht']
+
+    def test_func(self):
+        return check_user(self.request.user)
 
     def get_success_url(self):
         url = "%s%s/" %(reverse_lazy('ledenlijst'), self.object.speltak)
@@ -60,13 +69,16 @@ class LidUpdateView(LoginRequiredMixin, UpdateView):
         return super(LidUpdateView, self).form_valid(form)
 
 
-class LidCreateView(LoginRequiredMixin, CreateView):
+class LidCreateView(UserPassesTestMixin, CreateView):
     model = Lid
     template_name = 'edit_lid.html'
     success_url = reverse_lazy('ledenlijst')
     fields = ['first_name', 'last_name', 'gebdat', 'speltak', 'email_address', 'straat', 'postcode', 'woonplaats',
               'telnr', 'mobiel', 'mobiel_ouder1', 'mobiel_ouder2', 'email_ouder1', 'email_ouder2', 'inschrijf_datum_sn',
               'scouting_nr', 'tshirt_maat', 'jub_badge', 'verzekerings_nr', 'opmerkingen', 'bijzonderheden', 'geslacht']
+
+    def test_func(self):
+        return check_user(self.request.user)
 
     def get_success_url(self):
         url = "%s%s/" % (reverse_lazy('ledenlijst'), self.object.speltak)
@@ -90,8 +102,11 @@ def aanmelden_ok(request):
     return render(request, 'aanmelden_ok.html')
 
 
-class LidDeleteView(LoginRequiredMixin, DeleteView):
+class LidDeleteView(UserPassesTestMixin, DeleteView):
     model = Lid
     success_url = reverse_lazy('ledenlijst')
     template_name = 'delete_lid.html'
     fields = ['fist_name', 'last_name']
+
+    def test_func(self):
+        return check_user(self.request.user)
