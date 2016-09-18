@@ -14,7 +14,7 @@ def fix_datum(dt, nullok=True):
         return parse('01-01-1900')
     elif dt == '':
         return None
-    return parse(dt)
+    return parse(dt, dayfirst=True)
 
 
 with open("Ledenlijst.csv", 'r', encoding='iso8859-15') as csv:
