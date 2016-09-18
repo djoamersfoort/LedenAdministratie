@@ -17,14 +17,14 @@ def fix_datum(dt, nullok=True):
     return parse(dt)
 
 
-with open("Ledenlijst2.csv", 'r') as csv:
+with open("Ledenlijst.csv", 'r', encoding='iso8859-15') as csv:
     first = True
     for line in csv.readlines():
         if first:
             first = False
             continue
         fields = line.split(';')
-        print("Importing: %s %s" % (fields[0], fields[2]))
+        print("Importing: %s" % fields[0])
         lid = Lid()
         geslacht = fields[1].strip('(').strip(')').lower()
         lid.geslacht = geslacht
