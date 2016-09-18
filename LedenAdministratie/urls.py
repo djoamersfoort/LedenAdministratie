@@ -19,7 +19,7 @@ from LedenAdministratie import views
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
-    # url(r'^openid/', include('django_openid_auth.urls')),
+    url(r'^accounts/', include('allauth.urls')),
     url(r'^ledenlijst/(.*)/$', views.ledenlijst, name='ledenlijst'),
     url(r'^ledenlijst/$', views.ledenlijst, name='ledenlijst'),
     url(r'^logoff/$', views.logoff, name='logoff'),

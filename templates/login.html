@@ -1,5 +1,7 @@
 {% load staticfiles %}
 {% load widget_tweaks %}
+{% load socialaccount %}
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -25,6 +27,7 @@
       <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
+
 </head>
 
 <body>
@@ -38,9 +41,9 @@
         <label for="username" class="sr-only">Scouting.nl Login</label>
         {{ form.username|add_class:'form-control'|attr:'placeholder:Gebruikersnaam' }}
 
-        {#        <input type="text" id="inputUsername" class="form-control" placeholder="Scouting.nl gebruikersnaam" required autofocus>#}
-        <label for="inputPassword" class="sr-only">Password</label>
-        {{ form.password|add_class:'form-control'|attr:'placeholder:Password' }}
+{#        <input type="text" id="inputUsername" class="form-control" placeholder="Scouting.nl gebruikersnaam" required autofocus>#}
+{#        <label for="inputPassword" class="sr-only">Password</label>#}
+{#        {{ form.password|add_class:'form-control'|attr:'placeholder:Password' }}#}
 
         {#        <input type="password" id="inputPassword" class="form-control" placeholder="Password" required>#}
         <button class="btn btn-lg btn-primary btn-block" type="submit">Inloggen</button>

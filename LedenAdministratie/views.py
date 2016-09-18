@@ -6,6 +6,7 @@ from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
+import django.http
 
 from .models import Lid
 from . import forms
@@ -19,11 +20,9 @@ def login(request):
         form = forms.LoginForm(request.POST)
         if form.is_valid():
             username = form.cleaned_data['username']
-            password = form.cleaned_data['password']
-            user = authenticate(username=username, password=password)
-            if user is not None:
-                do_login(request, user)
-                return redirect('ledenlijst')
+            url = reverse_lazy('openid_login')
+            url += '?openid=%s/%s' % ('https://login.scouting.nl/user', username)
+            return django.http.HttpResponseRedirect(url)
 
     return render(request, 'login.html', {'form': form})
 
@@ -32,11 +31,6 @@ def login(request):
 def logoff(request):
     logout(request)
     return redirect('login')
-
-
-@login_required
-def index(request):
-    return render(request, 'base.html')
 
 
 @login_required
