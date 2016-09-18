@@ -1,0 +1,19 @@
+{% if messages %}
+    <div class="alert alert-success">
+        <span class="glyphicon glyphicon-info-sign"></span>
+        {{ messages }}
+    </div>
+{% endif %}
+{% if form.errors %}
+    <div class="alert alert-danger">
+        <span class="glyphicon glyphicon-exclamation-sign"></span>
+        {% for field in form %}
+            {% if field.errors %}
+                {% for error in field.errors %}
+                    {{ error }}<br>
+                {% endfor %}
+            {% endif %}
+        {% endfor %}
+    </div>
+{% endif %}
+

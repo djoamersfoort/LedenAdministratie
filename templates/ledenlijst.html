@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+
+{% block navbar %}
+    <ul class="nav nav-sidebar">
+        {% for taktag, takname in speltakken %}
+
+        <li {% if speltak == taktag %} class="active" {% endif %}>
+            <a href="{% url 'ledenlijst' taktag %}">{{ takname }}</a>
+        </li>
+
+        {% endfor %}
+
+    </ul>
+{% endblock %}
+
+{% block content %}
+
+    <div class="alert alert-info">
+      Aantal leden op deze lijst: {{ leden.count }}
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-hover table-striped">
+            <thead>
+            <tr>
+                <th>Naam</th>
+                <th>E-mail</th>
+                <th>Geb. Datum</th>
+                <th>Straat</th>
+                <th>Woonplaats</th>
+                <th>Tel. Nr.</th>
+                <th>Aangemeld op</th>
+                <th>Leeftijd</th>
+                <th>Speltak</th>
+                <th></th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for lid in leden %}
+
+                <tr>
+                    <td>{{ lid }}</td>
+                    <td>{{ lid.email_address }}</td>
+                    <td>{{ lid.gebdat|date:"d-m-Y" }}</td>
+                    <td>{{ lid.straat }}</td>
+                    <td>{{ lid.woonplaats }}</td>
+                    <td>{{ lid.telnr }}</td>
+                    <td>{{ lid.aanmeld_datum|date:"d-m-Y" }}</td>
+                    <td>{{ lid.age }}</td>
+                    {% if lid.speltak == 'wachtlijst' %}
+                        <td>{{ lid.wachtlijst_speltak|title }}</td>
+                    {% else %}
+                        <td>{{ lid.get_speltak_display }}</td>
+                    {% endif %}
+                    <td>
+                        <a href="{% url 'lid_edit' lid.pk %}" class="btn btn-success">
+                            <span class="glyphicon glyphicon-pencil"></span>
+                        </a>
+                    </td>
+                    <td>
+                        <a href="{% url 'lid_delete' lid.pk %}" class="btn btn-danger">
+                            <span class="glyphicon glyphicon-trash"></span>
+                        </a>
+                    </td>
+                </tr>
+
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+{% endblock %}
