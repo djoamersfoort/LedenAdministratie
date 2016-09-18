@@ -1,5 +1,6 @@
 db.sqlite3
 LedenAdministratie/settings.py
+LedenAdministratie/migrations/
 .idea/
 
 ### Python template
@@ -92,3 +93,4 @@ ENV/
 
 # Rope project settings
 .ropeproject
+
