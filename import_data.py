@@ -17,7 +17,7 @@ def fix_datum(dt, nullok=True):
     return parse(dt)
 
 
-with open("/home/ronald/Downloads/Ledenlijst2.csv", 'r') as csv:
+with open("Ledenlijst2.csv", 'r') as csv:
     first = True
     for line in csv.readlines():
         if first:
