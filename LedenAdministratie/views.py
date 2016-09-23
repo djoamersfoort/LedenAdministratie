@@ -36,7 +36,10 @@ def check_user(user):
 @user_passes_test(check_user)
 def logoff(request):
     logout(request)
-    return django.http.HttpResponseRedirect('https://login.scouting.nl/provider/logout/')
+
+    return_url = reverse_lazy('login')
+
+    return django.http.HttpResponseRedirect('https://login.scouting.nl/provider/logout/?submit=logout&openid_return_url=%s' % return_url)
 
 
 @user_passes_test(check_user)
