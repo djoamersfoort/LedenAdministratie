@@ -95,9 +95,17 @@ class LidAanmeldView(CreateView):
               'telnr', 'mobiel', 'mobiel_ouder1', 'mobiel_ouder2', 'email_ouder1', 'email_ouder2', 'geslacht']
 
     def form_valid(self, form):
+        # Send an e-mail to 'bestuur'
         subject = 'Nieuwe aanmelding St. Ansfridus ontvangen'
         body = render_to_string('aanmelden_email.html', context={'lid': form.instance})
         send_mail(subject=subject, message=body, from_email=settings.EMAIL_SENDER, recipient_list=settings.EMAIL_RECIPIENTS_NEW)
+
+        # Send a confirmation e-mail to the user
+        subject = 'Bevestiging aanmelding St. Ansfridus'
+        body = render_to_string('aanmelden_email_user.html', context={'lid': form.instance})
+        send_mail(subject=subject, message=body, from_email=settings.EMAIL_SENDER,
+                  recipient_list=form.instance.email_address)
+
         return super(LidAanmeldView, self).form_valid(form)
 
 

@@ -4,3 +4,4 @@ mysqlclient==1.3.7
 python-dateutil
 python3-openid==3.0.10
 django-allauth
+django-simple-captcha
