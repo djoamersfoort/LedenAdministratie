@@ -89,10 +89,9 @@ class LidCreateView(UserPassesTestMixin, CreateView):
 
 class LidAanmeldView(CreateView):
     model = Lid
+    form_class = forms.LidForm
     template_name = 'aanmelden_lid.html'
     success_url = reverse_lazy('aanmelden_ok')
-    fields = ['first_name', 'last_name', 'gebdat', 'speltak', 'email_address', 'straat', 'postcode', 'woonplaats',
-              'telnr', 'mobiel', 'mobiel_ouder1', 'mobiel_ouder2', 'email_ouder1', 'email_ouder2', 'geslacht']
 
     def form_valid(self, form):
         # Send an e-mail to 'bestuur'

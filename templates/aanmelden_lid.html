@@ -107,6 +107,13 @@
                 </div>
             </div>
 
+
+            <label for="id_email_ouder2">Om spam te voorkomen vragen we u onderstaande code over te typen:</label>
+            <br>
+            {{ form.captcha|add_class:'form-control' }}
+            <br>
+
+
             <br>
             <button type="submit" class="btn btn-success">Aanmelden</button>
             <button onclick="javascript:history.go(-1)" type="button" class="btn btn-default">Annuleren</button>
