@@ -36,7 +36,7 @@ def check_user(user):
 @user_passes_test(check_user)
 def logoff(request):
     logout(request)
-    return redirect('login')
+    return django.http.HttpResponseRedirect('https://login.scouting.nl/provider/logout/')
 
 
 @user_passes_test(check_user)
