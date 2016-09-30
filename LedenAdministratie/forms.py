@@ -8,6 +8,11 @@ class LoginForm(forms.Form):
 
 
 class LidForm(forms.ModelForm):
+    class Meta:
+        model = Lid
+        exclude = []
+
+class LidCaptchaForm(forms.ModelForm):
     captcha = CaptchaField()
     class Meta:
         model = Lid

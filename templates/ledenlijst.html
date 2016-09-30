@@ -5,9 +5,9 @@
     <ul class="nav nav-sidebar">
         {% for taktag, takname in speltakken %}
 
-        <li {% if speltak == taktag %} class="active" {% endif %}>
-            <a href="{% url 'ledenlijst' taktag %}">{{ takname }}</a>
-        </li>
+            <li {% if speltak == taktag %} class="active" {% endif %}>
+                <a href="{% url 'ledenlijst' taktag %}">{{ takname }}</a>
+            </li>
 
         {% endfor %}
 
@@ -17,7 +17,7 @@
 {% block content %}
 
     <div class="alert alert-info">
-      Aantal leden op deze lijst: {{ leden.count }}
+        Aantal leden op deze lijst: {{ leden.count }}
     </div>
 
     <div class="table-responsive">
@@ -54,16 +54,24 @@
                     {% else %}
                         <td>{{ lid.get_speltak_display }}</td>
                     {% endif %}
-                    <td>
-                        <a href="{% url 'lid_edit' lid.pk %}" class="btn btn-success">
-                            <span class="glyphicon glyphicon-pencil"></span>
-                        </a>
-                    </td>
-                    <td>
-                        <a href="{% url 'lid_delete' lid.pk %}" class="btn btn-danger">
-                            <span class="glyphicon glyphicon-trash"></span>
-                        </a>
-                    </td>
+                    {% if perms.LedenAdministratie.change_lid %}
+                        <td>
+                            <a href="{% url 'lid_edit' lid.pk %}" class="btn btn-success">
+                                <span class="glyphicon glyphicon-pencil"></span>
+                            </a>
+                        </td>
+                        <td>
+                            <a href="{% url 'lid_delete' lid.pk %}" class="btn btn-danger">
+                                <span class="glyphicon glyphicon-trash"></span>
+                            </a>
+                        </td>
+                    {% else %}
+                        <td>
+                            <a href="{% url 'lid_edit' lid.pk %}" class="btn btn-success">
+                                <span class="glyphicon glyphicon-zoom-in"></span>
+                            </a>
+                        </td>
+                    {% endif %}
                 </tr>
 
             {% endfor %}

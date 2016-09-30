@@ -48,9 +48,11 @@
             {% endblock %}
 
             <ul class="nav nav-sidebar">
-                <li><a href="{% url 'lid_create' %}">Nieuw Lid</a></li>
+                {% if perms.LedenAdministratie.change_lid %}
+                    <li><a href="{% url 'lid_create' %}">Nieuw Lid</a></li>
+                {% endif %}
                 {% if request.user.is_superuser %}
-                <li><a href="/admin/">Gebruikers</a></li>
+                    <li><a href="/admin/">Gebruikers</a></li>
                 {% endif %}
             </ul>
             <ul class="nav nav-sidebar">

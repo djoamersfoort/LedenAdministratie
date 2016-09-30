@@ -8,6 +8,9 @@ class Lid(models.Model):
     class Meta:
         ordering = ["last_name", "first_name"]
         verbose_name_plural = "Leden"
+        permissions = (
+            ('read_lid', 'Can read leden'),
+        )
 
     LIJST_CHOICES=(
         ('wachtlijst', 'Wachtlijst'),

@@ -28,7 +28,7 @@ def login(request):
 
 
 def check_user(user):
-    if user.is_authenticated and user.is_staff and user.is_active:
+    if user.is_authenticated and user.has_perm('LedenAdministratie.read_lid') and user.is_active:
         return True
     return False
 
@@ -54,9 +54,16 @@ def ledenlijst(request, speltak='wachtlijst'):
 class LidUpdateView(UserPassesTestMixin, UpdateView):
     model = Lid
     template_name = 'edit_lid.html'
-    fields = ['first_name', 'last_name', 'gebdat', 'speltak', 'email_address', 'straat', 'postcode', 'woonplaats',
-              'telnr', 'mobiel', 'mobiel_ouder1', 'mobiel_ouder2', 'email_ouder1', 'email_ouder2', 'inschrijf_datum_sn',
-              'scouting_nr', 'tshirt_maat', 'jub_badge', 'verzekerings_nr', 'opmerkingen', 'bijzonderheden', 'geslacht']
+    form_class = forms.LidForm
+
+    def get_form(self, form_class=None):
+        form = super(LidUpdateView, self).get_form(form_class)
+
+        # Make the form read-only when user has no change permissions
+        if not self.request.user.has_perm('LedenAdministratie.change_lid'):
+            for name, field in form.fields.items():
+                field.widget.attrs['disabled'] = True
+        return form
 
     def test_func(self):
         return check_user(self.request.user)
@@ -76,12 +83,11 @@ class LidCreateView(UserPassesTestMixin, CreateView):
     model = Lid
     template_name = 'edit_lid.html'
     success_url = reverse_lazy('ledenlijst')
-    fields = ['first_name', 'last_name', 'gebdat', 'speltak', 'email_address', 'straat', 'postcode', 'woonplaats',
-              'telnr', 'mobiel', 'mobiel_ouder1', 'mobiel_ouder2', 'email_ouder1', 'email_ouder2', 'inschrijf_datum_sn',
-              'scouting_nr', 'tshirt_maat', 'jub_badge', 'verzekerings_nr', 'opmerkingen', 'bijzonderheden', 'geslacht']
+    form_class = forms.LidForm
 
     def test_func(self):
-        return check_user(self.request.user)
+        can_change = self.request.user.has_perm('LedenAdministratie.change_lid')
+        return check_user(self.request.user) and can_change
 
     def get_success_url(self):
         url = "%s%s/" % (reverse_lazy('ledenlijst'), self.object.speltak)
@@ -89,7 +95,7 @@ class LidCreateView(UserPassesTestMixin, CreateView):
 
 class LidAanmeldView(CreateView):
     model = Lid
-    form_class = forms.LidForm
+    form_class = forms.LidCaptchaForm
     template_name = 'aanmelden_lid.html'
     success_url = reverse_lazy('aanmelden_ok')
 
@@ -119,4 +125,5 @@ class LidDeleteView(UserPassesTestMixin, DeleteView):
     fields = ['fist_name', 'last_name']
 
     def test_func(self):
-        return check_user(self.request.user)
+        can_change = self.request.user.has_perm('LedenAdministratie.change_lid')
+        return check_user(self.request.user) and can_change
