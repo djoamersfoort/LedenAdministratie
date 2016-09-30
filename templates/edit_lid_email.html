@@ -1,6 +1,6 @@
 De volgende gegevens zijn aangepast:
 
-Naam       : {{ oldlid.first_name }} {{ lid.last_name }} ({{ lid.geslacht }})
+Naam       : {{ oldlid.first_name }} {{ oldlid.last_name }} ({{ oldlid.geslacht }}) --> {{ lid.first_name }} {{ lid.last_name }} ({{ lid.geslacht }})
 Geb Datum  : {{ oldlid.gebdat|date:"d-m-Y" }} --> {{ lid.gebdat|date:"d-m-Y" }}
 Adres      : {{ oldlid.straat }} --> {{ lid.straat }}
 Postcode   : {{ oldlid.postcode }} --> {{ lid.postcode }}
