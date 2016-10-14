@@ -18,10 +18,13 @@ class Lid(models.Model):
         ('welpen', 'Welpen'),
         ('scouts', 'Scouts'),
         ('explorers', 'Explorers'),
+        ('roverscouts', 'Roverscouts'),
         ('stam', 'Stam'),
         ('leiding', 'Leiding'),
         ('bestuur', 'Bestuur'),
+        ('vrijwilliger', 'Vrijwilligers'),
         ('oudleden', 'Oud-Leden'),
+        ('oudleiding', 'Oud-Leiding'),
     )
 
     def _calculate_age(self, ondate = date.today()):
