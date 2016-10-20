@@ -48,7 +48,9 @@ class Lid(models.Model):
             speltak = 'Scouts'
         elif age_at_endofyear >=15 and age_at_endofyear < 18:
             speltak = 'Explorers'
-        elif age_at_endofyear >=18 and age_at_endofyear < 25:
+        elif age_at_endofyear >= 18 and age_at_endofyear < 21:
+            speltak = 'Roverscouts'
+        elif age_at_endofyear >=21 and age_at_endofyear < 25:
             speltak = 'Stam'
         elif age_at_endofyear >=25:
             speltak = 'Leiding'
