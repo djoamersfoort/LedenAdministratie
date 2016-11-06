@@ -12,7 +12,7 @@ class Lid(models.Model):
             ('read_lid', 'Can read leden'),
         )
 
-    LIJST_CHOICES=(
+    LIJST_CHOICES=[
         ('wachtlijst', 'Wachtlijst'),
         ('bevers', 'Bevers'),
         ('welpen', 'Welpen'),
@@ -25,7 +25,7 @@ class Lid(models.Model):
         ('vrijwilliger', 'Vrijwilligers'),
         ('oudleden', 'Oud-Leden'),
         ('oudleiding', 'Oud-Leiding'),
-    )
+    ]
 
     def _calculate_age(self, ondate = date.today()):
         today = ondate

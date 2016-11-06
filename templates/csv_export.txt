@@ -1,0 +1,3 @@
+Voornaam;Achternaam;Leeftijd
+{% for lid in leden %}"{{ lid.first_name }}"; "{{lid.last_name}}"; "{{ lid.age }}"
+{% endfor %}

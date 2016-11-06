@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import user_passes_test
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
@@ -127,3 +127,30 @@ class LidDeleteView(UserPassesTestMixin, DeleteView):
     def test_func(self):
         can_change = self.request.user.has_perm('LedenAdministratie.change_lid')
         return check_user(self.request.user) and can_change
+
+@user_passes_test(check_user)
+def export(request):
+    form = forms.ExportForm()
+    if request.method == 'POST':
+        form = forms.ExportForm(request.POST)
+        if form.is_valid():
+            speltak = form.cleaned_data['speltak']
+            return redirect('do_export', speltak)
+
+    return render(request, 'export.html', context={'form': form, 'speltakken': Lid.LIJST_CHOICES})
+
+@user_passes_test(check_user)
+def do_export(request, speltak):
+    if speltak == 'all':
+        leden = Lid.objects.all().order_by('last_name')
+    else:
+        leden = Lid.objects.filter(speltak=speltak).order_by('last_name')
+
+    filename = speltak + ".csv"
+    response = django.http.HttpResponse(content_type='text/csv', charset='utf-8')
+    response['Content-Disposition'] = 'attachment; filename="%s"' % filename
+
+    text = render_to_string('csv_export.txt', context={'leden': leden})
+    response.write(text)
+
+    return response
