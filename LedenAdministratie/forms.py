@@ -19,6 +19,6 @@ class LidCaptchaForm(forms.ModelForm):
         exclude = []
 
 class ExportForm(forms.Form):
-    choices = Lid.LIJST_CHOICES
+    choices = Lid.LIJST_CHOICES.copy()
     choices.insert(0, ('all', 'Alle Lijsten'))
     speltak = forms.ChoiceField(label='Speltak', choices=choices, required=True)
