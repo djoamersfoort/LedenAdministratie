@@ -7,6 +7,7 @@ from django.contrib.auth.mixins import UserPassesTestMixin
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
 import django.http
+import csv
 
 from .models import Lid
 from . import forms
@@ -39,7 +40,8 @@ def logoff(request):
 
     full_url = request.build_absolute_uri('/')
 
-    return django.http.HttpResponseRedirect('https://login.scouting.nl/provider/logout/?submit=logout&openid_return_url=%s' % full_url)
+    return django.http.HttpResponseRedirect(
+        'https://login.scouting.nl/provider/logout/?submit=logout&openid_return_url=%s' % full_url)
 
 
 @user_passes_test(check_user)
@@ -69,13 +71,14 @@ class LidUpdateView(UserPassesTestMixin, UpdateView):
         return check_user(self.request.user)
 
     def get_success_url(self):
-        url = "%s%s/" %(reverse_lazy('ledenlijst'), self.object.speltak)
+        url = "%s%s/" % (reverse_lazy('ledenlijst'), self.object.speltak)
         return url
 
     def form_valid(self, form):
         subject = 'Update ledenlijst van scouting St Ansfridus'
         body = render_to_string('edit_lid_email.html', context={'lid': form.instance, 'oldlid': form.initial})
-        send_mail(subject=subject, message=body, from_email=settings.EMAIL_SENDER, recipient_list=settings.EMAIL_RECIPIENTS_UPDATE)
+        send_mail(subject=subject, message=body, from_email=settings.EMAIL_SENDER,
+                  recipient_list=settings.EMAIL_RECIPIENTS_UPDATE)
         return super(LidUpdateView, self).form_valid(form)
 
 
@@ -93,6 +96,7 @@ class LidCreateView(UserPassesTestMixin, CreateView):
         url = "%s%s/" % (reverse_lazy('ledenlijst'), self.object.speltak)
         return url
 
+
 class LidAanmeldView(CreateView):
     model = Lid
     form_class = forms.LidCaptchaForm
@@ -103,7 +107,8 @@ class LidAanmeldView(CreateView):
         # Send an e-mail to 'bestuur'
         subject = 'Nieuwe aanmelding St. Ansfridus ontvangen'
         body = render_to_string('aanmelden_email.html', context={'lid': form.instance})
-        send_mail(subject=subject, message=body, from_email=settings.EMAIL_SENDER, recipient_list=settings.EMAIL_RECIPIENTS_NEW)
+        send_mail(subject=subject, message=body, from_email=settings.EMAIL_SENDER,
+                  recipient_list=settings.EMAIL_RECIPIENTS_NEW)
 
         # Send a confirmation e-mail to the user
         subject = 'Bevestiging aanmelding St. Ansfridus'
@@ -128,6 +133,7 @@ class LidDeleteView(UserPassesTestMixin, DeleteView):
         can_change = self.request.user.has_perm('LedenAdministratie.change_lid')
         return check_user(self.request.user) and can_change
 
+
 @user_passes_test(check_user)
 def export(request):
     form = forms.ExportForm()
@@ -138,6 +144,7 @@ def export(request):
             return redirect('do_export', speltak)
 
     return render(request, 'export.html', context={'form': form, 'speltakken': Lid.LIJST_CHOICES})
+
 
 @user_passes_test(check_user)
 def do_export(request, speltak):
@@ -150,7 +157,19 @@ def do_export(request, speltak):
     response = django.http.HttpResponse(content_type='text/csv', charset='utf-8')
     response['Content-Disposition'] = 'attachment; filename="%s"' % filename
 
-    text = render_to_string('csv_export.txt', context={'leden': leden})
-    response.write(text)
+    writer = csv.writer(response)
+    writer.writerow(
+        ['Voornaam', 'Achternaam', 'SN', 'Geb. Datum', 'Leeftijd', 'Geslacht', 'Speltak', 'E-mail', 'Straat',
+         'Postcode', 'Woonplaats', 'Telnr', 'Mobiel', 'Mobiel Ouder 1', 'Mobiel Ouder 2',
+         'E-mail Ouder 1', 'E-mail Ouder 2'])
+
+    fields = ['first_name', 'last_name', 'scouting_nr', 'gebdat', 'age', 'geslacht', 'speltak', 'email_address',
+              'straat', 'postcode', 'woonplaats', 'telnr', 'mobiel', 'mobiel_ouder1', 'mobiel_ouder2', 'email_ouder1',
+              'email_ouder2']
+    for lid in leden:
+        values = []
+        for field in fields:
+            values.add(lid[field])
+        writer.writerow(values)
 
     return response
