@@ -49,8 +49,9 @@ def ledenlijst(request, speltak='wachtlijst'):
     if speltak == 'wachtlijst':
         leden = Lid.objects.filter(speltak=speltak).order_by('aanmeld_datum')
     else:
-        leden = Lid.objects.filter(speltak=speltak)
-    return render(request, 'ledenlijst.html', {'leden': leden, 'speltak': speltak, 'speltakken': Lid.LIJST_CHOICES})
+        leden = Lid.objects.proper_lastname_order(speltak=speltak)
+
+    return render(request, 'ledenlijst.html', {'leden': leden, 'speltak': speltak, 'speltakken': Lid.LIJST_CHOICES, 'count': len(leden)})
 
 
 class LidUpdateView(UserPassesTestMixin, UpdateView):
@@ -149,9 +150,9 @@ def export(request):
 @user_passes_test(check_user)
 def do_export(request, speltak):
     if speltak == 'all':
-        leden = Lid.objects.all().order_by('last_name')
+        leden = Lid.objects.proper_lastname_order()
     else:
-        leden = Lid.objects.filter(speltak=speltak).order_by('last_name')
+        leden = Lid.objects.proper_lastname_order(speltak=speltak)
 
     filename = speltak + ".csv"
     response = django.http.HttpResponse(content_type='text/csv', charset='utf-8')

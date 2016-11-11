@@ -3,8 +3,14 @@ from datetime import date
 from django.core.validators import RegexValidator, EmailValidator
 
 
-class Lid(models.Model):
+class LidManager(models.Manager):
+    def proper_lastname_order(self, *args, **kwargs):
+        qs = self.get_queryset().filter(*args, **kwargs)
+        return sorted(qs, key=lambda n: n.last_name.lower().split()[-1])
 
+
+class Lid(models.Model):
+    objects = LidManager()
     class Meta:
         ordering = ["last_name", "first_name"]
         verbose_name_plural = "Leden"
