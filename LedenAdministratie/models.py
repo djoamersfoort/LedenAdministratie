@@ -62,6 +62,11 @@ class Lid(models.Model):
             speltak = 'Leiding'
         return speltak
 
+    def _calculate_foto(self):
+        if self.fotopubliek:
+            return 'Ja'
+        else:
+            return 'Nee'
 
     def __str__(self):
         return "%s %s" % (self.first_name, self.last_name)
@@ -89,5 +94,7 @@ class Lid(models.Model):
     verzekerings_nr = models.CharField(max_length=20, blank=True)
     opmerkingen = models.TextField(max_length=1024, blank=True)
     bijzonderheden = models.TextField(max_length=1024, blank=True)
+    fotopubliek = models.BooleanField(default=True, blank=False, verbose_name="Foto's publiceren toegestaan")
     age = property(_calculate_age)
     wachtlijst_speltak = property(_calculate_speltak)
+    foto = property(_calculate_foto)

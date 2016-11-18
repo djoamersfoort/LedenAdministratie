@@ -162,11 +162,11 @@ def do_export(request, speltak):
     writer.writerow(
         ['Voornaam', 'Achternaam', 'SN', 'Geb. Datum', 'Leeftijd', 'Geslacht', 'Speltak', 'E-mail', 'Straat',
          'Postcode', 'Woonplaats', 'Telnr', 'Mobiel', 'Mobiel Ouder 1', 'Mobiel Ouder 2',
-         'E-mail Ouder 1', 'E-mail Ouder 2'])
+         'E-mail Ouder 1', 'E-mail Ouder 2', 'FotoPubliek'])
 
     for lid in leden:
         writer.writerow([lid.first_name, lid.last_name, lid.scouting_nr, lid.gebdat, lid.age, lid.geslacht, lid.speltak,
                          lid.email_address, lid.straat, lid.postcode, lid.woonplaats, lid.telnr,
-                         lid.mobiel, lid.mobiel_ouder1, lid.mobiel_ouder2, lid.email_ouder1, lid.email_ouder2])
+                         lid.mobiel, lid.mobiel_ouder1, lid.mobiel_ouder2, lid.email_ouder1, lid.email_ouder2, lid.foto])
 
     return response

@@ -119,6 +119,12 @@
                         <label for="id_bijzonderheden">Bijzonderheden</label>
                         {{ form.bijzonderheden|add_class:'form-control' }}
 
+                        <br>
+                        <div class="checkbox-inline">
+                            <label for="id_fotopubliek">
+                                {{ form.fotopubliek }} Foto's mogen gepubliceerd worden
+                            </label>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -127,7 +133,7 @@
 
         <br>
         {% if perms.LedenAdministratie.change_lid %}
-        <button type="submit" class="btn btn-success">Opslaan</button>
+            <button type="submit" class="btn btn-success">Opslaan</button>
         {% endif %}
         <button onclick="javascript:history.go(-1)" type="button" class="btn btn-default">Annuleren</button>
     </form>
