@@ -78,8 +78,9 @@ class LidUpdateView(UserPassesTestMixin, UpdateView):
     def form_valid(self, form):
         subject = 'Update ledenlijst van scouting St Ansfridus'
         body = render_to_string('edit_lid_email.html', context={'lid': form.instance, 'oldlid': form.initial})
-        send_mail(subject=subject, message=body, from_email=settings.EMAIL_SENDER,
-                  recipient_list=settings.EMAIL_RECIPIENTS_UPDATE)
+        if settings.SEND_UPDATE_EMAILS:
+            send_mail(subject=subject, message=body, from_email=settings.EMAIL_SENDER,
+                      recipient_list=settings.EMAIL_RECIPIENTS_UPDATE)
         return super(LidUpdateView, self).form_valid(form)
 
 
