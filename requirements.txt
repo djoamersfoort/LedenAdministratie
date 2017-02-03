@@ -2,6 +2,6 @@ Django>=1.10
 django-widget-tweaks==1.4.1
 mysqlclient==1.3.7
 python-dateutil
-django-allauth==0.29.0
+django-allauth
 django-simple-captcha
 gunicorn
