@@ -22,7 +22,7 @@ def login(request):
         if form.is_valid():
             username = form.cleaned_data['username']
             url = reverse_lazy('openid_login')
-            url += '?openid=%s/%s' % ('https://login.scouting.nl/user', username)
+            url += '?openid=%s/%s&next=%s' % ('https://login.scouting.nl/user', username, '/ledenlijst/')
             return django.http.HttpResponseRedirect(url)
 
     return render(request, 'login.html', {'form': form})
