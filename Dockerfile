@@ -7,7 +7,7 @@ COPY LedenAdministratie /srv/LedenAdministratie
 
 RUN apk update && \
     apk add nginx mariadb-dev zlib-dev gcc musl-dev jpeg-dev && \
-    pip3 install -r /srv/LedenAdministratie/requirements.txt && \
+    pip3 install --no-cache-dir -r /srv/LedenAdministratie/requirements.txt && \
     apk del gcc musl-dev
 
 WORKDIR /srv
