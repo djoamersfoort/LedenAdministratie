@@ -6,7 +6,7 @@ MAINTAINER Ronald Moesbergen
 COPY LedenAdministratie /srv/LedenAdministratie
 
 RUN apk update && \
-    apk add nginx mariadb-dev zlib-dev gcc musl-dev jpeg-dev && \
+    apk add nginx mariadb-dev zlib-dev gcc musl-dev jpeg-dev freetype-dev && \
     pip3 install --no-cache-dir -r /srv/LedenAdministratie/requirements.txt && \
     apk del gcc musl-dev
 
