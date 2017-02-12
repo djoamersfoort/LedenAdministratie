@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 python3 manage.py makemigrations LedenAdministratie    # Apply database migrations
 python3 manage.py makemigrations           # Apply database migrations
 python3 manage.py migrate                  # Apply database migrations
