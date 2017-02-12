@@ -1,26 +1,22 @@
 # Set the base image to use to Ubuntu
-FROM ubuntu:16.04
+FROM python:3.5-alpine
 
 # Set the file maintainer (your name - the file's author)
 MAINTAINER Ronald Moesbergen
 
-ENV LEDEN_SRC=LedenAdministratie
-ENV LEDEN_SRVHOME=/srv
-ENV LEDEN_SRVPROJ=/srv/LedenAdministratie
+RUN apk update && apk add nginx
 
-RUN apt-get update && apt-get install -y libmysqlclient-dev python3-pip
-
-WORKDIR $LEDEN_SRVHOME
+WORKDIR /srv
 RUN mkdir static logs
 
-COPY $LEDEN_SRC $LEDEN_SRVPROJ
+COPY LedenAdministratie /srv/LedenAdministratie
 
-RUN pip3 install -r $LEDEN_SRVPROJ/requirements.txt
+RUN pip3 install -r /srv/LedenAdministratie/requirements.txt
 
 # Port to expose
-EXPOSE 8000
+EXPOSE 80
 
 # Copy entrypoint script into the image
-WORKDIR $LEDEN_SRVPROJ
+WORKDIR /srv/LedenAdministratie
 COPY ./docker-entrypoint.sh /
 ENTRYPOINT ["/docker-entrypoint.sh"]
