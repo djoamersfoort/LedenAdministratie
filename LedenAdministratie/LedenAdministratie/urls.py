@@ -18,7 +18,7 @@ from django.contrib import admin
 from LedenAdministratie import views
 
 urlpatterns = [
-    url(r'^admin/', include(admin.site.urls)),
+    url(r'^admin/', admin.site.urls),
     url(r'^accounts/', include('allauth.socialaccount.providers.openid.urls')),
     url(r'^captcha/', include('captcha.urls')),
     url(r'^ledenlijst/(.*)/$', views.ledenlijst, name='ledenlijst'),
