@@ -1,7 +1,5 @@
 {% load staticfiles %}
 {% load widget_tweaks %}
-{% load socialaccount %}
-
 
 <!DOCTYPE html>
 <html lang="en">
@@ -14,7 +12,7 @@
     <meta name="author" content="">
     <link rel="icon" href="../../favicon.ico">
 
-    <title>Ledenadministratie St. Ansfridus</title>
+    <title>Ledenadministratie DJO</title>
 
     <!-- Bootstrap core CSS -->
     <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
@@ -38,8 +36,11 @@
         {% csrf_token %}
 
         <h2 class="form-signin-heading">Inloggen</h2>
-        <label for="username" class="sr-only">Scouting.nl Login</label>
+        <label for="username" class="sr-only">Your username</label>
         {{ form.username|add_class:'form-control'|attr:'placeholder:Gebruikersnaam' }}
+
+        <label for="password" class="sr-only">Your password</label>
+        {{ form.password|add_class:'form-control'|attr:'placeholder:Password' }}
 
         <button class="btn btn-lg btn-primary btn-block" type="submit">Inloggen</button>
     </form>

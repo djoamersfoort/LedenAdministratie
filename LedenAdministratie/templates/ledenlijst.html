@@ -30,11 +30,7 @@
                 <th>Straat</th>
                 <th>Woonplaats</th>
                 <th>Tel. Nr.</th>
-                {% if speltak == 'wachtlijst' %}
                 <th>Aangemeld op</th>
-                {% else %}
-                <th>Scouting Nr.</th>
-                {% endif %}
                 <th>Leeftijd</th>
                 <th>Speltak</th>
                 <th></th>
@@ -51,11 +47,7 @@
                     <td>{{ lid.straat }}</td>
                     <td>{{ lid.woonplaats }}</td>
                     <td>{{ lid.telnr }}</td>
-                    {% if speltak == 'wachtlijst' %}
-                        <td>{{ lid.aanmeld_datum|date:"d-m-Y" }}</td>
-                    {% else %}
-                        <td>{{ lid.scouting_nr }}</td>
-                    {% endif %}
+                    <td>{{ lid.aanmeld_datum|date:"d-m-Y" }}</td>
                     <td>{{ lid.age }}</td>
                     {% if lid.speltak == 'wachtlijst' %}
                         <td>{{ lid.wachtlijst_speltak|title }}</td>

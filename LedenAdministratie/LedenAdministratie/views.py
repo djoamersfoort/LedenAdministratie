@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth import logout
+from django.contrib.auth import logout, login as auth_login, authenticate
 from django.contrib.auth.decorators import user_passes_test
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
@@ -14,16 +14,18 @@ from . import forms
 from . import settings
 
 
-def login(request):
+def login(request, template_name='login.html'):
     form = forms.LoginForm()
 
     if request.method == 'POST':
         form = forms.LoginForm(request.POST)
         if form.is_valid():
             username = form.cleaned_data['username']
-            url = reverse_lazy('openid_login')
-            url += '?openid=%s/%s&next=%s' % ('https://login.scouting.nl/user', username, '/ledenlijst/')
-            return django.http.HttpResponseRedirect(url)
+            password = form.cleaned_data['password']
+            user = authenticate(username=username, password=password)
+            if user and user.is_active:
+                auth_login(request, user)
+                return redirect('ledenlijst')
 
     return render(request, 'login.html', {'form': form})
 
@@ -76,7 +78,7 @@ class LidUpdateView(UserPassesTestMixin, UpdateView):
         return url
 
     def form_valid(self, form):
-        subject = 'Update ledenlijst van scouting St Ansfridus'
+        subject = 'Update ledenlijst van DJO'
         body = render_to_string('edit_lid_email.html', context={'lid': form.instance, 'oldlid': form.initial})
         if settings.SEND_UPDATE_EMAILS:
             send_mail(subject=subject, message=body, from_email=settings.EMAIL_SENDER,
@@ -107,13 +109,13 @@ class LidAanmeldView(CreateView):
 
     def form_valid(self, form):
         # Send an e-mail to 'bestuur'
-        subject = 'Nieuwe aanmelding St. Ansfridus ontvangen'
+        subject = 'Nieuwe aanmelding DJO ontvangen'
         body = render_to_string('aanmelden_email.html', context={'lid': form.instance})
         send_mail(subject=subject, message=body, from_email=settings.EMAIL_SENDER,
                   recipient_list=settings.EMAIL_RECIPIENTS_NEW)
 
         # Send a confirmation e-mail to the user
-        subject = 'Bevestiging aanmelding St. Ansfridus'
+        subject = 'Bevestiging aanmelding DJO'
         body = render_to_string('aanmelden_email_user.html', context={'lid': form.instance})
         send_mail(subject=subject, message=body, from_email=settings.EMAIL_SENDER,
                   recipient_list=[form.instance.email_address])
