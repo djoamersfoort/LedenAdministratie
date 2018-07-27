@@ -40,10 +40,7 @@ def check_user(user):
 def logoff(request):
     logout(request)
 
-    full_url = request.build_absolute_uri('/')
-
-    return django.http.HttpResponseRedirect(
-        'https://login.scouting.nl/provider/logout/?submit=logout&openid_return_url=%s' % full_url)
+    return redirect('/')
 
 
 @user_passes_test(check_user)
