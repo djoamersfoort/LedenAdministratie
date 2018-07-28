@@ -30,5 +30,5 @@ urlpatterns = [
     path('lid_create/', views.LidCreateView.as_view(), name='lid_create'),
     path('aanmelden/', views.LidAanmeldView.as_view(), name='lid_aanmelden'),
     path('aanmelden_ok/', views.aanmelden_ok, name='aanmelden_ok'),
-    path('/', views.login, name='login'),
+    path('', views.login, name='login'),
 ]
