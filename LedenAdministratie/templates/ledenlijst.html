@@ -49,11 +49,7 @@
                     <td>{{ lid.telnr }}</td>
                     <td>{{ lid.aanmeld_datum|date:"d-m-Y" }}</td>
                     <td>{{ lid.age }}</td>
-                    {% if lid.speltak == 'wachtlijst' %}
-                        <td>{{ lid.wachtlijst_speltak|title }}</td>
-                    {% else %}
-                        <td>{{ lid.get_speltak_display }}</td>
-                    {% endif %}
+                    <td>{{ lid.get_speltak_display }}</td>
                     {% if perms.LedenAdministratie.change_lid %}
                         <td>
                             <a href="{% url 'lid_edit' lid.pk %}" class="btn btn-success">

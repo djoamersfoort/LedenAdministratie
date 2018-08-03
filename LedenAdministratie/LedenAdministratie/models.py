@@ -19,7 +19,7 @@ class Lid(models.Model):
         )
 
     LIJST_CHOICES=[
-        ('wachtlijst', 'Wachtlijst'),
+        ('nieuw', 'Nieuw Aangemeld'),
         ('leden', 'Leden'),
         ('begeleiding', 'Begeleiding'),
         ('bestuur', 'Bestuur'),
@@ -37,7 +37,7 @@ class Lid(models.Model):
     last_name = models.CharField(max_length=200)
     gebdat = models.DateField(verbose_name='Geboorte Datum')
     geslacht = models.CharField(max_length=1, choices=(('m', 'M'),('v','V')), blank=False, null=False, default='m')
-    speltak = models.CharField(max_length=40, choices=LIJST_CHOICES, default='wachtlijst', blank=False, null=False)
+    speltak = models.CharField(max_length=40, choices=LIJST_CHOICES, default='nieuw', blank=False, null=False)
     email_address = models.EmailField(max_length=150, validators=[EmailValidator(message='E-mail adres is ongeldig')])
     straat = models.CharField(max_length=255)
     postcode = models.CharField(max_length=7, validators=[RegexValidator(regex='\d\d\d\d\s?[A-Za-z]{2}', message='De postcode is ongeldig')])

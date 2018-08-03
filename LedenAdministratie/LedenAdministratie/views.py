@@ -44,8 +44,8 @@ def logoff(request):
 
 
 @user_passes_test(check_user)
-def ledenlijst(request, speltak='wachtlijst'):
-    if speltak == 'wachtlijst':
+def ledenlijst(request, speltak='nieuw'):
+    if speltak == 'nieuw':
         leden = Lid.objects.filter(speltak=speltak).order_by('aanmeld_datum')
     else:
         leden = Lid.objects.proper_lastname_order(speltak=speltak)
