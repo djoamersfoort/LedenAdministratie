@@ -19,7 +19,7 @@ class Lid(models.Model):
         )
 
     LIJST_CHOICES=[
-        ('nieuw', 'Nieuw Aangemeld'),
+        ('nieuw', 'Nieuw'),
         ('leden', 'Leden'),
         ('begeleiding', 'Begeleiding'),
         ('bestuur', 'Bestuur'),
