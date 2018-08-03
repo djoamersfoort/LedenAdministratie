@@ -22,4 +22,4 @@ class LidCaptchaForm(forms.ModelForm):
 class ExportForm(forms.Form):
     choices = Lid.LIJST_CHOICES.copy()
     choices.insert(0, ('all', 'Alle Lijsten'))
-    speltak = forms.ChoiceField(label='Speltak', choices=choices, required=True)
+    speltak = forms.ChoiceField(label='Lijst', choices=choices, required=True)

@@ -20,7 +20,7 @@
 
         <form method="post">
             {% csrf_token %}
-            <label for="id_speltak">Speltak</label>
+            <label for="id_speltak">Lijst</label>
             {{ form.speltak|add_class:'form-control' }}
             <br>
             <button class="btn btn-lg btn-primary btn-block" type="submit">Exporteren</button>

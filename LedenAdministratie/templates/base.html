@@ -51,7 +51,7 @@
                 {% if perms.LedenAdministratie.change_lid %}
                     <li><a href="{% url 'lid_create' %}">Nieuw Lid</a></li>
                 {% endif %}
-                <li><a href="{% url 'export' %}">Excel Export</a></li>
+                <!-- <li><a href="{% url 'export' %}">Excel Export</a></li> -->
                 {% if request.user.is_superuser %}
                     <li><a href="/admin/">Gebruikers</a></li>
                 {% endif %}
