@@ -105,17 +105,18 @@ class LidAanmeldView(CreateView):
     success_url = reverse_lazy('aanmelden_ok')
 
     def form_valid(self, form):
-        # Send an e-mail to 'bestuur'
-        subject = 'Nieuwe aanmelding DJO ontvangen'
-        body = render_to_string('aanmelden_email.html', context={'lid': form.instance})
-        send_mail(subject=subject, message=body, from_email=settings.EMAIL_SENDER,
-                  recipient_list=settings.EMAIL_RECIPIENTS_NEW)
+        if settings.SEND_NEW_EMAILS:
+            # Send an e-mail to 'bestuur'
+            subject = 'Nieuwe aanmelding DJO ontvangen'
+            body = render_to_string('aanmelden_email.html', context={'lid': form.instance})
+            send_mail(subject=subject, message=body, from_email=settings.EMAIL_SENDER,
+                      recipient_list=settings.EMAIL_RECIPIENTS_NEW)
 
-        # Send a confirmation e-mail to the user
-        subject = 'Bevestiging aanmelding DJO'
-        body = render_to_string('aanmelden_email_user.html', context={'lid': form.instance})
-        send_mail(subject=subject, message=body, from_email=settings.EMAIL_SENDER,
-                  recipient_list=[form.instance.email_address])
+            # Send a confirmation e-mail to the user
+            subject = 'Bevestiging aanmelding DJO'
+            body = render_to_string('aanmelden_email_user.html', context={'lid': form.instance})
+            send_mail(subject=subject, message=body, from_email=settings.EMAIL_SENDER,
+                      recipient_list=[form.instance.email_address])
 
         return super(LidAanmeldView, self).form_valid(form)
 
