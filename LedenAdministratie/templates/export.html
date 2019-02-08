@@ -2,30 +2,36 @@
 {% load widget_tweaks %}
 
 {% block navbar %}
-    <ul class="nav nav-sidebar">
-        {% for taktag, takname in speltakken %}
+<h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+    <span>Filters</span>
+</h6>
 
-            <li {% if speltak == taktag %} class="active" {% endif %}>
-                <a href="{% url 'ledenlijst' taktag %}">{{ takname }}</a>
-            </li>
-
-        {% endfor %}
-
-    </ul>
+<ul class="nav flex-column">
+    {% for taktag, takname in speltakken %}
+    <li class="nav-item">
+        <a {% if speltak == taktag %} class="nav-link active" {% else %} class="nav-link" {% endif %}
+           href="{% url 'ledenlijst' taktag %}">
+            <span data-feather="filter"></span>{{ takname }}
+        </a>
+    </li>
+    {% endfor %}
+</ul>
 {% endblock %}
 
 {% block content %}
 
-    <div class="container col-lg-offset-1 col-lg-2">
-
+<br/>
+<div class="container col-md-2">
+    <div class="card">
+        <div class="card-header">Selecteer de te exporteren lijst</div>
         <form method="post">
             {% csrf_token %}
-            <label for="id_speltak">Lijst</label>
+            <!-- <label for="id_speltak">Lijst</label> -->
             {{ form.speltak|add_class:'form-control' }}
-            <br>
-            <button class="btn btn-lg btn-primary btn-block" type="submit">Exporteren</button>
+            <br/>
+            <button class="btn btn-success btn-block" type="submit">Exporteren</button>
         </form>
-
     </div>
+</div>
 
 {% endblock %}

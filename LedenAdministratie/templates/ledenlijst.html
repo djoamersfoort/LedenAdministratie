@@ -2,26 +2,31 @@
 
 
 {% block navbar %}
-    <ul class="nav nav-sidebar">
+
+    <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+        <span>Filters</span>
+    </h6>
+
+    <ul class="nav flex-column">
         {% for taktag, takname in speltakken %}
-
-            <li {% if speltak == taktag %} class="active" {% endif %}>
-                <a href="{% url 'ledenlijst' taktag %}">{{ takname }}</a>
+            <li class="nav-item">
+                <a {% if speltak == taktag %} class="nav-link active" {% else %} class="nav-link" {% endif %} href="{% url 'ledenlijst' taktag %}">
+                    <span data-feather="filter"></span>{{ takname }}
+                </a>
             </li>
-
         {% endfor %}
-
     </ul>
+
 {% endblock %}
 
 {% block content %}
 
-    <div class="alert alert-info">
+    <div class="alert alert-info bg-secondary text-white">
         Aantal leden op deze lijst: {{ count }}
     </div>
 
     <div class="table-responsive">
-        <table class="table table-hover table-striped">
+        <table class="table table-hover table-striped table-sm">
             <thead>
             <tr>
                 <th>Naam</th>
@@ -52,19 +57,19 @@
                     <td>{{ lid.get_speltak_display }}</td>
                     {% if perms.LedenAdministratie.change_lid %}
                         <td>
-                            <a href="{% url 'lid_edit' lid.pk %}" class="btn btn-success">
-                                <span class="glyphicon glyphicon-pencil"></span>
+                            <a href="{% url 'lid_edit' lid.pk %}" class="btn btn-success btn-sm">
+                                <span data-feather="edit"></span>
                             </a>
                         </td>
                         <td>
-                            <a href="{% url 'lid_delete' lid.pk %}" class="btn btn-danger">
-                                <span class="glyphicon glyphicon-trash"></span>
+                            <a href="{% url 'lid_delete' lid.pk %}" class="btn btn-danger btn-sm">
+                                <span data-feather="trash-2"></span>
                             </a>
                         </td>
                     {% else %}
                         <td>
-                            <a href="{% url 'lid_edit' lid.pk %}" class="btn btn-success">
-                                <span class="glyphicon glyphicon-zoom-in"></span>
+                            <a href="{% url 'lid_edit' lid.pk %}" class="btn btn-success btn-sm">
+                                <span data-feather="edit"></span>
                             </a>
                         </td>
                     {% endif %}

@@ -1,11 +1,11 @@
 
 {% if form.errors %}
     <div class="alert alert-danger">
-        <span class="glyphicon glyphicon-exclamation-sign"></span>
+        <span data-feather="alert-circle"></span>
         {% for field in form %}
             {% if field.errors %}
                 {% for error in field.errors %}
-                    {{ error }}<br>
+                    {{ error }}<br/>
                 {% endfor %}
             {% endif %}
         {% endfor %}

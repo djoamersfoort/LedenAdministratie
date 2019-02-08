@@ -5,12 +5,12 @@
     <form action="" method="post">
         {% csrf_token %}
         <div class="alert alert-danger" role="alert">
-        <span class="glyphicon glyphicon-question-sign"></span>
+        <span data-feather="alert-triangle"></span>
         Weet u zeker dat u {{ object }} wilt verwijderen?
         </div>
 
         <button type="submit" class="btn btn-success">Verwijderen</button>
-        <button type="button" class="btn btn-default">Annuleren</button>
+        <button onclick="javascript:history.go(-1)" type="button" class="btn btn-secondary">Annuleren</button>
     </form>
 
 {% endblock %}
