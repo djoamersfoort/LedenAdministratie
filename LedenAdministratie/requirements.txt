@@ -1,5 +1,5 @@
 Django>2
-django-widget-tweaks==1.4.1
+django-widget-tweaks==1.4.3
 mysqlclient
 python-dateutil
 django-simple-captcha
