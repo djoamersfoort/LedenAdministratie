@@ -1,7 +1,6 @@
 db.sqlite3
 settings.py
 LedenAdministratie/settings.py
-LedenAdministratie/migrations/
 .idea/
 
 ### Python template
@@ -30,7 +29,6 @@ var/
 *.egg-info/
 .installed.cfg
 *.egg
-migrations
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
