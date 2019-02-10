@@ -1,5 +1,5 @@
 from django import forms
-from LedenAdministratie.models import Lid
+from .models import Member, MemberType
 from captcha.fields import CaptchaField
 
 
@@ -10,16 +10,17 @@ class LoginForm(forms.Form):
 
 class LidForm(forms.ModelForm):
     class Meta:
-        model = Lid
+        model = Member
         exclude = []
+
 
 class LidCaptchaForm(forms.ModelForm):
     captcha = CaptchaField()
+
     class Meta:
-        model = Lid
+        model = Member
         exclude = []
 
+
 class ExportForm(forms.Form):
-    choices = Lid.LIJST_CHOICES.copy()
-    choices.insert(0, ('all', 'Alle Lijsten'))
-    speltak = forms.ChoiceField(label='Lijst', choices=choices, required=True)
+    filter_slug = forms.ModelChoiceField(label='Filter', required=True, queryset=MemberType.objects.all())

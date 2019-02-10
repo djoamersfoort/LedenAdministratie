@@ -15,20 +15,18 @@ Including another URLconf
 """
 from django.urls import path, include
 from django.contrib import admin
-from LedenAdministratie import views
+from . import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('captcha/', include('captcha.urls')),
-    path('ledenlijst/<speltak>/', views.ledenlijst, name='ledenlijst'),
-    path('ledenlijst/', views.ledenlijst, name='ledenlijst'),
+    path('ledenlijst/<filter_slug>/', views.MemberListView.as_view(), name='ledenlijst'),
+    path('ledenlijst/', views.MemberListView.as_view(), name='ledenlijst'),
     path('logoff/', views.logoff, name='logoff'),
     path('export/', views.export, name='export'),
-    path('do_export/<speltak>/', views.do_export, name='do_export'),
+    path('do_export/<filter_slug>/', views.do_export, name='do_export'),
     path('lid_edit/<int:pk>/', views.LidUpdateView.as_view(), name='lid_edit'),
     path('lid_delete/<int:pk>/', views.LidDeleteView.as_view(), name='lid_delete'),
     path('lid_create/', views.LidCreateView.as_view(), name='lid_create'),
-    path('aanmelden/', views.LidAanmeldView.as_view(), name='lid_aanmelden'),
-    path('aanmelden_ok/', views.aanmelden_ok, name='aanmelden_ok'),
     path('', views.login, name='login'),
 ]

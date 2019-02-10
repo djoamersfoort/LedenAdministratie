@@ -3,32 +3,37 @@ from datetime import date
 from django.core.validators import RegexValidator, EmailValidator
 
 
-class LidManager(models.Manager):
+class MemberType(models.Model):
+    slug = models.SlugField()
+    display_name = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.display_name
+
+
+class MemberManager(models.Manager):
     def proper_lastname_order(self, *args, **kwargs):
         qs = self.get_queryset().filter(*args, **kwargs)
         return sorted(qs, key=lambda n: n.last_name.lower().split()[-1])
 
 
-class Lid(models.Model):
-    objects = LidManager()
+class Member(models.Model):
+    objects = MemberManager()
+
     class Meta:
         ordering = ["last_name", "first_name"]
-        verbose_name_plural = "Leden"
+        verbose_name_plural = "Members"
         permissions = (
-            ('read_lid', 'Can read leden'),
+            ('read_member', 'Can read members'),
         )
-
-    LIJST_CHOICES=[
-        ('nieuw', 'Nieuw'),
-        ('leden', 'Leden'),
-        ('begeleiding', 'Begeleiding'),
-        ('bestuur', 'Bestuur'),
-    ]
 
     def _calculate_age(self, ondate = date.today()):
         today = ondate
         born = self.gebdat
         return today.year - born.year - ((today.month, today.day) < (born.month, born.day))
+
+    def get_types_display(self):
+        return ','.join([tmptype.display_name for tmptype in self.types.all()])
 
     def __str__(self):
         return "%s %s" % (self.first_name, self.last_name)
@@ -37,8 +42,8 @@ class Lid(models.Model):
     last_name = models.CharField(max_length=200)
     gebdat = models.DateField(verbose_name='Geboorte Datum')
     geslacht = models.CharField(max_length=1, choices=(('m', 'M'),('v','V')), blank=False, null=False, default='m')
-    speltak = models.CharField(max_length=40, choices=LIJST_CHOICES, default='nieuw', blank=False, null=False)
-    email_address = models.EmailField(max_length=150, validators=[EmailValidator(message='E-mail adres is ongeldig')])
+    types = models.ManyToManyField(MemberType)
+    email_address = models.EmailField(max_length=200, validators=[EmailValidator(message='E-mail adres is ongeldig')])
     straat = models.CharField(max_length=255)
     postcode = models.CharField(max_length=7, validators=[RegexValidator(regex='\d\d\d\d\s?[A-Za-z]{2}', message='De postcode is ongeldig')])
     woonplaats = models.CharField(max_length=100)

@@ -1,25 +1,6 @@
 {% extends 'base.html' %}
 {% load widget_tweaks %}
 
-{% block navbar %}
-
-<h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
-    <span>Filters</span>
-</h6>
-
-<ul class="nav flex-column">
-    {% for taktag, takname in lid.LIJST_CHOICES %}
-    <li class="nav-item">
-        <a {% if lid.speltak == taktag %} class="nav-link active" {% else %} class="nav-link" {% endif %}
-           href="{% url 'ledenlijst' taktag %}">
-            <span data-feather="filter"></span>{{ takname }}
-        </a>
-    </li>
-    {% endfor %}
-</ul>
-
-{% endblock %}
-
 {% block content %}
 
 {% include 'alerts.html' %}
@@ -58,8 +39,8 @@
                         <label for="id_email_address">E-mail adres *</label>
                         {{ form.email_address|add_class:'form-control' }}
 
-                        <label for="id_speltak">Lijst</label>
-                        {{ form.speltak|add_class:'form-control' }}
+                        <label for="id_types">Type</label>
+                        {{ form.types|add_class:'form-control' }}
                     </div>
                 </div>
             </div>

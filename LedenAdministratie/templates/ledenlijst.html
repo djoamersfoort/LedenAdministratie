@@ -1,24 +1,6 @@
 {% extends 'base.html' %}
 
 
-{% block navbar %}
-
-    <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
-        <span>Filters</span>
-    </h6>
-
-    <ul class="nav flex-column">
-        {% for taktag, takname in speltakken %}
-            <li class="nav-item">
-                <a {% if speltak == taktag %} class="nav-link active" {% else %} class="nav-link" {% endif %} href="{% url 'ledenlijst' taktag %}">
-                    <span data-feather="filter"></span>{{ takname }}
-                </a>
-            </li>
-        {% endfor %}
-    </ul>
-
-{% endblock %}
-
 {% block content %}
 
     <div class="alert alert-info bg-secondary text-white">
@@ -38,13 +20,13 @@
                 <th>Tel. Nr.</th>
                 <th>Aangemeld op</th>
                 <th>Leeftijd</th>
-                <th>Lijst</th>
+                <th>Type</th>
                 <th></th>
                 <th></th>
             </tr>
             </thead>
             <tbody>
-            {% for lid in leden %}
+            {% for lid in object_list %}
 
                 <tr>
                     <td>{{ lid }}</td>
@@ -55,7 +37,7 @@
                     <td>{{ lid.telnr }}</td>
                     <td>{{ lid.aanmeld_datum|date:"d-m-Y" }}</td>
                     <td>{{ lid.age }}</td>
-                    <td>{{ lid.get_speltak_display }}</td>
+                    <td>{{ lid.get_types_display }}</td>
                     {% if perms.LedenAdministratie.change_lid %}
                         <td>
                             <a href="{% url 'lid_edit' lid.pk %}" class="btn btn-success btn-sm">
