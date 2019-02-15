@@ -54,7 +54,6 @@ class Member(models.Model):
     email_ouder1 = models.EmailField(max_length=150, blank=True)
     email_ouder2 = models.EmailField(max_length=150, blank=True)
     aanmeld_datum = models.DateField(auto_now_add=True, auto_now=False)
-    opmerkingen = models.TextField(max_length=1024, blank=True)
     age = property(_calculate_age)
 
 
