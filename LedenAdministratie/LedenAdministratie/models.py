@@ -56,3 +56,10 @@ class Member(models.Model):
     aanmeld_datum = models.DateField(auto_now_add=True, auto_now=False)
     opmerkingen = models.TextField(max_length=1024, blank=True)
     age = property(_calculate_age)
+
+
+class Note(models.Model):
+    member = models.ForeignKey(Member, on_delete=models.CASCADE, related_name='notes')
+    created = models.DateField(auto_now_add=True, auto_now=False)
+    username = models.CharField(max_length=255, null=False, default='')
+    text = models.TextField(max_length=65535, null=False, default='')
