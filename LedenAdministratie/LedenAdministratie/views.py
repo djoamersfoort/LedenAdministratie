@@ -143,13 +143,11 @@ def do_export(request, filter_slug):
     writer = csv.writer(response, dialect=csv.excel, quoting=csv.QUOTE_ALL)
     writer.writerow(
         ['Voornaam', 'Achternaam', 'Geb. Datum', 'Leeftijd', 'Geslacht', 'E-mail', 'Straat',
-         'Postcode', 'Woonplaats', 'Telnr', 'Mobiel', 'Mobiel Ouder 1', 'Mobiel Ouder 2',
-         'E-mail Ouder 1', 'E-mail Ouder 2'])
+         'Postcode', 'Woonplaats', 'Telnr', 'Telnr Ouders', 'E-mail Ouders'])
 
     for member in members:
         writer.writerow([member.first_name, member.last_name, member.gebdat, member.age, member.geslacht,
                          member.email_address, member.straat, member.postcode, member.woonplaats, member.telnr,
-                         member.mobiel, member.mobiel_ouder1, member.mobiel_ouder2, member.email_ouder1,
-                         member.email_ouder2])
+                         member.telnr_ouders, member.email_ouders])
 
     return response

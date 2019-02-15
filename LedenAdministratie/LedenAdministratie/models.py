@@ -22,7 +22,7 @@ class Member(models.Model):
 
     class Meta:
         ordering = ["last_name", "first_name"]
-        verbose_name_plural = "Members"
+        verbose_name_plural = "Leden"
         permissions = (
             ('read_member', 'Can read members'),
         )
@@ -41,18 +41,15 @@ class Member(models.Model):
     first_name = models.CharField(max_length=40)
     last_name = models.CharField(max_length=200)
     gebdat = models.DateField(verbose_name='Geboorte Datum')
-    geslacht = models.CharField(max_length=1, choices=(('m', 'M'),('v','V')), blank=False, null=False, default='m')
+    geslacht = models.CharField(max_length=1, choices=(('m', 'Man'), ('v', 'Vrouw'), ('o', 'Anders')), blank=False, null=False, default='m')
     types = models.ManyToManyField(MemberType)
     email_address = models.EmailField(max_length=200, validators=[EmailValidator(message='E-mail adres is ongeldig')])
     straat = models.CharField(max_length=255)
     postcode = models.CharField(max_length=7, validators=[RegexValidator(regex='\d\d\d\d\s?[A-Za-z]{2}', message='De postcode is ongeldig')])
     woonplaats = models.CharField(max_length=100)
     telnr = models.CharField(max_length=30)
-    mobiel = models.CharField(max_length=20, blank=True, validators=[RegexValidator(regex='06.*', message='Mobiel nummer is ongeldig')])
-    mobiel_ouder1 = models.CharField(max_length=20, blank=True, validators=[RegexValidator(regex='06.*', message='Mobiel nummer is ongeldig')])
-    mobiel_ouder2 = models.CharField(max_length=20, blank=True, validators=[RegexValidator(regex='06.*', message='Mobiel nummer is ongeldig')])
-    email_ouder1 = models.EmailField(max_length=150, blank=True)
-    email_ouder2 = models.EmailField(max_length=150, blank=True)
+    telnr_ouders = models.CharField(max_length=30, blank=True)
+    email_ouders = models.EmailField(max_length=150, blank=True)
     aanmeld_datum = models.DateField(auto_now_add=True, auto_now=False)
     age = property(_calculate_age)
 

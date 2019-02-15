@@ -36,9 +36,6 @@
                         <label for="id_postcode">Postcode *</label>
                         {{ form.postcode|add_class:'form-control' }}
 
-                        <label for="id_email_address">E-mail adres *</label>
-                        {{ form.email_address|add_class:'form-control' }}
-
                         <label for="id_types">Type</label>
                         {{ form.types|add_class:'form-control' }}
                     </div>
@@ -50,25 +47,24 @@
     <div class="col-md-10">
         <div class="card">
             <div class="card-body">
-                <div class="card-header text-white bg-secondary">Contactgegevens Ouders</div>
+                <div class="card-header text-white bg-secondary">Contactgegevens</div>
 
                 <div class="form-row">
                     <div class="col-md-5">
-                        <label for="id_mobiel_ouder1">Mobiel Ouder 1</label>
-                        {{ form.mobiel_ouder1|add_class:'form-control' }}
-
-                        <label for="id_email_ouder1">E-mail Ouder 1</label>
-                        {{ form.email_ouder1|add_class:'form-control' }}
+                        <label for="id_email_address">E-mail adres *</label>
+                        {{ form.email_address|add_class:'form-control' }}
 
                         <label for="id_telnr">Tel. Nummer *</label>
                         {{ form.telnr|add_class:'form-control' }}
+
+                        <label for="id_email_ouders">E-mail Ouders</label>
+                        {{ form.email_ouders|add_class:'form-control' }}
+
+                        <label for="id_telnr_ouders">Tel. Nummer Ouders</label>
+                        {{ form.telnr_ouders|add_class:'form-control' }}
                     </div>
                     <div class="col-md-5">
-                        <label for="id_mobiel_ouder2">Mobiel Ouder 2</label>
-                        {{ form.mobiel_ouder2|add_class:'form-control' }}
-
-                        <label for="id_email_ouder2">E-mail Ouder 2</label>
-                        {{ form.email_ouder2|add_class:'form-control' }}
+                        <!-- plaats voor meer -->
                     </div>
                 </div>
             </div>
