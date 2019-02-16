@@ -10,7 +10,7 @@ from django.template.loader import render_to_string
 import django.http
 import csv
 
-from .models import Member, MemberType
+from .models import Member, MemberType, Note
 from . import forms
 from . import settings
 
@@ -111,6 +111,26 @@ class LidDeleteView(UserPassesTestMixin, DeleteView):
     template_name = 'delete_lid.html'
     fields = ['fist_name', 'last_name']
     extra_context = {'types': MemberType.objects.all()}
+
+    def test_func(self):
+        can_change = self.request.user.has_perm('LedenAdministratie.change_lid')
+        return check_user(self.request.user) and can_change
+
+
+class LidAddNoteView(UserPassesTestMixin, CreateView):
+    model = Note
+    form_class = forms.LidAddNoteForm
+    template_name = 'lid_add_note.html'
+
+    def get_success_url(self):
+        return reverse_lazy()
+        return reverse_lazy('lid_edit', self.kwargs.get('member_id'))
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        member_id = self.kwargs.get('member_id')
+        context['member'] = Member.objects.get(pk=member_id)
+        return context
 
     def test_func(self):
         can_change = self.request.user.has_perm('LedenAdministratie.change_lid')

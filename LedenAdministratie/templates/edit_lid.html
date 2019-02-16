@@ -76,7 +76,7 @@
             <div class="card-body">
                 <div class="card-header text-white bg-secondary">Overig</div>
                 <div class="col-md-5">
-                    <h6 class="mt-2">Notities</h6>
+                    <h6 class="mt-2">Notities <a href="{% url 'lid_addnote' object.id %}"><span data-feather="plus-circle"></span></a></h6>
                     <div class="table-responsive">
                         <table class="table table-hover table-sm">
                             <thead class="thead-light">
@@ -88,7 +88,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                {% for note in form.instance.notes.all %}
+                                {% for note in object.notes.all %}
                                 <tr>
                                     <td>{{ note.created }}</td>
                                     <td>{{ note.username }}</td>

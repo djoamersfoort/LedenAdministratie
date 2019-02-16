@@ -28,5 +28,6 @@ urlpatterns = [
     path('lid_edit/<int:pk>/', views.LidUpdateView.as_view(), name='lid_edit'),
     path('lid_delete/<int:pk>/', views.LidDeleteView.as_view(), name='lid_delete'),
     path('lid_create/', views.LidCreateView.as_view(), name='lid_create'),
+    path('lid_addnote/<int:member_id>/', views.LidAddNoteView.as_view(), name='lid_addnote'),
     path('', views.login, name='login'),
 ]

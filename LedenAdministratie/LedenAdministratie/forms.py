@@ -1,5 +1,5 @@
 from django import forms
-from .models import Member, MemberType
+from .models import Member, MemberType, Note
 from captcha.fields import CaptchaField
 
 
@@ -24,3 +24,9 @@ class LidCaptchaForm(forms.ModelForm):
 
 class ExportForm(forms.Form):
     filter_slug = forms.ModelChoiceField(label='Filter', required=True, queryset=MemberType.objects.all())
+
+
+class LidAddNoteForm(forms.ModelForm):
+    class Meta:
+        model = Note
+        exclude = []
