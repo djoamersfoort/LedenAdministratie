@@ -51,6 +51,8 @@ class Member(models.Model):
     telnr_ouders = models.CharField(max_length=30, blank=True)
     email_ouders = models.EmailField(max_length=150, blank=True)
     aanmeld_datum = models.DateField(auto_now_add=True, auto_now=False)
+    dag_vrijdag = models.BooleanField(null=False, default=False)
+    dag_zaterdag = models.BooleanField(null=False, default=False)
     age = property(_calculate_age)
 
 

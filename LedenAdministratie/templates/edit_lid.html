@@ -38,6 +38,17 @@
 
                         <label for="id_types">Type</label>
                         {{ form.types|add_class:'form-control' }}
+
+                        <h6 class="mt-3 ml-3">Dagdeel aanwezig</h6>
+                        <div class="form-check mt-1 ml-3">
+                            {{ form.dag_vrijdag|add_class:'form-check-input' }}
+                            <label for="id_dag_vrijdag">Vrijdag</label>
+                        </div>
+
+                        <div class="form-check ml-3">
+                            {{ form.dag_zaterdag|add_class:'form-check-input' }}
+                            <label for="id_dag_zaterdag">Zaterdag</label>
+                        </div>
                     </div>
                 </div>
             </div>
