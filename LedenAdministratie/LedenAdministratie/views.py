@@ -3,7 +3,7 @@ from django.contrib.auth import logout, login as auth_login, authenticate
 from django.contrib.auth.decorators import user_passes_test
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic.list import ListView
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
@@ -122,15 +122,19 @@ class LidAddNoteView(UserPassesTestMixin, CreateView):
     form_class = forms.LidAddNoteForm
     template_name = 'lid_add_note.html'
 
-    def get_success_url(self):
-        return reverse_lazy()
-        return reverse_lazy('lid_edit', self.kwargs.get('member_id'))
-
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        member_id = self.kwargs.get('member_id')
-        context['member'] = Member.objects.get(pk=member_id)
+        context = super().get_context_data()
+        context['member'] = Member.objects.get(pk=self.kwargs['member_id'])
         return context
+
+    def get_success_url(self):
+        return reverse('lid_edit', kwargs={'pk': self.kwargs['member_id']})
+
+    def form_valid(self, form):
+        member_id = self.kwargs['member_id']
+        form.instance.member = Member.objects.get(pk=member_id)
+        form.instance.username = self.request.user.username
+        return super().form_valid(form)
 
     def test_func(self):
         can_change = self.request.user.has_perm('LedenAdministratie.change_lid')

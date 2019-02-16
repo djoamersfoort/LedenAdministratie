@@ -29,4 +29,4 @@ class ExportForm(forms.Form):
 class LidAddNoteForm(forms.ModelForm):
     class Meta:
         model = Note
-        exclude = []
+        fields = ['text']

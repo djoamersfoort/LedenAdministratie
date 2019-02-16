@@ -11,10 +11,7 @@
             Notitie toevoegen
         </div>
         <div class="card-body">
-            <h5 class="card-title">Notitie voor {{ member.first_name }}</h5>
-            {{ form.member }}
-            {{ form.created }}
-            {{ form.username }}
+            <h5 class="card-title">Notitie voor {{ member.first_name }} {{ member.last_name }} </h5>
             {{ form.text|add_class:'form-control' }}
             <br/>
 
