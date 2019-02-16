@@ -141,6 +141,19 @@ class LidAddNoteView(UserPassesTestMixin, CreateView):
         return check_user(self.request.user) and can_change
 
 
+class LidDeleteNoteView(UserPassesTestMixin, DeleteView):
+    model = Note
+
+    def get_success_url(self):
+        return reverse('lid_edit', kwargs={'pk': self.object.member.id})
+
+    def test_func(self):
+        can_change = self.request.user.has_perm('LedenAdministratie.change_lid')
+        return check_user(self.request.user) and can_change
+
+
+
+
 @user_passes_test(check_user)
 def export(request):
     form = forms.ExportForm()
