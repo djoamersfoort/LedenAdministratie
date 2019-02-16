@@ -96,13 +96,11 @@ class LidCreateView(UserPassesTestMixin, CreateView):
     template_name = 'edit_lid.html'
     success_url = reverse_lazy('ledenlijst')
     form_class = forms.LidForm
+    extra_context = {'types': MemberType.objects.all()}
 
     def test_func(self):
         can_change = self.request.user.has_perm('LedenAdministratie.change_lid')
         return check_user(self.request.user) and can_change
-
-    def get_success_url(self):
-        return reverse_lazy('ledenlijst')
 
 
 class LidDeleteView(UserPassesTestMixin, DeleteView):
@@ -150,8 +148,6 @@ class LidDeleteNoteView(UserPassesTestMixin, DeleteView):
     def test_func(self):
         can_change = self.request.user.has_perm('LedenAdministratie.change_lid')
         return check_user(self.request.user) and can_change
-
-
 
 
 @user_passes_test(check_user)

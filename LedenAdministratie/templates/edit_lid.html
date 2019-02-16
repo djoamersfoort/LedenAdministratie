@@ -82,6 +82,8 @@
         </div>
     </div>
 
+
+    {% if object %}
     <div class="col-md-10">
         <div class="card">
             <div class="card-body">
@@ -169,6 +171,7 @@
             </div>
         </div>
     </div>
+    {% endif %}
 
     <br>
     {% if perms.LedenAdministratie.change_lid %}
