@@ -9,9 +9,17 @@ class LoginForm(forms.Form):
 
 
 class LidForm(forms.ModelForm):
+    foto = forms.FileField(required=False)
+
     class Meta:
         model = Member
         exclude = []
+
+    def save(self, commit=True):
+        if self.cleaned_data.get('foto') is not None:
+            data = self.cleaned_data['foto'].file.read()
+            self.instance.foto = data
+        return super().save(commit)
 
 
 class LidCaptchaForm(forms.ModelForm):

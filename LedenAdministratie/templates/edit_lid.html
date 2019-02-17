@@ -1,11 +1,12 @@
 {% extends 'base.html' %}
 {% load widget_tweaks %}
+{% load photo_filter %}
 
 {% block content %}
 
 {% include 'alerts.html' %}
 
-<form method="post">
+<form method="post" enctype="multipart/form-data">
     {% csrf_token %}
 
     <div class="col-md-10">
@@ -75,7 +76,8 @@
                         {{ form.telnr_ouders|add_class:'form-control' }}
                     </div>
                     <div class="col-md-5">
-                        <!-- plaats voor meer -->
+                        <img src="{{ form.foto|img2base64 }}" class="border rounded mt-3" height="250px" width="200px">
+                        {{ form.foto }}
                     </div>
                 </div>
             </div>
