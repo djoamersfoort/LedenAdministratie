@@ -1,4 +1,5 @@
 from django import template
+from django.forms import BoundField
 import base64
 import imghdr
 
@@ -79,9 +80,13 @@ gg==
 
 @register.filter(name='img2base64', is_safe=True)
 def img2base64(field):
-    #if not isinstance(value, bytes):
-    #    return 'data:image/png;base64,{0}'.format(onbekend_persoon)
-    #else:
-    image_type = imghdr.what('', field.value())
+    if not isinstance(field, BoundField):
+        return 'data:image/png;base64,{0}'.format(onbekend_persoon)
+
+    foto = field.value()
+    if foto is None or foto == '':
+        return 'data:image/png;base64,{0}'.format(onbekend_persoon)
+
+    image_type = imghdr.what(None, field.value())
     base64img = base64.encodebytes(field.value()).decode('ascii')
     return 'data:image/{0};base64,{1}'.format(image_type, base64img)
