@@ -53,6 +53,7 @@ class Member(models.Model):
     aanmeld_datum = models.DateField(auto_now_add=True, auto_now=False)
     dag_vrijdag = models.BooleanField(null=False, default=False)
     dag_zaterdag = models.BooleanField(null=False, default=False)
+    foto = models.BinaryField(null=True, verbose_name='Foto')
     age = property(_calculate_age)
 
 
