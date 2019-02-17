@@ -59,10 +59,10 @@
     <div class="col-md-10">
         <div class="card">
             <div class="card-body">
-                <div class="card-header text-white bg-secondary">Contactgegevens</div>
+                <div class="card-header text-white bg-secondary">Contactgegevens / Foto</div>
 
                 <div class="form-row">
-                    <div class="col-md-5">
+                    <div class="col-5">
                         <label for="id_email_address">E-mail adres *</label>
                         {{ form.email_address|add_class:'form-control' }}
 
@@ -75,9 +75,19 @@
                         <label for="id_telnr_ouders">Tel. Nummer Ouders</label>
                         {{ form.telnr_ouders|add_class:'form-control' }}
                     </div>
-                    <div class="col-md-5">
-                        <img src="{{ form.foto|img2base64 }}" class="border rounded mt-3" height="250px" width="200px">
-                        {{ form.foto }}
+                    <div class="col-2">
+                    </div>
+                    <div class="col-3">
+                        <div class="d-flex justify-content-center mb-3">
+                            <img src="{{ form.foto|img2base64 }}" class="border rounded mt-3" height="200px" width="150px">
+                        </div>
+                        <div class="custom-file" id="customFile" lang="es">
+                            <input type="file" class="custom-file-input" id="id_foto" name="foto"
+                                   onchange="$(this).next('.custom-file-label').html($(this).val().split('\\').pop());">
+                            <label class="custom-file-label" for="id_foto">
+                               Foto uploaden...
+                            </label>
+                        </div>
                     </div>
                 </div>
             </div>
