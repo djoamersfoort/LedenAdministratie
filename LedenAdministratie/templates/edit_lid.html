@@ -89,7 +89,7 @@
             <div class="card-body">
                 <div class="card-header text-white bg-secondary">Overig</div>
                 <div class="col-md-5">
-                    <h6 class="mt-2">Notities <a href="{% url 'lid_addnote' object.id %}"><span data-feather="plus-circle"></span></a></h6>
+                    <h6 class="mt-2">Notities</h6>
                     <div class="table-responsive">
                         <table class="table table-hover table-sm">
                             <thead class="thead-light">
@@ -163,6 +163,10 @@
                                 {% endfor %}
                             </tbody>
                         </table>
+
+                        <a class="btn btn-primary btn-sm" role="button" href="{% url 'lid_addnote' object.id %}">
+                            Toevoegen</span>
+                        </a>
                     </div>
                 </div>
                 <div class="col-md-5">
