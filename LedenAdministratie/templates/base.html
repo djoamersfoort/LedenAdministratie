@@ -33,6 +33,12 @@
                     </h6>
 
                     <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a {% if filter_slug == '' %} class="nav-link active" {% else %} class="nav-link" {% endif %} href="{% url 'ledenlijst' %}">
+                                <span data-feather="filter"></span>Alle leden
+                            </a>
+                        </li>
+
                         {% for type in types %}
                             <li class="nav-item">
                                 <a {% if filter_slug == type.slug %} class="nav-link active" {% else %} class="nav-link" {% endif %} href="{% url 'ledenlijst' type.slug %}">
