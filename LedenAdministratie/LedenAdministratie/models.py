@@ -32,6 +32,9 @@ class Member(models.Model):
         born = self.gebdat
         return today.year - born.year - ((today.month, today.day) < (born.month, born.day))
 
+    def _get_full_name(self):
+        return "{0} {1}".format(self.first_name, self.last_name)
+
     def get_types_display(self):
         return ','.join([tmptype.display_name for tmptype in self.types.all()])
 
@@ -55,6 +58,7 @@ class Member(models.Model):
     dag_zaterdag = models.BooleanField(null=False, default=False)
     foto = models.BinaryField(blank=True, null=True, verbose_name='Foto', editable=True)
     age = property(_calculate_age)
+    full_name = property(_get_full_name)
 
 
 class Note(models.Model):

@@ -168,6 +168,19 @@ class LidEditNoteView(UserPassesTestMixin, UpdateView):
         return check_user(self.request.user) and can_change
 
 
+class TodoListView(UserPassesTestMixin, ListView):
+    model = Note
+    template_name = 'todo_list.html'
+
+    def get_queryset(self):
+        todos = Note.objects.filter(done=False)
+        self.extra_context = {'count': todos.count()}
+        return todos
+
+    def test_func(self):
+        return check_user(self.request.user)
+
+
 @user_passes_test(check_user)
 def export(request):
     form = forms.ExportForm()

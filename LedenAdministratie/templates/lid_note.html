@@ -8,10 +8,10 @@
 
     <div class="card">
         <div class="card-header">
-            {% if form.object is None %}
-                Notitie toevoegen
-            {% else %}
+            {% if object %}
                 Notitie wijzigen
+            {% else %}
+                Notitie toevoegen
             {% endif %}
         </div>
         <div class="card-body">
@@ -24,10 +24,10 @@
                 <label for="id_done">Is afgerond</label>
             </div>
 
-            {% if form.object is None %}
-                <button type="submit" class="btn btn-success">Toevoegen</button>
-            {% else %}
+            {% if object %}
                 <button type="submit" class="btn btn-success">Wijzigen</button>
+            {% else %}
+                <button type="submit" class="btn btn-success">Toevoegen</button>
             {% endif %}
             <button onclick="javascript:history.go(-1)" type="button" class="btn btn-secondary">Annuleren</button>
 
