@@ -56,7 +56,7 @@
         </div>
     </div>
 
-    <div class="col-md-10">
+    <div class="col-10">
         <div class="card">
             <div class="card-body">
                 <div class="card-header text-white bg-secondary">Contactgegevens en Foto</div>
@@ -96,13 +96,20 @@
 
 
     {% if object %}
-    <div class="col-md-10">
+    <div class="col-10">
         <div class="card">
             <div class="card-body">
                 <div class="card-header text-white bg-secondary">Notities en Facturen</div>
-                    {% include 'notes_table.html' %}
-                <div class="col-md-5">
-                    <!-- Hier komen de facturen -->
+
+                <div class="form-row">
+                    <div class="col-5">
+                        {% include 'notes_table.html' %}
+                    </div>
+                    <div class="col-1">
+                    </div>
+                    <div class="col-4">
+                        {% include 'invoices_table.html' %}
+                    </div>
                 </div>
             </div>
         </div>

@@ -1,54 +1,54 @@
-    <h6 class="mt-2">Notities</h6>
+    <h6 class="mt-2">Facturen</h6>
     <div class="table-responsive">
         <table class="table table-hover table-sm">
             <thead class="thead-light">
                 <tr>
                     <th>Datum</th>
                     <th>Gebruiker</th>
-                    <th>Notitie</th>
-                    <th>Afgerond</th>
+                    <th>Bedrag</th>
+                    <th>Betaald</th>
                     <th></th>
                     <th></th>
                     <th></th>
                 </tr>
             </thead>
             <tbody>
-                {% for note in object.notes.all %}
+                {% for invoice in object.invoices.all %}
                 <tr>
-                    <td>{{ note.created }}</td>
-                    <td>{{ note.username|capfirst }}</td>
-                    <td>{{ note.text|truncatechars:20 }}</td>
+                    <td>{{ invoice.created }}</td>
+                    <td>{{ invoice.username|capfirst }}</td>
+                    <td>{{ invoice.amount }}</td>
                     <td>
-                        {% if note.done %}
+                        {% if invoice.payed %}
                             <span data-feather="check"></span>
                         {% else %}
                             <span data-feather="x"></span>
                         {% endif %}
                     </td>
                     <td>
-                        <a href="{% url 'lid_editnote' note.id %}">
+                        <a href="{% url 'lid_editnote' invoice.id %}">
                             <span data-feather="edit"></span>
                         </a>
                     </td>
                     <td>
-                        <a href="#" data-toggle="modal" data-target="#showNoteDeleteModal{{ note.id }}">
+                        <a href="#" data-toggle="modal" data-target="#showInvoiceDeleteModal{{ invoice.id }}">
                             <span data-feather="trash-2"></span>
                         </a>
-                        <!-- Note Delete confirm Modal -->
-                        <div class="modal fade" id="showNoteDeleteModal{{ note.id }}" tabindex="-1" role="dialog">
+                        <!-- Invoice Delete confirm Modal -->
+                        <div class="modal fade" id="showInvoiceDeleteModal{{ invoice.id }}" tabindex="-1" role="dialog">
                           <div class="modal-dialog modal-dialog-centered" role="document">
                             <div class="modal-content">
                               <div class="modal-header">
-                                <h5 class="modal-title">Notitie verwijderen?</h5>
+                                <h5 class="modal-title">Factuur verwijderen?</h5>
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                   <span aria-hidden="true">&times;</span>
                                 </button>
                               </div>
                               <div class="modal-body">
-                                <p>Weet u zeker dat u de notitie wilt verwijderen?</p>
+                                <p>Weet u zeker dat u de factuur wilt verwijderen?</p>
                               </div>
                               <div class="modal-footer">
-                                  <form method="post" action="{% url 'lid_delnote' note.id %}">
+                                  <form method="post" action="{% url 'lid_delnote' invoice.id %}">
                                       {% csrf_token %}
                                       <button type="submit" class="btn btn-primary">Verwijderen</button>
                                       <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuleren</button>
@@ -59,21 +59,21 @@
                         </div>
                     </td>
                     <td>
-                        <a href="#" data-toggle="modal" data-target="#showNoteModal{{ note.id }}">
+                        <a href="#" data-toggle="modal" data-target="#showInvoiceModal{{ invoice.id }}">
                             <span data-feather="eye"></span>
                         </a>
-                        <!-- Show Note Modal -->
-                        <div class="modal fade" id="showNoteModal{{ note.id }}" tabindex="-1" role="dialog">
+                        <!-- Show Invoice Modal -->
+                        <div class="modal fade" id="showInvoiceModal{{ invoice.id }}" tabindex="-1" role="dialog">
                           <div class="modal-dialog modal-dialog-centered" role="document">
                             <div class="modal-content">
                               <div class="modal-header">
-                                <h5 class="modal-title">Notitie gemaakt door {{ note.username|capfirst }}</h5>
+                                <h5 class="modal-title">Factuur gemaakt door {{ invoice.username|capfirst }}</h5>
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                   <span aria-hidden="true">&times;</span>
                                 </button>
                               </div>
                               <div class="modal-body">
-                                <p>[{{ note.created }}] {{ note.text|linebreaks }}</p>
+                                <p>[{{ invoice.created }}] {{ invoice.amount }}</p>
                               </div>
                               <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Sluiten</button>
@@ -88,6 +88,6 @@
         </table>
 
         <a class="btn btn-primary btn-sm" role="button" href="{% url 'lid_addnote' object.id %}">
-            Toevoegen</span>
+            Aanmaken</span>
         </a>
     </div>

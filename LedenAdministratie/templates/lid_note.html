@@ -15,22 +15,25 @@
             {% endif %}
         </div>
         <div class="card-body">
-            <h5 class="card-title">Notitie voor {{ member.first_name }} {{ member.last_name }} </h5>
-            {{ form.text|add_class:'form-control' }}
-            <br/>
+            <div class="form-row">
+                <div class="col-10">
+                    <h5 class="card-title">Notitie voor {{ member.first_name }} {{ member.last_name }} </h5>
+                    {{ form.text|add_class:'form-control' }}
+                    <br/>
 
-            <div class="form-check mb-3">
-                {{ form.done|add_class:'form-check-input' }}
-                <label for="id_done">Is afgerond</label>
+                    <div class="form-check mb-3">
+                        {{ form.done|add_class:'form-check-input' }}
+                        <label for="id_done">Is afgerond</label>
+                    </div>
+
+                    {% if object %}
+                        <button type="submit" class="btn btn-success">Wijzigen</button>
+                    {% else %}
+                        <button type="submit" class="btn btn-success">Toevoegen</button>
+                    {% endif %}
+                    <button onclick="javascript:history.go(-1)" type="button" class="btn btn-secondary">Annuleren</button>
+                </div>
             </div>
-
-            {% if object %}
-                <button type="submit" class="btn btn-success">Wijzigen</button>
-            {% else %}
-                <button type="submit" class="btn btn-success">Toevoegen</button>
-            {% endif %}
-            <button onclick="javascript:history.go(-1)" type="button" class="btn btn-secondary">Annuleren</button>
-
         </div>
     </div>
 </form>
