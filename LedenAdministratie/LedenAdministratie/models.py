@@ -67,3 +67,13 @@ class Note(models.Model):
     username = models.CharField(max_length=255, null=False, default='')
     done = models.BooleanField(verbose_name='Afgerond', null=False, default=False)
     text = models.TextField(max_length=65535, null=False, default='')
+
+
+class Invoice(models.Model):
+    member = models.ForeignKey(Member, on_delete=models.CASCADE, related_name='invoices')
+    created = models.DateField(auto_now_add=True, auto_now=False)
+    username = models.CharField(max_length=255, null=False, default='')
+    payed = models.BooleanField(verbose_name='Betaald', null=False, default=False)
+    sent = models.DateTimeField(blank=True, null=True)
+    amount = models.DecimalField(verbose_name='Bedrag', blank=False, default=0.00, decimal_places=2, max_digits=6)
+    pdf = models.BinaryField(blank=True, null=True, editable=True)
