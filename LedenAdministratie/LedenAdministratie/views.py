@@ -174,7 +174,7 @@ class TodoListView(UserPassesTestMixin, ListView):
 
     def get_queryset(self):
         todos = Note.objects.filter(done=False)
-        self.extra_context = {'count': todos.count()}
+        self.extra_context = {'count': todos.count(), 'types': MemberType.objects.all()}
         return todos
 
     def test_func(self):
