@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+
+{% block content %}
+
+<form method="post">
+    {% csrf_token %}
+
+    <div class="card">
+        <div class="card-header">
+            {% if form.object is None %}
+                Notitie toevoegen
+            {% else %}
+                Notitie wijzigen
+            {% endif %}
+        </div>
+        <div class="card-body">
+            <h5 class="card-title">Notitie voor {{ member.first_name }} {{ member.last_name }} </h5>
+            {{ form.text|add_class:'form-control' }}
+            <br/>
+
+            <div class="form-check mb-3">
+                {{ form.done|add_class:'form-check-input' }}
+                <label for="id_done">Is afgerond</label>
+            </div>
+
+            {% if form.object is None %}
+                <button type="submit" class="btn btn-success">Toevoegen</button>
+            {% else %}
+                <button type="submit" class="btn btn-success">Wijzigen</button>
+            {% endif %}
+            <button onclick="javascript:history.go(-1)" type="button" class="btn btn-secondary">Annuleren</button>
+
+        </div>
+    </div>
+</form>
+
+
+{% endblock %}

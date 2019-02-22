@@ -117,8 +117,8 @@ class LidDeleteView(UserPassesTestMixin, DeleteView):
 
 class LidAddNoteView(UserPassesTestMixin, CreateView):
     model = Note
-    form_class = forms.LidAddNoteForm
-    template_name = 'lid_add_note.html'
+    form_class = forms.LidNoteForm
+    template_name = 'lid_note.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data()
@@ -141,6 +141,24 @@ class LidAddNoteView(UserPassesTestMixin, CreateView):
 
 class LidDeleteNoteView(UserPassesTestMixin, DeleteView):
     model = Note
+
+    def get_success_url(self):
+        return reverse('lid_edit', kwargs={'pk': self.object.member.id})
+
+    def test_func(self):
+        can_change = self.request.user.has_perm('LedenAdministratie.change_lid')
+        return check_user(self.request.user) and can_change
+
+
+class LidEditNoteView(UserPassesTestMixin, UpdateView):
+    model = Note
+    form_class = forms.LidNoteForm
+    template_name = 'lid_note.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data()
+        context['member'] = self.object.member
+        return context
 
     def get_success_url(self):
         return reverse('lid_edit', kwargs={'pk': self.object.member.id})

@@ -30,5 +30,6 @@ urlpatterns = [
     path('lid_create/', views.LidCreateView.as_view(), name='lid_create'),
     path('lid_addnote/<int:member_id>/', views.LidAddNoteView.as_view(), name='lid_addnote'),
     path('lid_delnote/<int:pk>', views.LidDeleteNoteView.as_view(), name='lid_delnote'),
+    path('lid_editnote/<int:pk>', views.LidEditNoteView.as_view(), name='lid_editnote'),
     path('', views.login, name='login'),
 ]

@@ -7,6 +7,8 @@
                     <th>Datum</th>
                     <th>Gebruiker</th>
                     <th>Notitie</th>
+                    <th>Afgerond</th>
+                    <th></th>
                     <th></th>
                     <th></th>
                 </tr>
@@ -17,6 +19,18 @@
                     <td>{{ note.created }}</td>
                     <td>{{ note.username }}</td>
                     <td>{{ note.text|truncatechars:20 }}</td>
+                    <td>
+                        {% if note.done %}
+                            <span data-feather="check"></span>
+                        {% else %}
+                            <span data-feather="x"></span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="{% url 'lid_editnote' note.id %}">
+                            <span data-feather="edit"></span>
+                        </a>
+                    </td>
                     <td>
                         <a href="#" data-toggle="modal" data-target="#showDeleteModal{{ note.id }}">
                             <span data-feather="trash-2"></span>
