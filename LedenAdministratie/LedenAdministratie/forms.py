@@ -1,4 +1,5 @@
 from django import forms
+from django.core.files.uploadedfile import UploadedFile
 from .models import Member, MemberType, Note
 from captcha.fields import CaptchaField
 
@@ -17,7 +18,9 @@ class LidForm(forms.ModelForm):
 
     def save(self, commit=True):
         if self.cleaned_data.get('foto') is not None:
-            data = self.cleaned_data['foto'].file.read()
+            data = self.cleaned_data['foto']
+            if isinstance(data, UploadedFile):
+                data = data.file.read()
             self.instance.foto = data
         return super().save(commit)
 
