@@ -1,16 +1,17 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import logout, login as auth_login, authenticate
 from django.contrib.auth.decorators import user_passes_test
-from django.views.generic.edit import CreateView, UpdateView, DeleteView
+from django.views.generic.edit import CreateView, UpdateView, DeleteView, FormView
 from django.views.generic.list import ListView
 from django.urls import reverse_lazy, reverse
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
+from django.forms import formset_factory
 import django.http
 import csv
 
-from .models import Member, MemberType, Note
+from .models import Member, MemberType, Note, Invoice
 from . import forms
 from . import settings
 
@@ -179,6 +180,32 @@ class TodoListView(UserPassesTestMixin, ListView):
 
     def test_func(self):
         return check_user(self.request.user)
+
+
+class InvoiceCreateView(UserPassesTestMixin, FormView):
+    template_name = 'invoice_create.html'
+    form_class = forms.InvoiceCreateForm
+    LinesFormSet = formset_factory(forms.InvoiceLineForm, extra=6)
+    lines = None
+
+    def test_func(self):
+        return check_user(self.request.user)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        if self.lines:
+            context['invoice_lines'] = self.lines
+        else:
+            context['invoice_lines'] = self.LinesFormSet
+        return context
+
+    def post(self, request, *args, **kwargs):
+        self.lines = self.LinesFormSet(request.POST, request.FILES)
+        return super().post(request, *args, *kwargs)
+
+    def form_valid(self, form):
+        if self.lines.is_valid():
+            raise
 
 
 @user_passes_test(check_user)

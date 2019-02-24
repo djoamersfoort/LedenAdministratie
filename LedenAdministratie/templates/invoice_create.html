@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+{% load l10n %}
+
+{% block content %}
+
+{% include 'alerts.html' %}
+
+<form method="post">
+    {% csrf_token %}
+
+    <div class="form-row">
+        <div class="col-3">
+            <div class="card">
+                <div class="card-body">
+                    <div class="card-header text-white bg-secondary">Selecteer leden</div>
+
+                    <div class="table mt-2">
+                        <table class="table table-hover table-sm table-responsive">
+                            <thead class="thead-light">
+                            <tr>
+                                <th><input type="checkbox" id="selectAll" checked></th>
+                                <th>Naam</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for member in form.members %}
+                            <tr>
+                                <td>{{ member.tag }}</td>
+                                <td>{{ member.choice_label }}</td>
+                            </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-7">
+            <div class="card">
+                <div class="card-body">
+
+                    <div class="card-header text-white bg-secondary">Factuur gegevens</div>
+                    <label for="id_invoice_types" class="mt-2">Factuur soort</label>
+                    {{ form.invoice_types|add_class:'form-control' }}
+
+                    <label for="id_total_amount" class="mt-2">Totaal bedrag</label>
+                    {{ form.total_amount|add_class:'form-control'|attr:'placeholder:0,00' }}
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    <div class="card-header text-white bg-secondary">Factuur regels</div>
+                    {{ invoice_lines.management_form }}
+
+                    <div class="form-row">
+                        <div class="col-8 mt-2">
+                            <span>Omschrijving</span>
+                        </div>
+                        <div class="col-2 mt-2">
+                            <span>Aantal</span>
+                        </div>
+                        <div class="col-2 mt-2">
+                            <span>Bedrag</span>
+                        </div>
+
+                        {% for invoice_line in invoice_lines %}
+                        <div class="col-8 mt-1">
+                            {{ invoice_line.description|add_class:'form-control' }}
+                        </div>
+                        <div class="col-2 mt-1">
+                            {{ invoice_line.count|add_class:'form-control' }}
+                        </div>
+                        <div class="col-2 mt-1">
+                            {{ invoice_line.amount|add_class:'form-control' }}
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary mt-2">Aanmaken</button>
+        </div>
+    </div>
+
+</form>
+
+{% endblock %}
+
+{% block customscript %}
+<script language="JavaScript">
+
+    $(document).ready(function() {
+        var $selectAll = $('#selectAll'); // main checkbox inside table thead
+        var $table = $('.table'); // table selector
+        var $tdCheckbox = $table.find('tbody input:checkbox'); // checboxes inside table body
+        var $tdCheckboxChecked = []; // checked checbox arr
+
+        $tdCheckbox.each(function() {
+            $(this).prop('checked', true);
+        });
+
+        //Select or deselect all checkboxes on main checkbox change
+        $selectAll.on('click', function () {
+            $tdCheckbox.prop('checked', this.checked);
+        });
+
+        //Switch main checkbox state to checked when all checkboxes inside tbody tag is checked
+        $tdCheckbox.on('change', function(){
+            $tdCheckboxChecked = $table.find('tbody input:checkbox:checked');//Collect all checked checkboxes from tbody tag
+            $selectAll.prop('checked', ($tdCheckboxChecked.length == $tdCheckbox.length));
+        })
+    });
+
+
+
+</script>
+{% endblock %}

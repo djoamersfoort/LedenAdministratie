@@ -1,3 +1,4 @@
+{% load l10n %}
 {% load staticfiles %}
 
 <!doctype html>
@@ -63,7 +64,7 @@
 
                <ul class="nav flex-column">
                     <li class="nav-item">
-                        <a class="nav-link" href="#">
+                        <a class="nav-link" href="{% url 'invoice_create' %}">
                             <span data-feather="plus-circle"></span>Aanmaken
                         </a>
                     </li>
@@ -124,5 +125,9 @@
 <script src="{% static 'js/bootstrap.min.js' %}"></script>
 <script src="{% static 'js/feather.min.js' %}"></script>
 <script>feather.replace()</script>
+
+{% block customscript %}
+{% endblock %}
+
 </body>
 </html>

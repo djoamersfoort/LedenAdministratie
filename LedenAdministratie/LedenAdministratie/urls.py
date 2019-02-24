@@ -32,5 +32,6 @@ urlpatterns = [
     path('lid_delnote/<int:pk>', views.LidDeleteNoteView.as_view(), name='lid_delnote'),
     path('lid_editnote/<int:pk>', views.LidEditNoteView.as_view(), name='lid_editnote'),
     path('todolist/', views.TodoListView.as_view(), name='todolist'),
+    path('invoice/create/', views.InvoiceCreateView.as_view(), name='invoice_create'),
     path('', views.login, name='login'),
 ]

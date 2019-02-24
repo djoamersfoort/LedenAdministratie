@@ -1,6 +1,7 @@
 from django import forms
+from django.forms.fields import validators
 from django.core.files.uploadedfile import UploadedFile
-from .models import Member, MemberType, Note
+from .models import Member, MemberType, Note, Invoice
 from captcha.fields import CaptchaField
 
 
@@ -41,3 +42,22 @@ class LidNoteForm(forms.ModelForm):
     class Meta:
         model = Note
         fields = ['text', 'done']
+
+
+class InvoiceCreateForm(forms.Form):
+
+    TYPES = (
+        ('standaard', 'Standaard factuur voor 1 jaar'),
+        ('senior', 'Senior Lid factuur voor 1 jaar'),
+        ('maart', 'Factuur voor lid ingeschreven na 1 Maart')
+    )
+
+    members = forms.ModelMultipleChoiceField(queryset=Member.objects.all(), widget=forms.CheckboxSelectMultiple)
+    invoice_types = forms.ChoiceField(choices=TYPES)
+    total_amount = forms.DecimalField(max_digits=5, decimal_places=2)
+
+
+class InvoiceLineForm(forms.Form):
+    description = forms.CharField(max_length=200, required=False)
+    count = forms.IntegerField()
+    amount = forms.DecimalField(max_digits=5, decimal_places=2)
