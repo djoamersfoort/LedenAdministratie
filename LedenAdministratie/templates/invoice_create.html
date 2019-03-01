@@ -42,8 +42,8 @@
 
         {% else %}
         <div class="col-2">
-            <div class="card">
-                <img class="card-img-top" src="{{ member.foto|img2base64 }}" height="200px" width="150px">
+            <div class="card shadow" style="width: 200px">
+                <img class="card-img-top" src="{{ member.foto|img2base64 }}">
                 <div class="card-body">
                         <input type="hidden" id="id_members_0" name="members" value="{{ member.id }}">
                         <h5 class="my-2">{{ member.full_name }}</h5>
