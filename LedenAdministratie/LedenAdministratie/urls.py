@@ -33,5 +33,8 @@ urlpatterns = [
     path('lid_editnote/<int:pk>', views.LidEditNoteView.as_view(), name='lid_editnote'),
     path('todolist/', views.TodoListView.as_view(), name='todolist'),
     path('invoice/create/', views.InvoiceCreateView.as_view(), name='invoice_create'),
+    path('invoice/create/<int:member_id>/', views.InvoiceCreateView.as_view(), name='invoice_create_for'),
+    path('invoice/display/<int:pk>', views.InvoiceDisplayView.as_view(), name='invoice_display'),
+    path('invoice/delete/<int:pk>', views.InvoiceDeleteView.as_view(), name='invoice_delete'),
     path('', views.login, name='login'),
 ]

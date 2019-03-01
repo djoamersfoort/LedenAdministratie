@@ -80,13 +80,14 @@ gg==
 
 @register.filter(name='img2base64', is_safe=True)
 def img2base64(field):
-    if not isinstance(field, BoundField):
-        return 'data:image/png;base64,{0}'.format(onbekend_persoon)
+    if isinstance(field, BoundField):
+        foto = field.value()
+    else:
+        foto = field
 
-    foto = field.value()
     if foto is None or foto == '':
         return 'data:image/png;base64,{0}'.format(onbekend_persoon)
 
-    image_type = imghdr.what(None, field.value())
-    base64img = base64.encodebytes(field.value()).decode('ascii')
+    image_type = imghdr.what(None, foto)
+    base64img = base64.encodebytes(foto).decode('ascii')
     return 'data:image/{0};base64,{1}'.format(image_type, base64img)

@@ -54,7 +54,6 @@ class InvoiceCreateForm(forms.Form):
 
     members = forms.ModelMultipleChoiceField(queryset=Member.objects.all(), widget=forms.CheckboxSelectMultiple)
     invoice_types = forms.ChoiceField(choices=TYPES)
-    total_amount = forms.DecimalField(max_digits=5, decimal_places=2)
 
 
 class InvoiceLineForm(forms.Form):

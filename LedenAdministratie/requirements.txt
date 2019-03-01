@@ -4,3 +4,4 @@ mysqlclient
 python-dateutil
 django-simple-captcha
 gunicorn
+Weasyprint

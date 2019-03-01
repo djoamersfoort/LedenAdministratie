@@ -48,7 +48,7 @@
                                 <p>Weet u zeker dat u de factuur wilt verwijderen?</p>
                               </div>
                               <div class="modal-footer">
-                                  <form method="post" action="{% url 'lid_delnote' invoice.id %}">
+                                  <form method="post" action="{% url 'invoice_delete' invoice.id %}">
                                       {% csrf_token %}
                                       <button type="submit" class="btn btn-primary">Verwijderen</button>
                                       <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuleren</button>
@@ -59,35 +59,16 @@
                         </div>
                     </td>
                     <td>
-                        <a href="#" data-toggle="modal" data-target="#showInvoiceModal{{ invoice.id }}">
+                        <a href="{% url 'invoice_display' invoice.id %}">
                             <span data-feather="eye"></span>
                         </a>
-                        <!-- Show Invoice Modal -->
-                        <div class="modal fade" id="showInvoiceModal{{ invoice.id }}" tabindex="-1" role="dialog">
-                          <div class="modal-dialog modal-dialog-centered" role="document">
-                            <div class="modal-content">
-                              <div class="modal-header">
-                                <h5 class="modal-title">Factuur gemaakt door {{ invoice.username|capfirst }}</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                  <span aria-hidden="true">&times;</span>
-                                </button>
-                              </div>
-                              <div class="modal-body">
-                                <p>[{{ invoice.created }}] {{ invoice.amount }}</p>
-                              </div>
-                              <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Sluiten</button>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
                     </td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
 
-        <a class="btn btn-primary btn-sm" role="button" href="{% url 'lid_addnote' object.id %}">
-            Aanmaken</span>
+        <a class="btn btn-primary btn-sm" role="button" href="{% url 'invoice_create_for' object.id %}">
+            Aanmaken
         </a>
     </div>

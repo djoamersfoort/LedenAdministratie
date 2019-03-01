@@ -1,19 +1,20 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import logout, login as auth_login, authenticate
 from django.contrib.auth.decorators import user_passes_test
-from django.views.generic.edit import CreateView, UpdateView, DeleteView, FormView
+from django.views.generic.edit import CreateView, UpdateView, DeleteView, FormView, BaseDetailView
 from django.views.generic.list import ListView
 from django.urls import reverse_lazy, reverse
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.forms import formset_factory
-import django.http
+from django.http import HttpResponse
 import csv
+from datetime import datetime
 
 from .models import Member, MemberType, Note, Invoice
-from . import forms
-from . import settings
+from . import forms, settings
+from .invoice import InvoiceTool
 
 
 def login(request, template_name='login.html'):
@@ -89,7 +90,7 @@ class LidUpdateView(UserPassesTestMixin, UpdateView):
         if settings.SEND_UPDATE_EMAILS:
             send_mail(subject=subject, message=body, from_email=settings.EMAIL_SENDER,
                       recipient_list=settings.EMAIL_RECIPIENTS_UPDATE)
-        return super(LidUpdateView, self).form_valid(form)
+        return super().form_valid(form)
 
 
 class LidCreateView(UserPassesTestMixin, CreateView):
@@ -186,6 +187,7 @@ class InvoiceCreateView(UserPassesTestMixin, FormView):
     template_name = 'invoice_create.html'
     form_class = forms.InvoiceCreateForm
     LinesFormSet = formset_factory(forms.InvoiceLineForm, extra=6)
+    success_url = reverse_lazy('ledenlijst')
     lines = None
 
     def test_func(self):
@@ -197,6 +199,8 @@ class InvoiceCreateView(UserPassesTestMixin, FormView):
             context['invoice_lines'] = self.lines
         else:
             context['invoice_lines'] = self.LinesFormSet
+        if self.kwargs.get('member_id'):
+            context['member'] = Member.objects.get(pk=self.kwargs['member_id'])
         return context
 
     def post(self, request, *args, **kwargs):
@@ -204,8 +208,42 @@ class InvoiceCreateView(UserPassesTestMixin, FormView):
         return super().post(request, *args, *kwargs)
 
     def form_valid(self, form):
-        if self.lines.is_valid():
-            raise
+        self.lines.is_valid()
+        for member in form.cleaned_data['members']:
+            invoice = Invoice()
+            invoice.member = member
+            invoice.amount = InvoiceTool.calculate_grand_total(self.lines)
+            invoice.created = datetime.now()
+            invoice.payed = False
+            invoice.username = self.request.user.username
+            invoice.save()
+            invoice_number = 'F1{0:0>4}-{1:0>5}'.format(member.pk, invoice.pk)
+            invoice.pdf = InvoiceTool.render_invoice(member, self.lines, invoice_number)
+            invoice.save()
+        return super().form_valid(form)
+
+
+class InvoiceDisplayView(UserPassesTestMixin, BaseDetailView):
+    model = Invoice
+
+    def get(self, request, *args, **kwargs):
+        invoice = self.get_object()
+        return HttpResponse(invoice.pdf, content_type='application/pdf')
+
+    def test_func(self):
+        return check_user(self.request.user)
+
+
+class InvoiceDeleteView(UserPassesTestMixin, DeleteView):
+    model = Invoice
+
+    def get_success_url(self):
+        return reverse('lid_edit', kwargs={'pk': self.object.member.id})
+
+    def test_func(self):
+        can_change = self.request.user.has_perm('LedenAdministratie.change_lid')
+        return check_user(self.request.user) and can_change
+
 
 
 @user_passes_test(check_user)

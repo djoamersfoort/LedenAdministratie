@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load widget_tweaks %}
+{% load photo_filter %}
 {% load l10n %}
 
 {% block content %}
@@ -10,6 +11,8 @@
     {% csrf_token %}
 
     <div class="form-row">
+        {% if not member %}
+
         <div class="col-3">
             <div class="card">
                 <div class="card-body">
@@ -37,6 +40,20 @@
             </div>
         </div>
 
+        {% else %}
+        <div class="col-2">
+            <div class="card">
+                <img class="card-img-top" src="{{ member.foto|img2base64 }}" height="200px" width="150px">
+                <div class="card-body">
+                        <input type="hidden" id="id_members_0" name="members" value="{{ member.id }}">
+                        <h5 class="my-2">{{ member.full_name }}</h5>
+                        <p>{{ member.get_types_display }}</p>
+                </div>
+            </div>
+        </div>
+
+        {% endif %}
+
         <div class="col-7">
             <div class="card">
                 <div class="card-body">
@@ -44,13 +61,10 @@
                     <div class="card-header text-white bg-secondary">Factuur gegevens</div>
                     <label for="id_invoice_types" class="mt-2">Factuur soort</label>
                     {{ form.invoice_types|add_class:'form-control' }}
-
-                    <label for="id_total_amount" class="mt-2">Totaal bedrag</label>
-                    {{ form.total_amount|add_class:'form-control'|attr:'placeholder:0,00' }}
                 </div>
             </div>
 
-            <div class="card">
+            <div class="card mt-3">
                 <div class="card-body">
                     <div class="card-header text-white bg-secondary">Factuur regels</div>
                     {{ invoice_lines.management_form }}
