@@ -201,6 +201,7 @@ class InvoiceCreateView(UserPassesTestMixin, FormView):
             context['invoice_lines'] = self.LinesFormSet
         if self.kwargs.get('member_id'):
             context['member'] = Member.objects.get(pk=self.kwargs['member_id'])
+        context['types'] = MemberType.objects.all()
         return context
 
     def post(self, request, *args, **kwargs):
