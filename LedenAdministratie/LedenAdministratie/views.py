@@ -1,16 +1,16 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import logout, login as auth_login, authenticate
 from django.contrib.auth.decorators import user_passes_test
-from django.views.generic.edit import CreateView, UpdateView, DeleteView, FormView, BaseDetailView
+from django.views.generic.edit import CreateView, UpdateView, DeleteView, FormView, BaseDetailView, View
 from django.views.generic.list import ListView
 from django.urls import reverse_lazy, reverse
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.forms import formset_factory
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 import csv
-from datetime import datetime
+from datetime import datetime, date
 
 from .models import Member, MemberType, Note, Invoice
 from . import forms, settings
@@ -186,27 +186,72 @@ class TodoListView(UserPassesTestMixin, ListView):
 class InvoiceCreateView(UserPassesTestMixin, FormView):
     template_name = 'invoice_create.html'
     form_class = forms.InvoiceCreateForm
-    LinesFormSet = formset_factory(forms.InvoiceLineForm, extra=6)
+    LinesFormSet = formset_factory(forms.InvoiceLineForm, extra=5)
     success_url = reverse_lazy('ledenlijst')
     lines = None
+    invoice_type = None
+
+    def __init__(self):
+        super().__init__()
+        self.refresh_only = False
 
     def test_func(self):
         return check_user(self.request.user)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context['types'] = MemberType.objects.all()
+
+        if self.kwargs.get('member_id'):
+            context['member'] = Member.objects.get(pk=self.kwargs['member_id'])
+
+        members = Member.objects.filter(types__slug='member')
+        if self.invoice_type == 'senior':
+            members = Member.objects.filter(types__slug='senior')
+        context['form'].fields['members'].queryset = members
+
+        self.lines = self.LinesFormSet(initial=[{
+            'description': 'Contributie {0} DJO Amersfoort'.format(date.today().year),
+            'count': 1,
+            'amount': 165.00}])
+        if self.invoice_type == 'senior':
+            self.lines = self.LinesFormSet(initial=[{
+                'description': 'Contributie senior lid {0} DJO Amersfoort'.format(date.today().year),
+                'count': 1,
+                'amount': 165.00}])
+        elif self.invoice_type == 'maart':
+            self.lines = self.LinesFormSet(initial=[{
+                    'description': 'Contributie {0} DJO Amersfoort'.format(date.today().year),
+                    'count': 1,
+                    'amount': 165.00
+                },
+                {
+                    'description': 'Af vanwege ingangsdatum - -{0}'.format(date.today().year),
+                    'count': -1,
+                    'amount': 13.75
+                },
+            ])
+
         if self.lines:
             context['invoice_lines'] = self.lines
         else:
             context['invoice_lines'] = self.LinesFormSet
-        if self.kwargs.get('member_id'):
-            context['member'] = Member.objects.get(pk=self.kwargs['member_id'])
-        context['types'] = MemberType.objects.all()
+
         return context
 
     def post(self, request, *args, **kwargs):
         self.lines = self.LinesFormSet(request.POST, request.FILES)
-        return super().post(request, *args, *kwargs)
+        if 'create' in request.POST:
+            return super().post(request, *args, *kwargs)
+        else:
+            # Invoice type dropdown changed
+            form = self.get_form()
+            self.invoice_type = form.data['invoice_types']
+            form.errors.clear()
+            return self.render_to_response(self.get_context_data(form=form))
+
+    def get_test_func(self):
+        return super().get_test_func()
 
     def form_valid(self, form):
         self.lines.is_valid()
@@ -235,16 +280,17 @@ class InvoiceDisplayView(UserPassesTestMixin, BaseDetailView):
         return check_user(self.request.user)
 
 
-class InvoiceDeleteView(UserPassesTestMixin, DeleteView):
-    model = Invoice
+class InvoiceDeleteView(UserPassesTestMixin, View):
 
-    def get_success_url(self):
-        return reverse('lid_edit', kwargs={'pk': self.object.member.id})
+    def get(self, request, *args, **kwargs):
+        invoice = Invoice.objects.get(pk=kwargs['pk'])
+        invoice.delete()
+        url = reverse('lid_edit', kwargs={'pk': invoice.member.id})
+        return HttpResponseRedirect(url)
 
     def test_func(self):
         can_change = self.request.user.has_perm('LedenAdministratie.change_lid')
         return check_user(self.request.user) and can_change
-
 
 
 @user_passes_test(check_user)

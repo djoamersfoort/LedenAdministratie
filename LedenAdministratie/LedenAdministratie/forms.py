@@ -52,11 +52,12 @@ class InvoiceCreateForm(forms.Form):
         ('maart', 'Factuur voor lid ingeschreven na 1 Maart')
     )
 
-    members = forms.ModelMultipleChoiceField(queryset=Member.objects.all(), widget=forms.CheckboxSelectMultiple)
     invoice_types = forms.ChoiceField(choices=TYPES)
+    members = forms.ModelMultipleChoiceField(queryset=Member.objects.all(),
+                                             widget=forms.CheckboxSelectMultiple)
 
 
 class InvoiceLineForm(forms.Form):
     description = forms.CharField(max_length=200, required=False)
     count = forms.IntegerField()
-    amount = forms.DecimalField(max_digits=5, decimal_places=2)
+    amount = forms.DecimalField(max_digits=7, decimal_places=2)

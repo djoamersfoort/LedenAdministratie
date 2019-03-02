@@ -15,7 +15,7 @@
             <tbody>
                 {% for invoice in object.invoices.all %}
                 <tr>
-                    <td>{{ invoice.created }}</td>
+                    <td>{{ invoice.created|date:"d-m-Y" }}</td>
                     <td>{{ invoice.username|capfirst }}</td>
                     <td>{{ invoice.amount }}</td>
                     <td>
@@ -31,7 +31,7 @@
                         </a>
                     </td>
                     <td>
-                        <a href="#" data-toggle="modal" data-target="#showInvoiceDeleteModal{{ invoice.id }}">
+                        <a href="#" data-toggle="modal" data-target="#showInvoiceDeleteModal{{ invoice.pk }}">
                             <span data-feather="trash-2"></span>
                         </a>
                         <!-- Invoice Delete confirm Modal -->
@@ -48,11 +48,8 @@
                                 <p>Weet u zeker dat u de factuur wilt verwijderen?</p>
                               </div>
                               <div class="modal-footer">
-                                  <form method="post" action="{% url 'invoice_delete' invoice.id %}">
-                                      {% csrf_token %}
-                                      <button type="submit" class="btn btn-primary">Verwijderen</button>
-                                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuleren</button>
-                                  </form>
+                                  <a class="btn btn-primary" href="{% url 'invoice_delete' invoice.pk %}">Verwijderen</a>
+                                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuleren</button>
                               </div>
                             </div>
                           </div>

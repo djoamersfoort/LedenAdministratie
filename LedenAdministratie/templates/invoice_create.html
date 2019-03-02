@@ -6,7 +6,7 @@
 
 {% include 'alerts.html' %}
 
-<form method="post">
+<form method="post" id="mainform">
     {% csrf_token %}
 
     <div class="form-row">
@@ -94,7 +94,7 @@
                     </div>
                 </div>
             </div>
-            <button type="submit" class="btn btn-primary mt-2">Aanmaken</button>
+            <button name="create" type="submit" class="btn btn-primary mt-2">Aanmaken</button>
         </div>
     </div>
 
@@ -125,6 +125,10 @@
             $tdCheckboxChecked = $table.find('tbody input:checkbox:checked');//Collect all checked checkboxes from tbody tag
             $selectAll.prop('checked', ($tdCheckboxChecked.length == $tdCheckbox.length));
         })
+    });
+
+    $('#id_invoice_types').change(function() {
+        $('#mainform').submit();
     });
 
 </script>
