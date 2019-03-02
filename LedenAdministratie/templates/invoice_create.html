@@ -1,7 +1,6 @@
 {% extends 'base.html' %}
 {% load widget_tweaks %}
 {% load photo_filter %}
-{% load l10n %}
 
 {% block content %}
 
@@ -41,9 +40,10 @@
         </div>
 
         {% else %}
-            <div class="col-2">
-            <div class="card shadow" style="width: 200px">
-                <img class="card-img-top" src="{{ member.foto|img2base64 }}">
+
+        <div class="col-2">
+            <div class="card shadow">
+                <img class="card-img-top img-fluid" src="{{ member.foto|img2base64 }}">
                 <div class="card-body">
                         <input type="hidden" id="id_members_0" name="members" value="{{ member.id }}">
                         <h5 class="my-2">{{ member.full_name }}</h5>
@@ -126,8 +126,6 @@
             $selectAll.prop('checked', ($tdCheckboxChecked.length == $tdCheckbox.length));
         })
     });
-
-
 
 </script>
 {% endblock %}

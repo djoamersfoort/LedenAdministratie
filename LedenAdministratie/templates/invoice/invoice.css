@@ -18,14 +18,17 @@ html {
   line-height: 1.6; }
   html body {
     margin: 0; }
+  html img#logo {
+    width: 260px;
+    margin: 0; }
   html h1 {
     color: #000000;
     font-family: DejaVu Sans;
-    font-size: 40pt;
-    margin: 0; }
+    font-size: 22pt;
+    margin: 0.5em 0 0 0; }
   html aside {
     display: flex;
-    margin: 2em 0 4em; }
+    margin: 1em 0 4em; }
     html aside address {
       font-style: normal;
       white-space: pre-line; }

@@ -1,7 +1,9 @@
 from django.template.loader import render_to_string, get_template
 from datetime import date, timedelta
-from weasyprint import HTML, CSS
+from weasyprint import HTML, CSS, default_url_fetcher
 from weasyprint.fonts import FontConfiguration
+from .settings import BASE_DIR
+import os
 
 
 class InvoiceTool:
@@ -13,6 +15,16 @@ class InvoiceTool:
             if 'count' in line.cleaned_data and 'amount' in line.cleaned_data:
                 grand_total += line.cleaned_data['count'] * line.cleaned_data['amount']
         return grand_total
+
+    @staticmethod
+    def svg_url_fetcher(url, timeout=10):
+        if url.startswith('local:'):
+            path = url.split(':')[1]
+            path = os.path.join(BASE_DIR, path)
+            file_obj = open(path, "rb")
+            return dict(file_obj=file_obj)
+        else:
+            return default_url_fetcher(url, timeout)
 
     @staticmethod
     def render_invoice(member, lines, invoice_number):
@@ -42,5 +54,5 @@ class InvoiceTool:
                                          'date': invoice_date,
                                          'due_date': due_date,
                                          'grand_total': grand_total})
-        printer = HTML(string=html)
+        printer = HTML(string=html, url_fetcher=InvoiceTool.svg_url_fetcher)
         return printer.write_pdf(stylesheets=[css])
