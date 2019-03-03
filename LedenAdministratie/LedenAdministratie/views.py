@@ -238,8 +238,7 @@ class InvoiceCreateView(UserPassesTestMixin, FormView):
             invoice.payed = False
             invoice.username = self.request.user.username
             invoice.save()
-            invoice_number = 'F1{0:0>4}-{1:0>5}'.format(member.pk, invoice.pk)
-            invoice.pdf = InvoiceTool.render_invoice(member, self.lines, invoice_number,
+            invoice.pdf = InvoiceTool.render_invoice(member, self.lines, invoice.invoice_number,
                                                      form.cleaned_data['invoice_types'])
             invoice.save()
         return super().form_valid(form)

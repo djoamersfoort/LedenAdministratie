@@ -5,6 +5,7 @@
                 <tr>
                     <th>Datum</th>
                     <th>Gebruiker</th>
+                    <th>Nummer</th>
                     <th>Bedrag</th>
                     <th>Betaald</th>
                     <th></th>
@@ -17,6 +18,7 @@
                 <tr>
                     <td>{{ invoice.created|date:"d-m-Y" }}</td>
                     <td>{{ invoice.username|capfirst }}</td>
+                    <td>{{ invoice.invoice_number }}</td>
                     <td>{{ invoice.amount }}</td>
                     <td>
                         {% if invoice.payed %}
