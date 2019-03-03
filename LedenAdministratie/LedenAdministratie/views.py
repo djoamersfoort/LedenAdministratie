@@ -220,8 +220,8 @@ class InvoiceCreateView(UserPassesTestMixin, FormView):
             return super().post(request, *args, *kwargs)
         else:
             # Invoice type dropdown changed
+            self.invoice_type = request.POST['invoice_types']
             form = self.get_form()
-            self.invoice_type = form.data['invoice_types']
             form.errors.clear()
             return self.render_to_response(self.get_context_data(form=form))
 
@@ -239,7 +239,8 @@ class InvoiceCreateView(UserPassesTestMixin, FormView):
             invoice.username = self.request.user.username
             invoice.save()
             invoice_number = 'F1{0:0>4}-{1:0>5}'.format(member.pk, invoice.pk)
-            invoice.pdf = InvoiceTool.render_invoice(member, self.lines, invoice_number)
+            invoice.pdf = InvoiceTool.render_invoice(member, self.lines, invoice_number,
+                                                     form.cleaned_data['invoice_types'])
             invoice.save()
         return super().form_valid(form)
 

@@ -28,9 +28,11 @@ class InvoiceTool:
             return default_url_fetcher(url, timeout)
 
     @staticmethod
-    def render_invoice(member, lines, invoice_number):
+    def render_invoice(member, lines, invoice_number, invoice_type):
         invoice_date = date.today().strftime('%d-%m-%Y')
         due_date = (date.today() + timedelta(days=14)).strftime('%d-%m-%Y')
+        extra_text = InvoiceTool.get_extra_text_for_invoice_type(invoice_type)
+        print(extra_text, invoice_type)
 
         grand_total = 0
         valid_lines = []
@@ -50,6 +52,7 @@ class InvoiceTool:
         css = CSS(string=strcss, font_config=font_config)
         html = render_to_string('invoice/invoice.html',
                                 context={'lines': valid_lines,
+                                         'extra_text': extra_text,
                                          'member': member,
                                          'invoicenr': invoice_number,
                                          'date': invoice_date,
@@ -57,6 +60,15 @@ class InvoiceTool:
                                          'grand_total': grand_total})
         printer = HTML(string=html, url_fetcher=InvoiceTool.svg_url_fetcher)
         return printer.write_pdf(stylesheets=[css])
+
+    @staticmethod
+    def get_extra_text_for_invoice_type(invoice_type):
+        extra_text = ''
+        if invoice_type in ['standaard', 'senior']:
+            extra_text = "Het is mogelijk om in 2 termijnen te betalen\n" \
+                         "De eerste helft zal binnen 14 dagen overgemaakt moeten worden.\n" \
+                         "Het tweede deel zal uiterlijk 31 mei overgemaakt moeten worden."
+        return extra_text
 
     @staticmethod
     def get_defaults_for_invoice_type(invoice_type):

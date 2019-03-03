@@ -86,3 +86,6 @@ html {
       margin: 0 -3cm;
       position: absolute;
       width: 18cm; }
+    html p {
+      margin-top: 3em;
+      font-size: 10pt; }
