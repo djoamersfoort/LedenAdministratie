@@ -41,9 +41,9 @@
         {% for line in lines %}
         <tr>
           <td>{{ line.description }}</td>
-          <td id="amount">{{ line.amount }}</td>
+          <td id="amount">{{ line.amount|floatformat:2 }}</td>
           <td>{{ line.count }}</td>
-          <td>{{ line.line_total }}</td>
+          <td>{{ line.line_total|floatformat:2 }}</td>
         </tr>
         {% endfor %}
       </tbody>
@@ -59,7 +59,7 @@
         <tr>
           <td>{{ due_date }}</td>
           <td>NL45 INGB 0004 4338 56</td>
-          <td>{{ grand_total }}</td>
+          <td>{{ grand_total|floatformat:2 }}</td>
         </tr>
       </tbody>
     </table>
