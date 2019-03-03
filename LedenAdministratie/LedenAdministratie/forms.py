@@ -1,7 +1,7 @@
 from django import forms
-from django.forms.fields import validators
 from django.core.files.uploadedfile import UploadedFile
-from .models import Member, MemberType, Note, Invoice
+from .models import Member, MemberType, Note
+from .settings import DATETIME_INPUT_FORMATS
 from captcha.fields import CaptchaField
 
 
@@ -12,6 +12,7 @@ class LoginForm(forms.Form):
 
 class LidForm(forms.ModelForm):
     foto = forms.FileField(required=False)
+    gebdat = forms.DateField(widget=forms.DateInput(format='%d-%m-%Y'), input_formats=DATETIME_INPUT_FORMATS)
 
     class Meta:
         model = Member

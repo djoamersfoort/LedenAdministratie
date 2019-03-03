@@ -28,7 +28,7 @@ def login(request, template_name='login.html'):
             user = authenticate(username=username, password=password)
             if user and user.is_active:
                 auth_login(request, user)
-                return redirect('ledenlijst')
+                return redirect('members')
 
     return render(request, 'login.html', {'form': form})
 
@@ -82,7 +82,7 @@ class LidUpdateView(UserPassesTestMixin, UpdateView):
         return check_user(self.request.user)
 
     def get_success_url(self):
-        return reverse_lazy('ledenlijst')
+        return reverse_lazy('members')
 
     def form_valid(self, form):
         subject = 'Update ledenlijst van DJO'
@@ -96,7 +96,7 @@ class LidUpdateView(UserPassesTestMixin, UpdateView):
 class LidCreateView(UserPassesTestMixin, CreateView):
     model = Member
     template_name = 'edit_lid.html'
-    success_url = reverse_lazy('ledenlijst')
+    success_url = reverse_lazy('members')
     form_class = forms.LidForm
     extra_context = {'types': MemberType.objects.all()}
 
@@ -107,7 +107,7 @@ class LidCreateView(UserPassesTestMixin, CreateView):
 
 class LidDeleteView(UserPassesTestMixin, DeleteView):
     model = Member
-    success_url = reverse_lazy('ledenlijst')
+    success_url = reverse_lazy('members')
     template_name = 'delete_lid.html'
     fields = ['fist_name', 'last_name']
     extra_context = {'types': MemberType.objects.all()}
@@ -192,7 +192,7 @@ class InvoiceCreateView(UserPassesTestMixin, FormView):
     template_name = 'invoice_create.html'
     form_class = forms.InvoiceCreateForm
     LinesFormSet = formset_factory(forms.InvoiceLineForm, extra=5)
-    success_url = reverse_lazy('ledenlijst')
+    success_url = reverse_lazy('members')
     lines = None
     invoice_type = None
     refresh_only = False
