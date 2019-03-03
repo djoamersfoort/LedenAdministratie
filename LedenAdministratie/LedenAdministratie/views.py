@@ -291,7 +291,7 @@ def do_export(request, filter_slug):
         members = Member.objects.proper_lastname_order(types__slug__in=filter_slug)
 
     filename = filter_slug + ".csv"
-    response = django.http.HttpResponse(content_type='text/csv', charset='utf-8')
+    response = HttpResponse(content_type='text/csv', charset='utf-8')
     response['Content-Disposition'] = 'attachment; filename="%s"' % filename
 
     writer = csv.writer(response, dialect=csv.excel, quoting=csv.QUOTE_ALL)
