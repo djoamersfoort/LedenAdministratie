@@ -48,11 +48,8 @@
                                 <p>Weet u zeker dat u de notitie wilt verwijderen?</p>
                               </div>
                               <div class="modal-footer">
-                                  <form method="post" action="{% url 'lid_delnote' note.id %}">
-                                      {% csrf_token %}
-                                      <button type="submit" class="btn btn-primary">Verwijderen</button>
-                                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuleren</button>
-                                  </form>
+                                  <a href="{% url 'lid_delnote' note.id %}" class="btn btn-primary">Verwijderen</a>
+                                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuleren</button>
                               </div>
                             </div>
                           </div>

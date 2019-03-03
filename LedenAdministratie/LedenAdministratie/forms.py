@@ -49,7 +49,9 @@ class InvoiceCreateForm(forms.Form):
     TYPES = (
         ('standaard', 'Standaard factuur voor 1 jaar'),
         ('senior', 'Senior Lid factuur voor 1 jaar'),
-        ('maart', 'Factuur voor lid ingeschreven na 1 Maart')
+        ('maart', 'Factuur voor lid ingeschreven na 1 Maart'),
+        ('sponsor', 'Sponsor factuur'),
+        ('custom', 'Aangepaste factuur')
     )
 
     invoice_types = forms.ChoiceField(choices=TYPES)

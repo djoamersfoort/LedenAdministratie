@@ -10,7 +10,7 @@ from django.template.loader import render_to_string
 from django.forms import formset_factory
 from django.http import HttpResponse, HttpResponseRedirect
 import csv
-from datetime import datetime, date
+from datetime import datetime
 
 from .models import Member, MemberType, Note, Invoice
 from . import forms, settings
@@ -141,11 +141,16 @@ class LidAddNoteView(UserPassesTestMixin, CreateView):
         return check_user(self.request.user) and can_change
 
 
-class LidDeleteNoteView(UserPassesTestMixin, DeleteView):
-    model = Note
+class LidDeleteNoteView(UserPassesTestMixin, View):
 
-    def get_success_url(self):
-        return reverse('lid_edit', kwargs={'pk': self.object.member.id})
+    def get(self, request, *args, **kwargs):
+        try:
+            note = Note.objects.get(pk=kwargs['pk'])
+            note.delete()
+        except Note.DoesNotExist:
+            pass
+        url = reverse('lid_edit', kwargs={'pk': note.member.id})
+        return HttpResponseRedirect(url)
 
     def test_func(self):
         can_change = self.request.user.has_perm('LedenAdministratie.change_lid')
@@ -190,10 +195,7 @@ class InvoiceCreateView(UserPassesTestMixin, FormView):
     success_url = reverse_lazy('ledenlijst')
     lines = None
     invoice_type = None
-
-    def __init__(self):
-        super().__init__()
-        self.refresh_only = False
+    refresh_only = False
 
     def test_func(self):
         return check_user(self.request.user)
@@ -204,38 +206,11 @@ class InvoiceCreateView(UserPassesTestMixin, FormView):
 
         if self.kwargs.get('member_id'):
             context['member'] = Member.objects.get(pk=self.kwargs['member_id'])
-
-        members = Member.objects.filter(types__slug='member')
-        if self.invoice_type == 'senior':
-            members = Member.objects.filter(types__slug='senior')
-        context['form'].fields['members'].queryset = members
-
-        self.lines = self.LinesFormSet(initial=[{
-            'description': 'Contributie {0} DJO Amersfoort'.format(date.today().year),
-            'count': 1,
-            'amount': 165.00}])
-        if self.invoice_type == 'senior':
-            self.lines = self.LinesFormSet(initial=[{
-                'description': 'Contributie senior lid {0} DJO Amersfoort'.format(date.today().year),
-                'count': 1,
-                'amount': 165.00}])
-        elif self.invoice_type == 'maart':
-            self.lines = self.LinesFormSet(initial=[{
-                    'description': 'Contributie {0} DJO Amersfoort'.format(date.today().year),
-                    'count': 1,
-                    'amount': 165.00
-                },
-                {
-                    'description': 'Af vanwege ingangsdatum - -{0}'.format(date.today().year),
-                    'count': -1,
-                    'amount': 13.75
-                },
-            ])
-
-        if self.lines:
-            context['invoice_lines'] = self.lines
         else:
-            context['invoice_lines'] = self.LinesFormSet
+            context['form'].fields['members'].queryset = InvoiceTool.get_members_invoice_type(self.invoice_type)
+
+        self.lines = self.LinesFormSet(initial=InvoiceTool.get_defaults_for_invoice_type(self.invoice_type))
+        context['invoice_lines'] = self.lines
 
         return context
 
@@ -283,8 +258,11 @@ class InvoiceDisplayView(UserPassesTestMixin, BaseDetailView):
 class InvoiceDeleteView(UserPassesTestMixin, View):
 
     def get(self, request, *args, **kwargs):
-        invoice = Invoice.objects.get(pk=kwargs['pk'])
-        invoice.delete()
+        try:
+            invoice = Invoice.objects.get(pk=kwargs['pk'])
+            invoice.delete()
+        except Invoice.DoesNotExist:
+            pass
         url = reverse('lid_edit', kwargs={'pk': invoice.member.id})
         return HttpResponseRedirect(url)
 

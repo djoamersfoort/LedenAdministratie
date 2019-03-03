@@ -3,6 +3,7 @@ from datetime import date, timedelta
 from weasyprint import HTML, CSS, default_url_fetcher
 from weasyprint.fonts import FontConfiguration
 from .settings import BASE_DIR
+from .models import Member
 import os
 
 
@@ -56,3 +57,51 @@ class InvoiceTool:
                                          'grand_total': grand_total})
         printer = HTML(string=html, url_fetcher=InvoiceTool.svg_url_fetcher)
         return printer.write_pdf(stylesheets=[css])
+
+    @staticmethod
+    def get_defaults_for_invoice_type(invoice_type):
+        defaults = [{
+            'description': 'Contributie {0} DJO Amersfoort'.format(date.today().year),
+            'count': 1,
+            'amount': 165.00}]
+
+        if invoice_type == 'senior':
+            defaults = [{
+                'description': 'Contributie senior lid {0} DJO Amersfoort'.format(date.today().year),
+                'count': 1,
+                'amount': 200.00}]
+        elif invoice_type == 'maart':
+            defaults = [{
+                    'description': 'Contributie {0} DJO Amersfoort'.format(date.today().year),
+                    'count': 1,
+                    'amount': 165.00
+                },
+                {
+                    'description': 'Correctie vanwege ingangsdatum - -{0}'.format(date.today().year),
+                    'count': -1,
+                    'amount': 13.75
+                },
+            ]
+        elif invoice_type == 'sponsor':
+            defaults = [
+                {
+                    'description': 'Sponsor {0} DJO Amersfoort'.format(date.today().year),
+                    'count': 1,
+                    'amount': 150.00
+                }
+            ]
+        elif invoice_type == 'custom':
+            defaults = []
+
+        return defaults
+
+    @staticmethod
+    def get_members_invoice_type(invoice_type):
+        members = Member.objects.filter(types__slug='member')
+        if invoice_type == 'senior':
+            members = Member.objects.filter(types__slug='senior')
+        elif invoice_type == 'sponsor':
+            members = Member.objects.filter(types__slug='sponsor')
+        elif invoice_type == 'custom':
+            members = Member.objects.all()
+        return members
