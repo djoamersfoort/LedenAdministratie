@@ -18,12 +18,14 @@ class InvoiceTool:
         return grand_total
 
     @staticmethod
-    def svg_url_fetcher(url, timeout=10):
+    def invoice_url_fetcher(url, timeout=10):
         if url.startswith('local:'):
-            path = url.split(':')[1]
+            parts = url.split(':')
+            path = parts[1]
+            mime_type = parts[2]
             path = os.path.join(BASE_DIR, path)
             file_obj = open(path, "rb")
-            return dict(file_obj=file_obj)
+            return dict(file_obj=file_obj, mime_type=mime_type)
         else:
             return default_url_fetcher(url, timeout)
 
@@ -58,7 +60,7 @@ class InvoiceTool:
                                          'date': invoice_date,
                                          'due_date': due_date,
                                          'grand_total': grand_total})
-        printer = HTML(string=html, url_fetcher=InvoiceTool.svg_url_fetcher)
+        printer = HTML(string=html, url_fetcher=InvoiceTool.invoice_url_fetcher)
         return printer.write_pdf(stylesheets=[css])
 
     @staticmethod
