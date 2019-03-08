@@ -58,6 +58,7 @@ class Member(models.Model):
     dag_vrijdag = models.BooleanField(null=False, default=False)
     dag_zaterdag = models.BooleanField(null=False, default=False)
     foto = models.BinaryField(blank=True, null=True, verbose_name='Foto', editable=True)
+    hoe_gevonden = models.CharField(max_length=255, blank=True, null=False, default='')
     age = property(_calculate_age)
 
 
