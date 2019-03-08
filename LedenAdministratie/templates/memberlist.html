@@ -1,6 +1,5 @@
 {% extends 'base.html' %}
 
-
 {% block content %}
 
     <div class="alert alert-info bg-secondary text-white">
@@ -40,18 +39,18 @@
                     <td>{{ lid.get_types_display }}</td>
                     {% if perms.LedenAdministratie.change_lid %}
                         <td>
-                            <a href="{% url 'lid_edit' lid.pk %}" class="btn btn-success btn-sm">
+                            <a href="{% url 'lid_edit' lid.pk %}" class="btn-sm btn-success">
                                 <span data-feather="edit"></span>
                             </a>
                         </td>
                         <td>
-                            <a href="{% url 'lid_delete' lid.pk %}" class="btn btn-danger btn-sm">
+                            <a href="{% url 'lid_delete' lid.pk %}" class="btn-sm btn-danger">
                                 <span data-feather="trash-2"></span>
                             </a>
                         </td>
                     {% else %}
                         <td>
-                            <a href="{% url 'lid_edit' lid.pk %}" class="btn btn-success btn-sm">
+                            <a href="{% url 'lid_edit' lid.pk %}" class="btn-sm btn-success">
                                 <span data-feather="edit"></span>
                             </a>
                         </td>

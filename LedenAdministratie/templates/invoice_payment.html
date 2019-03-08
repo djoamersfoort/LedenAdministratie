@@ -1,40 +1,42 @@
-    <h6 class="mt-2">Facturen</h6>
+{% extends 'base.html' %}
+
+{% block content %}
+
+    <div class="alert alert-info bg-secondary text-white">
+        Aantal openstaande facturen:
+        <span class="badge badge-light">{{ object_list.count }}</span>
+    </div>
+
     <div class="table-responsive">
         <table class="table table-hover table-sm">
             <thead class="thead-light">
-                <tr>
-                    <th>Datum</th>
-                    <th>Gebruiker</th>
-                    <th>Nummer</th>
-                    <th>Bedrag</th>
-                    <th>Betaald</th>
-                    <th></th>
-                    <th></th>
-                    <th></th>
-                </tr>
+            <tr>
+                <th>Factuur Nr.</th>
+                <th>Factuur voor</th>
+                <th>Aangemaakt op</th>
+                <th>Aangemaakt door</th>
+                <th>Verstuurd op</th>
+                <th>Bedrag</th>
+                <th>Openstaand bedrag</th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+            </tr>
             </thead>
             <tbody>
-                {% for invoice in object.invoices.all %}
+            {% for invoice in object_list %}
                 <tr>
-                    <td>{{ invoice.created|date:"d-m-Y" }}</td>
-                    <td>{{ invoice.username|capfirst }}</td>
                     <td>{{ invoice.invoice_number }}</td>
+                    <td>{{ invoice.member.full_name }}</td>
+                    <td>{{ invoice.created }}</td>
+                    <td>{{ invoice.username|capfirst }}</td>
+                    <td>{{ invoice.sent|default:"Niet verstuurd" }}</td>
                     <td>{{ invoice.amount }}</td>
-                    <td>
-                        {% if invoice.payed %}
-                            <span data-feather="check"></span>
-                        {% else %}
-                            <span data-feather="x"></span>
-                        {% endif %}
-                    </td>
-                    <td>
-                        <a href="{% url 'lid_editnote' invoice.id %}">
-                            <span data-feather="edit"></span>
-                        </a>
-                    </td>
-                    <td>
-                        <a href="#" data-toggle="modal" data-target="#showInvoiceDeleteModal{{ invoice.pk }}">
-                            <span data-feather="trash-2"></span>
+                    <td>{{ invoice.amount_unpayed }}</td>
+                    <td><a class="btn-sm btn-success"   href="{% url 'invoice_pay_full' invoice.pk %}"><span data-feather="check"></span></a></td>
+                    <td><a class="btn-sm btn-secondary" href="{% url 'invoice_pay_part' invoice.pk %}"><span data-feather="dollar-sign"></span></a></td>
+                    <td><a class="btn-sm btn-danger"    href="#" data-toggle="modal" data-target="#showInvoiceDeleteModal{{ invoice.pk }}"><span data-feather="trash"></span>
                         </a>
                         <!-- Invoice Delete confirm Modal -->
                         <div class="modal fade" id="showInvoiceDeleteModal{{ invoice.id }}" tabindex="-1" role="dialog">
@@ -57,17 +59,11 @@
                           </div>
                         </div>
                     </td>
-                    <td>
-                        <a target="_blank" href="{% url 'invoice_display' invoice.id %}">
-                            <span data-feather="eye"></span>
-                        </a>
-                    </td>
+                    <td><a target="_blank" href="{% url 'invoice_display' invoice.id %}"><span data-feather="eye"></span></a></td>
                 </tr>
-                {% endfor %}
+            {% endfor %}
             </tbody>
         </table>
-
-        <a class="btn btn-primary btn-sm" role="button" href="{% url 'invoice_create_for' object.id %}">
-            Aanmaken
-        </a>
     </div>
+
+{% endblock %}

@@ -9,6 +9,7 @@ from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.forms import formset_factory
 from django.http import HttpResponse, HttpResponseRedirect
+from django.db.models import F
 import csv
 from datetime import datetime
 
@@ -144,12 +145,12 @@ class MemberAddNoteView(UserPassesTestMixin, CreateView):
 class MemberDeleteNoteView(UserPassesTestMixin, View):
 
     def get(self, request, *args, **kwargs):
-        try:
-            note = Note.objects.get(pk=kwargs['pk'])
-            note.delete()
-        except Note.DoesNotExist:
-            pass
-        url = reverse('lid_edit', kwargs={'pk': note.member.id})
+        note = Note.objects.get(pk=kwargs['pk'])
+        note.delete()
+        if 'HTTP_REFERER' in request.META:
+            url = request.META['HTTP_REFERER']
+        else:
+            url = reverse('members')
         return HttpResponseRedirect(url)
 
     def test_func(self):
@@ -181,7 +182,7 @@ class TodoListView(UserPassesTestMixin, ListView):
 
     def get_queryset(self):
         todos = Note.objects.filter(done=False)
-        self.extra_context = {'count': todos.count(), 'types': MemberType.objects.all()}
+        self.extra_context = {'types': MemberType.objects.all()}
         return todos
 
     def test_func(self):
@@ -234,8 +235,8 @@ class InvoiceCreateView(UserPassesTestMixin, FormView):
             invoice = Invoice()
             invoice.member = member
             invoice.amount = InvoiceTool.calculate_grand_total(self.lines)
+            invoice.amount_payed = 0.00
             invoice.created = datetime.now()
-            invoice.payed = False
             invoice.username = self.request.user.username
             invoice.save()
             invoice.pdf = InvoiceTool.render_invoice(member, self.lines, invoice.invoice_number,
@@ -258,16 +259,47 @@ class InvoiceDisplayView(UserPassesTestMixin, BaseDetailView):
 class InvoiceDeleteView(UserPassesTestMixin, View):
 
     def get(self, request, *args, **kwargs):
-        try:
-            invoice = Invoice.objects.get(pk=kwargs['pk'])
-            invoice.delete()
-        except Invoice.DoesNotExist:
-            pass
-        url = reverse('lid_edit', kwargs={'pk': invoice.member.id})
+        invoice = Invoice.objects.get(pk=kwargs['pk'])
+        invoice.delete()
+        if 'HTTP_REFERER' in request.META:
+            url = request.META['HTTP_REFERER']
+        else:
+            url = reverse('members')
         return HttpResponseRedirect(url)
 
     def test_func(self):
-        can_change = self.request.user.has_perm('LedenAdministratie.change_lid')
+        can_change = self.request.user.has_perm('LedenAdministratie.change_invoice')
+        return check_user(self.request.user) and can_change
+
+
+class InvoicePaymentView(UserPassesTestMixin, ListView):
+    model = Invoice
+    queryset = Invoice.objects.filter(amount_payed__lt=F('amount'))
+    template_name = 'invoice_payment.html'
+    extra_context = {'types': MemberType.objects.all()}
+
+    def test_func(self):
+        can_change = self.request.user.has_perm('LedenAdministratie.change_invoice')
+        return check_user(self.request.user) and can_change
+
+
+class InvoicePayFullView(UserPassesTestMixin, View):
+
+    def get(self, request, *args, **kwargs):
+        invoice = Invoice.objects.get(pk=kwargs['pk'])
+        invoice.amount_payed = invoice.amount
+        invoice.save()
+        return HttpResponseRedirect(reverse('invoice_payment'))
+
+    def test_func(self):
+        can_change = self.request.user.has_perm('LedenAdministratie.change_invoice')
+        return check_user(self.request.user) and can_change
+
+
+class InvoicePayPartView(UserPassesTestMixin, View):
+
+    def test_func(self):
+        can_change = self.request.user.has_perm('LedenAdministratie.change_invoice')
         return check_user(self.request.user) and can_change
 
 
