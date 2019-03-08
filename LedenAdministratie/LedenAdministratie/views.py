@@ -47,7 +47,7 @@ def logoff(request):
 
 
 class MemberListView(UserPassesTestMixin, ListView):
-    template_name = 'ledenlijst.html'
+    template_name = 'memberlist.html'
 
     def get_queryset(self):
         queryset = Member.objects.proper_lastname_order()
@@ -63,14 +63,14 @@ class MemberListView(UserPassesTestMixin, ListView):
         return check_user(self.request.user)
 
 
-class LidUpdateView(UserPassesTestMixin, UpdateView):
+class MemberUpdateView(UserPassesTestMixin, UpdateView):
     model = Member
-    template_name = 'edit_lid.html'
-    form_class = forms.LidForm
+    template_name = 'edit_member.html'
+    form_class = forms.MemberForm
     extra_context = {'types': MemberType.objects.all()}
 
     def get_form(self, form_class=None):
-        form = super(LidUpdateView, self).get_form(form_class)
+        form = super().get_form(form_class)
 
         # Make the form read-only when user has no change permissions
         if not self.request.user.has_perm('LedenAdministratie.change_lid'):
@@ -93,11 +93,11 @@ class LidUpdateView(UserPassesTestMixin, UpdateView):
         return super().form_valid(form)
 
 
-class LidCreateView(UserPassesTestMixin, CreateView):
+class MemberCreateView(UserPassesTestMixin, CreateView):
     model = Member
-    template_name = 'edit_lid.html'
+    template_name = 'edit_member.html'
     success_url = reverse_lazy('members')
-    form_class = forms.LidForm
+    form_class = forms.MemberForm
     extra_context = {'types': MemberType.objects.all()}
 
     def test_func(self):
@@ -105,10 +105,10 @@ class LidCreateView(UserPassesTestMixin, CreateView):
         return check_user(self.request.user) and can_change
 
 
-class LidDeleteView(UserPassesTestMixin, DeleteView):
+class MemberDeleteView(UserPassesTestMixin, DeleteView):
     model = Member
     success_url = reverse_lazy('members')
-    template_name = 'delete_lid.html'
+    template_name = 'delete_member.html'
     fields = ['fist_name', 'last_name']
     extra_context = {'types': MemberType.objects.all()}
 
@@ -117,7 +117,7 @@ class LidDeleteView(UserPassesTestMixin, DeleteView):
         return check_user(self.request.user) and can_change
 
 
-class LidAddNoteView(UserPassesTestMixin, CreateView):
+class MemberAddNoteView(UserPassesTestMixin, CreateView):
     model = Note
     form_class = forms.LidNoteForm
     template_name = 'lid_note.html'
@@ -141,7 +141,7 @@ class LidAddNoteView(UserPassesTestMixin, CreateView):
         return check_user(self.request.user) and can_change
 
 
-class LidDeleteNoteView(UserPassesTestMixin, View):
+class MemberDeleteNoteView(UserPassesTestMixin, View):
 
     def get(self, request, *args, **kwargs):
         try:
@@ -157,7 +157,7 @@ class LidDeleteNoteView(UserPassesTestMixin, View):
         return check_user(self.request.user) and can_change
 
 
-class LidEditNoteView(UserPassesTestMixin, UpdateView):
+class MemberEditNoteView(UserPassesTestMixin, UpdateView):
     model = Note
     form_class = forms.LidNoteForm
     template_name = 'lid_note.html'

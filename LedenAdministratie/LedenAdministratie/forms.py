@@ -9,7 +9,7 @@ class LoginForm(forms.Form):
     password = forms.CharField(label='Password', max_length=50, min_length=1, widget=forms.PasswordInput)
 
 
-class LidForm(forms.ModelForm):
+class MemberForm(forms.ModelForm):
     foto = forms.FileField(required=False)
     gebdat = forms.DateField(widget=forms.DateInput(format='%d-%m-%Y'), input_formats=DATETIME_INPUT_FORMATS)
 
