@@ -1,4 +1,4 @@
-from django.template.loader import render_to_string, get_template
+from django.template.loader import render_to_string
 from datetime import date, timedelta
 from weasyprint import HTML, CSS, default_url_fetcher
 from weasyprint.fonts import FontConfiguration
@@ -34,7 +34,7 @@ class InvoiceTool:
         invoice_date = date.today().strftime('%d-%m-%Y')
         due_date = (date.today() + timedelta(days=14)).strftime('%d-%m-%Y')
         extra_text = InvoiceTool.get_extra_text_for_invoice_type(invoice_type)
-        print(extra_text, invoice_type)
+        title = InvoiceTool.get_title_for_invoice_type(invoice_type)
 
         grand_total = 0
         valid_lines = []
@@ -57,11 +57,19 @@ class InvoiceTool:
                                          'extra_text': extra_text,
                                          'member': member,
                                          'invoicenr': invoice_number,
+                                         'title': title,
                                          'date': invoice_date,
                                          'due_date': due_date,
                                          'grand_total': grand_total})
         printer = HTML(string=html, url_fetcher=InvoiceTool.invoice_url_fetcher)
         return printer.write_pdf(stylesheets=[css])
+
+    @staticmethod
+    def get_title_for_invoice_type(invoice_type):
+        title = 'Aan de ouders/verzorgers van:'
+        if invoice_type in ['sponsor', 'custom']:
+            title = 'Aan:'
+        return title
 
     @staticmethod
     def get_extra_text_for_invoice_type(invoice_type):
