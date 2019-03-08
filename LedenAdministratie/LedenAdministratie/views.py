@@ -218,9 +218,6 @@ class InvoiceDisplayView(PermissionRequiredMixin, BaseDetailView):
         invoice = self.get_object()
         return HttpResponse(invoice.pdf, content_type='application/pdf')
 
-    def test_func(self):
-        return check_user(self.request.user)
-
 
 class InvoiceDeleteView(PermissionRequiredMixin, View):
     required_permission = 'LedenAdministratie.delete_invoice'
