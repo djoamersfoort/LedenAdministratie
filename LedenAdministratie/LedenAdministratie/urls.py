@@ -19,7 +19,6 @@ from . import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('captcha/', include('captcha.urls')),
     path('members/<filter_slug>/', views.MemberListView.as_view(), name='members'),
     path('members/', views.MemberListView.as_view(), name='members'),
     path('logoff/', views.logoff, name='logoff'),

@@ -2,7 +2,6 @@ from django import forms
 from django.core.files.uploadedfile import UploadedFile
 from .models import Member, MemberType, Note
 from .settings import DATETIME_INPUT_FORMATS
-from captcha.fields import CaptchaField
 
 
 class LoginForm(forms.Form):
@@ -25,14 +24,6 @@ class LidForm(forms.ModelForm):
                 data = data.file.read()
             self.instance.foto = data
         return super().save(commit)
-
-
-class LidCaptchaForm(forms.ModelForm):
-    captcha = CaptchaField()
-
-    class Meta:
-        model = Member
-        exclude = []
 
 
 class ExportForm(forms.Form):
