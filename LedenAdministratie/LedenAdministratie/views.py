@@ -2,7 +2,6 @@ from django.contrib.auth import logout, login as auth_login, authenticate
 from django.views.generic.edit import CreateView, UpdateView, DeleteView, FormView, BaseDetailView, View
 from django.views.generic.list import ListView
 from django.urls import reverse_lazy, reverse
-from django.contrib.auth.mixins import UserPassesTestMixin
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.forms import formset_factory
@@ -14,18 +13,7 @@ from datetime import datetime
 from .models import Member, MemberType, Note, Invoice
 from . import forms, settings
 from .invoice import InvoiceTool
-
-
-class PermissionRequiredMixin(UserPassesTestMixin):
-    required_permission = 'LedenAdministratie.view_member'
-
-    def check_user(self, user):
-        if user.is_authenticated and user.has_perm(self.required_permission) and user.is_active:
-            return True
-        return False
-
-    def test_func(self):
-        return self.check_user(self.request.user)
+from .mixins import PermissionRequiredMixin
 
 
 class LoginView(FormView):
