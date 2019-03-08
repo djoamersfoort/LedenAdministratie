@@ -296,7 +296,16 @@ class InvoicePayFullView(UserPassesTestMixin, View):
         return check_user(self.request.user) and can_change
 
 
-class InvoicePayPartView(UserPassesTestMixin, View):
+class InvoicePayPartView(UserPassesTestMixin, UpdateView):
+    model = Invoice
+    template_name = 'invoice_partial_payment.html'
+    form_class = forms.InvoicePartialPaymentForm
+
+    def get_success_url(self):
+        if self.kwargs.get('member_id'):
+            return reverse('lid_edit', kwargs={'pk': self.kwargs['member_id']})
+        else:
+            return reverse('invoice_payment')
 
     def test_func(self):
         can_change = self.request.user.has_perm('LedenAdministratie.change_invoice')

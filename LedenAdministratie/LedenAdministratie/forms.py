@@ -1,6 +1,6 @@
 from django import forms
 from django.core.files.uploadedfile import UploadedFile
-from .models import Member, MemberType, Note
+from .models import Member, MemberType, Note, Invoice
 from .settings import DATETIME_INPUT_FORMATS
 
 
@@ -55,3 +55,9 @@ class InvoiceLineForm(forms.Form):
     description = forms.CharField(max_length=200, required=False)
     count = forms.IntegerField()
     amount = forms.DecimalField(max_digits=7, decimal_places=2)
+
+
+class InvoicePartialPaymentForm(forms.ModelForm):
+    class Meta:
+        model = Invoice
+        fields = ['amount_payed']

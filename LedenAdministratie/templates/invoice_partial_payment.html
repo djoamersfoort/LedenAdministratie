@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+
+{% block content %}
+
+<form method="post">
+    {% csrf_token %}
+
+    <div class="row">
+        <div class="col-6">
+
+            <div class="card">
+                <div class="card-header">
+                    Deelbetaling verwerken
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">Deelbetaling verwerken voor factuur: {{ invoice.invoice_number }}</h5>
+
+                    <p>
+                        <b>Factuur voor</b>: {{ invoice.member.full_name }} <br>
+                        <b>Factuur nummer</b>: {{ invoice.invoice_number }} <br>
+                        <b>Totaal bedrag</b>: € {{ invoice.amount }} <br>
+                        <b>Openstaand bedrag</b>: € {{ invoice.amount_unpayed }} <br>
+                    </p>
+
+                    <label for="id_amount">Betaald bedrag</label>
+                    {{ form.amount_payed|add_class:'form-control' }}
+
+                    <button type="submit" class="btn btn-success mt-3">Opslaan</button>
+                    <button onclick="javascript:history.go(-1)" type="button" class="btn btn-secondary mt-3">
+                        Annuleren
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</form>
+
+
+{% endblock %}

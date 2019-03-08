@@ -23,12 +23,14 @@
                     <td>
                         {% if invoice.payed %}
                             <span data-feather="check"></span>
+                        {% elif invoice.amount_payed > 0 %}
+                            <span data-feather="credit-card"></span>
                         {% else %}
                             <span data-feather="x"></span>
                         {% endif %}
                     </td>
                     <td>
-                        <a href="{% url 'lid_editnote' invoice.id %}">
+                        <a href="{% url 'invoice_pay_part' invoice.pk invoice.member.pk %}">
                             <span data-feather="edit"></span>
                         </a>
                     </td>
