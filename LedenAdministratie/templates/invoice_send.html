@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="alert alert-info bg-secondary text-white" xmlns="http://www.w3.org/1999/html">
+    Aantal nog te versturen facturen:
+    <span class="badge badge-light">{{ object_list.count }}</span>
+</div>
+
+<form method="post">
+
+    {% csrf_token %}
+
+    <div class="table-responsive">
+        <table class="table table-hover table-sm">
+            <thead class="thead-light">
+            <tr>
+                <th></th>
+                <th>Factuur Nr.</th>
+                <th>Factuur voor</th>
+                <th>Aangemaakt op</th>
+                <th>Aangemaakt door</th>
+                <th>Verstuurd op</th>
+                <th>Bedrag</th>
+                <th>Openstaand bedrag</th>
+                <th></th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for invoice in object_list %}
+                <tr>
+                    <td><input type="checkbox" id="id_invoices[]" value="{{ invoice.pk }}></td>
+                    <td>{{ invoice.invoice_number }}</td>
+                    <td><a href="{% url 'lid_edit' invoice.member.pk %}" class="text-dark">{{ invoice.member.full_name }}</a></td>
+                    <td>{{ invoice.created }}</td>
+                    <td>{{ invoice.username|capfirst }}</td>
+                    <td>{{ invoice.sent|default:"Niet verstuurd" }}</td>
+                    <td>{{ invoice.amount }}</td>
+                    <td>{{ invoice.amount_unpayed }}</td>
+
+                    <td><a class="btn-sm btn-secondary" href="{% url 'invoice_pay_part' invoice.pk %}"><span
+                            data-feather="send"></span></a></td>
+
+                    <td><a target="_blank" href="{% url 'invoice_display' invoice.id %}"><span
+                            data-feather="eye"></span></a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <input type="submit" class="btn btn-primary" value="Versturen">
+    </div>
+
+</form>
+
+{% endblock %}

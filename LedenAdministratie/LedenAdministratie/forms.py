@@ -65,3 +65,7 @@ class InvoicePartialPaymentForm(forms.ModelForm):
     class Meta:
         model = Invoice
         fields = ['amount_payed']
+
+
+class InvoiceSelectionForm(forms.Form):
+    invoices = forms.MultipleChoiceField(widget=forms.CheckboxSelectMultiple)

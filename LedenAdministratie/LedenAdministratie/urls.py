@@ -38,5 +38,6 @@ urlpatterns = [
     path('invoice/pay_full/<int:pk>', views.InvoicePayFullView.as_view(), name='invoice_pay_full'),
     path('invoice/pay_part/<int:pk>', views.InvoicePayPartView.as_view(), name='invoice_pay_part'),
     path('invoice/pay_part/<int:pk>/<int:member_id>', views.InvoicePayPartView.as_view(), name='invoice_pay_part'),
+    path('invoice/send/', views.InvoiceSendView.as_view(), name='invoice_send'),
     path('', views.LoginView.as_view(), name='login'),
 ]

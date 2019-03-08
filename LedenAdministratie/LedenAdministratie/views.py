@@ -1,5 +1,5 @@
 from django.contrib.auth import logout, login as auth_login, authenticate
-from django.views.generic.edit import CreateView, UpdateView, DeleteView, FormView, BaseDetailView, View
+from django.views.generic.edit import CreateView, UpdateView, DeleteView, FormView, BaseDetailView, View, FormMixin
 from django.views.generic.list import ListView
 from django.urls import reverse_lazy, reverse
 from django.core.mail import send_mail
@@ -261,6 +261,22 @@ class InvoicePayPartView(PermissionRequiredMixin, UpdateView):
             return reverse('lid_edit', kwargs={'pk': self.kwargs['member_id']})
         else:
             return reverse('invoice_payment')
+
+
+class InvoiceSendView(PermissionRequiredMixin, FormMixin, ListView):
+    model = Invoice
+    template_name = 'invoice_send.html'
+    extra_context = {'types': MemberType.objects.all()}
+    required_permission = 'LedenAdministratie.view_invoice'
+    queryset = Invoice.objects.filter(sent=None)
+    form_class = forms.InvoiceSelectionForm
+
+    def post(self, request, *args, **kwargs):
+        raise
+
+    def form_valid(self, form):
+        invoices = form.cleaned_data['invoices']
+        raise
 
 
 class ExportView(PermissionRequiredMixin, FormView):
