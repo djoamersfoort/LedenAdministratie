@@ -27,8 +27,11 @@
                         <label for="id_gebdat">Geboorte datum *</label>
                         {{ form.gebdat|add_class:'form-control' }}
 
-                        <label for="id_geslacht">Geslacht *</label>
-                        {{ form.geslacht|add_class:'form-control' }}
+                        <label for="id_aanmeld_datum">Aanmeld datum *</label>
+                        {{ form.aanmeld_datum|add_class:'form-control' }}
+
+                        <label for="id_aanmeld_datum">Afmeld datum</label>
+                        {{ form.afmeld_datum|add_class:'form-control' }}
                     </div>
                     <div class="col-md-5">
                         <label for="id_last_name">Achternaam *</label>
@@ -36,6 +39,9 @@
 
                         <label for="id_postcode">Postcode *</label>
                         {{ form.postcode|add_class:'form-control' }}
+
+                        <label for="id_geslacht">Geslacht *</label>
+                        {{ form.geslacht|add_class:'form-control' }}
 
                         <label for="id_types">Type</label>
                         {{ form.types|add_class:'form-control' }}
@@ -50,6 +56,8 @@
                             {{ form.dag_zaterdag|add_class:'form-check-input' }}
                             <label for="id_dag_zaterdag">Zaterdag</label>
                         </div>
+
+
                     </div>
                 </div>
             </div>

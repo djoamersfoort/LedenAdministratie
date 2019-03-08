@@ -23,9 +23,6 @@ class Member(models.Model):
     class Meta:
         ordering = ["last_name", "first_name"]
         verbose_name_plural = "Leden"
-        permissions = (
-            ('read_member', 'Can read members'),
-        )
 
     def _calculate_age(self, ondate=date.today()):
         today = ondate
@@ -56,7 +53,8 @@ class Member(models.Model):
     telnr = models.CharField(max_length=30)
     telnr_ouders = models.CharField(max_length=30, blank=True)
     email_ouders = models.EmailField(max_length=150, blank=True)
-    aanmeld_datum = models.DateField(auto_now_add=True, auto_now=False)
+    aanmeld_datum = models.DateField(verbose_name='Aanmeld datum', auto_now=False)
+    afmeld_datum = models.DateField(verbose_name='Afmeld datum', null=True, blank=True)
     dag_vrijdag = models.BooleanField(null=False, default=False)
     dag_zaterdag = models.BooleanField(null=False, default=False)
     foto = models.BinaryField(blank=True, null=True, verbose_name='Foto', editable=True)

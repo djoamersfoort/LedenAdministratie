@@ -102,6 +102,16 @@ TIME_ZONE = 'Europe/Amsterdam'
 USE_I18N = True
 USE_L10N = True
 USE_TZ = True
+DATE_FORMAT = 'd-m-Y'
+DATETIME_FORMAT = 'd-m-Y H:i:s'
+DATETIME_INPUT_FORMATS = [
+    '%d-%m-%Y %H:%M:%S',
+    '%d-%m-%Y %H:%M',
+    '%d-%m-%Y',
+]
+
+DECIMAL_SEPARATOR = ','
+USE_THOUSAND_SEPARATOR = False
 
 
 # Static files (CSS, JavaScript, Images)
