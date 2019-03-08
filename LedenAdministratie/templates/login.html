@@ -16,29 +16,43 @@
     <!-- Bootstrap core CSS -->
     <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet" crossorigin="anonymous">
 
-    <!-- Custom styles for this template -->
-    <link href="{% static 'css/signin.css' %}" rel="stylesheet" crossorigin="anonymous">
+    <style>
+        .vertical-center {
+          min-height: 100%;  /* Fallback for browsers do NOT support vh unit */
+          min-height: 100vh; /* These two lines are counted as one :-)       */
+
+          display: flex;
+          align-items: center;
+        }
+    </style>
 
 </head>
 
 <body>
 
-<div class="container">
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-2 vertical-center mx-auto">
+            <div class="card shadow">
+                <div class="card-body">
+                    <div class="card-header text-white bg-secondary mb-3">Inloggen</div>
 
-    <form method="post" class="form-signin">
-        {% csrf_token %}
+                    <form method="post" class="form-signin">
+                        {% csrf_token %}
 
-        <h2 class="form-signin-heading">Inloggen</h2>
-        <label for="username" class="sr-only">Your username</label>
-        {{ form.username|add_class:'form-control'|attr:'placeholder:Gebruikersnaam' }}
+                        <label for="username" class="sr-only">Your username</label>
+                        {{ form.username|add_class:'form-control'|attr:'placeholder:Gebruikersnaam' }}
 
-        <label for="password" class="sr-only">Your password</label>
-        {{ form.password|add_class:'form-control'|attr:'placeholder:Wachtwoord' }}
+                        <label for="password" class="sr-only">Your password</label>
+                        {{ form.password|add_class:'form-control'|attr:'placeholder:Wachtwoord' }}
 
-        <button class="btn btn-success btn-block" type="submit">Inloggen</button>
-    </form>
-
-</div> <!-- /container -->
+                        <button class="btn btn-primary btn-block mt-3" type="submit">Inloggen</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 </body>
 </html>
