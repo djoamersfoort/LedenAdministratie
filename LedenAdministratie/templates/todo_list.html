@@ -12,8 +12,8 @@
             <thead class="thead-light">
                 <tr>
                     <th>Datum</th>
-                    <th>Gebruiker</th>
-                    <th>Lid</th>
+                    <th>Todo voor</th>
+                    <th>Aangemaakt door</th>
                     <th>Notitie</th>
                     <th>Afgerond</th>
                     <th></th>
@@ -23,8 +23,8 @@
                 {% for note in object_list %}
                 <tr>
                     <td>{{ note.created }}</td>
+                    <td><a href="{% url 'lid_edit' note.member.pk %}" class="text-dark">{{ note.member.full_name }}</a></td>
                     <td>{{ note.username|capfirst }}</td>
-                    <td>{{ note.member.full_name }}</td>
                     <td>{{ note.text|truncatechars:60 }}</td>
                     <td>
                         {% if note.done %}
