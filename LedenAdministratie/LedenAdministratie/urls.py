@@ -21,9 +21,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('members/<filter_slug>/', views.MemberListView.as_view(), name='members'),
     path('members/', views.MemberListView.as_view(), name='members'),
-    path('logoff/', views.logoff, name='logoff'),
-    path('export/', views.export, name='export'),
-    path('do_export/<filter_slug>/', views.do_export, name='do_export'),
+    path('logoff/', views.LogoffView.as_view(), name='logoff'),
+    path('export/', views.ExportView.as_view(), name='export'),
     path('member/edit/<int:pk>/', views.MemberUpdateView.as_view(), name='lid_edit'),
     path('member/delete/<int:pk>/', views.MemberDeleteView.as_view(), name='lid_delete'),
     path('member/create/', views.MemberCreateView.as_view(), name='lid_create'),
@@ -39,5 +38,5 @@ urlpatterns = [
     path('invoice/pay_full/<int:pk>', views.InvoicePayFullView.as_view(), name='invoice_pay_full'),
     path('invoice/pay_part/<int:pk>', views.InvoicePayPartView.as_view(), name='invoice_pay_part'),
     path('invoice/pay_part/<int:pk>/<int:member_id>', views.InvoicePayPartView.as_view(), name='invoice_pay_part'),
-    path('', views.login, name='login'),
+    path('', views.LoginView.as_view(), name='login'),
 ]

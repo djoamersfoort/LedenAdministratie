@@ -1,6 +1,4 @@
-from django.shortcuts import render, redirect
 from django.contrib.auth import logout, login as auth_login, authenticate
-from django.contrib.auth.decorators import user_passes_test
 from django.views.generic.edit import CreateView, UpdateView, DeleteView, FormView, BaseDetailView, View
 from django.views.generic.list import ListView
 from django.urls import reverse_lazy, reverse
@@ -18,37 +16,43 @@ from . import forms, settings
 from .invoice import InvoiceTool
 
 
-def login(request, template_name='login.html'):
-    form = forms.LoginForm()
+class PermissionRequiredMixin(UserPassesTestMixin):
+    required_permission = 'LedenAdministratie.view_member'
 
-    if request.method == 'POST':
-        form = forms.LoginForm(request.POST)
-        if form.is_valid():
-            username = form.cleaned_data['username']
-            password = form.cleaned_data['password']
-            user = authenticate(username=username, password=password)
-            if user and user.is_active:
-                auth_login(request, user)
-                return redirect('members')
+    def check_user(self, user):
+        if user.is_authenticated and user.has_perm(self.required_permission) and user.is_active:
+            return True
+        return False
 
-    return render(request, 'login.html', {'form': form})
+    def test_func(self):
+        return self.check_user(self.request.user)
 
 
-def check_user(user):
-    if user.is_authenticated and user.has_perm('LedenAdministratie.read_lid') and user.is_active:
-        return True
-    return False
+class LoginView(FormView):
+    form_class = forms.LoginForm
+    template_name = 'login.html'
+
+    def form_valid(self, form):
+        username = form.cleaned_data['username']
+        password = form.cleaned_data['password']
+        user = authenticate(username=username, password=password)
+        if user and user.is_active:
+            auth_login(self.request, user)
+            return HttpResponseRedirect(reverse('members'))
+        else:
+            return HttpResponseRedirect(reverse('login'))
 
 
-@user_passes_test(check_user)
-def logoff(request):
-    logout(request)
+class LogoffView(PermissionRequiredMixin, View):
 
-    return redirect('/')
+    def get(self, request, *args, **kwargs):
+        logout(request)
+        return HttpResponseRedirect('/')
 
 
-class MemberListView(UserPassesTestMixin, ListView):
+class MemberListView(PermissionRequiredMixin, ListView):
     template_name = 'memberlist.html'
+    required_permission = 'LedenAdministratie.view_member'
 
     def get_queryset(self):
         queryset = Member.objects.proper_lastname_order()
@@ -60,15 +64,13 @@ class MemberListView(UserPassesTestMixin, ListView):
 
         return queryset
 
-    def test_func(self):
-        return check_user(self.request.user)
 
-
-class MemberUpdateView(UserPassesTestMixin, UpdateView):
+class MemberUpdateView(PermissionRequiredMixin, UpdateView):
     model = Member
     template_name = 'edit_member.html'
     form_class = forms.MemberForm
     extra_context = {'types': MemberType.objects.all()}
+    required_permission = 'LedenAdministratie.change_member'
 
     def get_form(self, form_class=None):
         form = super().get_form(form_class)
@@ -78,9 +80,6 @@ class MemberUpdateView(UserPassesTestMixin, UpdateView):
             for name, field in form.fields.items():
                 field.widget.attrs['disabled'] = True
         return form
-
-    def test_func(self):
-        return check_user(self.request.user)
 
     def get_success_url(self):
         return reverse_lazy('members')
@@ -94,34 +93,29 @@ class MemberUpdateView(UserPassesTestMixin, UpdateView):
         return super().form_valid(form)
 
 
-class MemberCreateView(UserPassesTestMixin, CreateView):
+class MemberCreateView(PermissionRequiredMixin, CreateView):
     model = Member
     template_name = 'edit_member.html'
     success_url = reverse_lazy('members')
     form_class = forms.MemberForm
     extra_context = {'types': MemberType.objects.all()}
-
-    def test_func(self):
-        can_change = self.request.user.has_perm('LedenAdministratie.change_lid')
-        return check_user(self.request.user) and can_change
+    required_permission = 'LedenAdministratie.add_member'
 
 
-class MemberDeleteView(UserPassesTestMixin, DeleteView):
+class MemberDeleteView(PermissionRequiredMixin, DeleteView):
     model = Member
     success_url = reverse_lazy('members')
     template_name = 'delete_member.html'
     fields = ['fist_name', 'last_name']
     extra_context = {'types': MemberType.objects.all()}
-
-    def test_func(self):
-        can_change = self.request.user.has_perm('LedenAdministratie.change_lid')
-        return check_user(self.request.user) and can_change
+    required_permission = 'LedenAdministratie.delete_member'
 
 
-class MemberAddNoteView(UserPassesTestMixin, CreateView):
+class MemberAddNoteView(PermissionRequiredMixin, CreateView):
     model = Note
     form_class = forms.LidNoteForm
     template_name = 'lid_note.html'
+    required_permission = 'LedenAdministratie.add_note'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data()
@@ -137,12 +131,9 @@ class MemberAddNoteView(UserPassesTestMixin, CreateView):
         form.instance.username = self.request.user.username
         return super().form_valid(form)
 
-    def test_func(self):
-        can_change = self.request.user.has_perm('LedenAdministratie.change_lid')
-        return check_user(self.request.user) and can_change
 
-
-class MemberDeleteNoteView(UserPassesTestMixin, View):
+class MemberDeleteNoteView(PermissionRequiredMixin, View):
+    required_permission = 'LedenAdministratie.delete_note'
 
     def get(self, request, *args, **kwargs):
         note = Note.objects.get(pk=kwargs['pk'])
@@ -153,15 +144,12 @@ class MemberDeleteNoteView(UserPassesTestMixin, View):
             url = reverse('members')
         return HttpResponseRedirect(url)
 
-    def test_func(self):
-        can_change = self.request.user.has_perm('LedenAdministratie.change_lid')
-        return check_user(self.request.user) and can_change
 
-
-class MemberEditNoteView(UserPassesTestMixin, UpdateView):
+class MemberEditNoteView(PermissionRequiredMixin, UpdateView):
     model = Note
     form_class = forms.LidNoteForm
     template_name = 'lid_note.html'
+    required_permission = 'LedenAdministratie.change_note'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data()
@@ -171,25 +159,19 @@ class MemberEditNoteView(UserPassesTestMixin, UpdateView):
     def get_success_url(self):
         return reverse('lid_edit', kwargs={'pk': self.object.member.id})
 
-    def test_func(self):
-        can_change = self.request.user.has_perm('LedenAdministratie.change_lid')
-        return check_user(self.request.user) and can_change
 
-
-class TodoListView(UserPassesTestMixin, ListView):
+class TodoListView(PermissionRequiredMixin, ListView):
     model = Note
     template_name = 'todo_list.html'
+    required_permission = 'LedenAdministratie.view_note'
 
     def get_queryset(self):
         todos = Note.objects.filter(done=False)
         self.extra_context = {'types': MemberType.objects.all()}
         return todos
 
-    def test_func(self):
-        return check_user(self.request.user)
 
-
-class InvoiceCreateView(UserPassesTestMixin, FormView):
+class InvoiceCreateView(PermissionRequiredMixin, FormView):
     template_name = 'invoice_create.html'
     form_class = forms.InvoiceCreateForm
     LinesFormSet = formset_factory(forms.InvoiceLineForm, extra=5)
@@ -197,9 +179,7 @@ class InvoiceCreateView(UserPassesTestMixin, FormView):
     lines = None
     invoice_type = None
     refresh_only = False
-
-    def test_func(self):
-        return check_user(self.request.user)
+    required_permission = 'LedenAdministratie.add_invoice'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -226,9 +206,6 @@ class InvoiceCreateView(UserPassesTestMixin, FormView):
             form.errors.clear()
             return self.render_to_response(self.get_context_data(form=form))
 
-    def get_test_func(self):
-        return super().get_test_func()
-
     def form_valid(self, form):
         self.lines.is_valid()
         for member in form.cleaned_data['members']:
@@ -245,8 +222,9 @@ class InvoiceCreateView(UserPassesTestMixin, FormView):
         return super().form_valid(form)
 
 
-class InvoiceDisplayView(UserPassesTestMixin, BaseDetailView):
+class InvoiceDisplayView(PermissionRequiredMixin, BaseDetailView):
     model = Invoice
+    required_permission = 'LedenAdministratie.view_invoice'
 
     def get(self, request, *args, **kwargs):
         invoice = self.get_object()
@@ -256,7 +234,8 @@ class InvoiceDisplayView(UserPassesTestMixin, BaseDetailView):
         return check_user(self.request.user)
 
 
-class InvoiceDeleteView(UserPassesTestMixin, View):
+class InvoiceDeleteView(PermissionRequiredMixin, View):
+    required_permission = 'LedenAdministratie.delete_invoice'
 
     def get(self, request, *args, **kwargs):
         invoice = Invoice.objects.get(pk=kwargs['pk'])
@@ -267,23 +246,17 @@ class InvoiceDeleteView(UserPassesTestMixin, View):
             url = reverse('members')
         return HttpResponseRedirect(url)
 
-    def test_func(self):
-        can_change = self.request.user.has_perm('LedenAdministratie.change_invoice')
-        return check_user(self.request.user) and can_change
 
-
-class InvoicePaymentView(UserPassesTestMixin, ListView):
+class InvoicePaymentView(PermissionRequiredMixin, ListView):
     model = Invoice
     queryset = Invoice.objects.filter(amount_payed__lt=F('amount'))
     template_name = 'invoice_payment.html'
     extra_context = {'types': MemberType.objects.all()}
-
-    def test_func(self):
-        can_change = self.request.user.has_perm('LedenAdministratie.change_invoice')
-        return check_user(self.request.user) and can_change
+    required_permission = 'LedenAdministratie.view_invoice'
 
 
-class InvoicePayFullView(UserPassesTestMixin, View):
+class InvoicePayFullView(PermissionRequiredMixin, View):
+    required_permission = 'LedenAdministratie.view_invoice'
 
     def get(self, request, *args, **kwargs):
         invoice = Invoice.objects.get(pk=kwargs['pk'])
@@ -291,15 +264,12 @@ class InvoicePayFullView(UserPassesTestMixin, View):
         invoice.save()
         return HttpResponseRedirect(reverse('invoice_payment'))
 
-    def test_func(self):
-        can_change = self.request.user.has_perm('LedenAdministratie.change_invoice')
-        return check_user(self.request.user) and can_change
 
-
-class InvoicePayPartView(UserPassesTestMixin, UpdateView):
+class InvoicePayPartView(PermissionRequiredMixin, UpdateView):
     model = Invoice
     template_name = 'invoice_partial_payment.html'
     form_class = forms.InvoicePartialPaymentForm
+    required_permission = 'LedenAdministratie.view_invoice'
 
     def get_success_url(self):
         if self.kwargs.get('member_id'):
@@ -307,42 +277,38 @@ class InvoicePayPartView(UserPassesTestMixin, UpdateView):
         else:
             return reverse('invoice_payment')
 
-    def test_func(self):
-        can_change = self.request.user.has_perm('LedenAdministratie.change_invoice')
-        return check_user(self.request.user) and can_change
 
+class ExportView(PermissionRequiredMixin, FormView):
+    form_class = forms.ExportForm
+    template_name = 'export.html'
+    required_permission = 'LedenAdministratie.view_member'
 
-@user_passes_test(check_user)
-def export(request):
-    form = forms.ExportForm()
-    if request.method == 'POST':
-        form = forms.ExportForm(request.POST)
-        if form.is_valid():
-            filter_slug = form.cleaned_data['filter_slug']
-            return redirect('do_export', filter_slug)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['types'] = MemberType.objects.all()
+        return context
 
-    return render(request, 'export.html', context={'form': form, 'types': MemberType.objects.all()})
+    def form_valid(self, form):
+        filter_slug = form.cleaned_data['filter_slug'].slug
 
+        print("Filter slug = {0}".format(filter_slug))
+        if filter_slug == 'all':
+            members = Member.objects.proper_lastname_order()
+        else:
+            members = Member.objects.proper_lastname_order(types__slug=filter_slug)
 
-@user_passes_test(check_user)
-def do_export(request, filter_slug):
-    if filter_slug == 'all':
-        members = Member.objects.proper_lastname_order()
-    else:
-        members = Member.objects.proper_lastname_order(types__slug__in=filter_slug)
+        filename = filter_slug + ".csv"
+        response = HttpResponse(content_type='text/csv', charset='utf-8')
+        response['Content-Disposition'] = 'attachment; filename="%s"' % filename
 
-    filename = filter_slug + ".csv"
-    response = HttpResponse(content_type='text/csv', charset='utf-8')
-    response['Content-Disposition'] = 'attachment; filename="%s"' % filename
+        writer = csv.writer(response, dialect=csv.excel, quoting=csv.QUOTE_ALL)
+        writer.writerow(
+            ['Voornaam', 'Achternaam', 'Geb. Datum', 'Leeftijd', 'Geslacht', 'E-mail', 'Straat',
+             'Postcode', 'Woonplaats', 'Telnr', 'Telnr Ouders', 'E-mail Ouders'])
 
-    writer = csv.writer(response, dialect=csv.excel, quoting=csv.QUOTE_ALL)
-    writer.writerow(
-        ['Voornaam', 'Achternaam', 'Geb. Datum', 'Leeftijd', 'Geslacht', 'E-mail', 'Straat',
-         'Postcode', 'Woonplaats', 'Telnr', 'Telnr Ouders', 'E-mail Ouders'])
+        for member in members:
+            writer.writerow([member.first_name, member.last_name, member.gebdat, member.age, member.geslacht,
+                             member.email_address, member.straat, member.postcode, member.woonplaats, member.telnr,
+                             member.telnr_ouders, member.email_ouders])
 
-    for member in members:
-        writer.writerow([member.first_name, member.last_name, member.gebdat, member.age, member.geslacht,
-                         member.email_address, member.straat, member.postcode, member.woonplaats, member.telnr,
-                         member.telnr_ouders, member.email_ouders])
-
-    return response
+        return response
