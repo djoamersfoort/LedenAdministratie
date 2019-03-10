@@ -276,7 +276,7 @@ class InvoiceSendView(PermissionRequiredMixin, FormView):
                 invoice.smtp_error = "Fout bij versturen: " + e.strerror
 
             invoice.save()
-            return super().form_valid(form)
+        return super().form_valid(form)
 
 
 class ExportView(PermissionRequiredMixin, FormView):
