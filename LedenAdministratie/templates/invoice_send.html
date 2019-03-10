@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block content %}
 
@@ -15,7 +16,7 @@
         <table class="table table-hover table-sm">
             <thead class="thead-light">
             <tr>
-                <th></th>
+                <th><input type="checkbox" id="selectAll" checked></th>
                 <th>Factuur Nr.</th>
                 <th>Factuur voor</th>
                 <th>Aangemaakt op</th>
@@ -30,12 +31,16 @@
             <tbody>
             {% for invoice in object_list %}
                 <tr>
-                    <td><input type="checkbox" id="id_invoices[]" value="{{ invoice.pk }}></td>
+                    <td><input type="checkbox" name="invoices" id="id_invoices_{{ forloop.counter0 }}" value="{{ invoice.pk }}"></td>
                     <td>{{ invoice.invoice_number }}</td>
                     <td><a href="{% url 'lid_edit' invoice.member.pk %}" class="text-dark">{{ invoice.member.full_name }}</a></td>
                     <td>{{ invoice.created }}</td>
                     <td>{{ invoice.username|capfirst }}</td>
-                    <td>{{ invoice.sent|default:"Niet verstuurd" }}</td>
+                    {% if invoice.smtp_error and invoice.smtp_error != '' %}
+                      <td><span title="{{ invoice.smtp_error }}">{{ invoice.smtp_error|truncatechars:30 }}</span></td>
+                    {% else %}
+                      <td>{{ invoice.sent|default:"Niet verstuurd" }}</td>
+                    {% endif %}
                     <td>{{ invoice.amount }}</td>
                     <td>{{ invoice.amount_unpayed }}</td>
 
@@ -54,4 +59,8 @@
 
 </form>
 
+{% endblock %}
+
+{% block customscript %}
+    <script src="{% static 'js/checkbox.js' %}"></script>
 {% endblock %}

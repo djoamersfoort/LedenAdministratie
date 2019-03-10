@@ -68,4 +68,5 @@ class InvoicePartialPaymentForm(forms.ModelForm):
 
 
 class InvoiceSelectionForm(forms.Form):
-    invoices = forms.MultipleChoiceField(widget=forms.CheckboxSelectMultiple)
+    invoices = forms.ModelMultipleChoiceField(queryset=Invoice.objects.all(),
+                                              widget=forms.CheckboxSelectMultiple)

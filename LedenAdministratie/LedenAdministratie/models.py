@@ -88,6 +88,7 @@ class Invoice(models.Model):
     created = models.DateField(auto_now_add=True, auto_now=False)
     username = models.CharField(max_length=255, null=False, default='')
     sent = models.DateTimeField(blank=True, null=True)
+    smtp_error = models.CharField(max_length=4096, null=True, blank=True)
     amount = models.DecimalField(verbose_name='Bedrag', blank=False, default=0.00, decimal_places=2, max_digits=6)
     amount_payed = models.DecimalField(verbose_name='Bedrag Betaald', blank=False, default=0.00, decimal_places=2,
                                        max_digits=6)

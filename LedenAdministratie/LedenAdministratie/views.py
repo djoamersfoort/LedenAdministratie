@@ -1,17 +1,16 @@
 from django.contrib.auth import logout, login as auth_login, authenticate
-from django.views.generic.edit import CreateView, UpdateView, DeleteView, FormView, BaseDetailView, View, FormMixin
+from django.views.generic.edit import CreateView, UpdateView, DeleteView, FormView, BaseDetailView, View
 from django.views.generic.list import ListView
 from django.urls import reverse_lazy, reverse
-from django.core.mail import send_mail
-from django.template.loader import render_to_string
 from django.forms import formset_factory
 from django.http import HttpResponse, HttpResponseRedirect
 from django.db.models import F
+from smtplib import SMTPException
 import csv
 from datetime import datetime
 
 from .models import Member, MemberType, Note, Invoice
-from . import forms, settings
+from . import forms
 from .invoice import InvoiceTool
 from .mixins import PermissionRequiredMixin
 
@@ -70,15 +69,7 @@ class MemberUpdateView(PermissionRequiredMixin, UpdateView):
         return form
 
     def get_success_url(self):
-        return reverse_lazy('members')
-
-    def form_valid(self, form):
-        subject = 'Update ledenlijst van DJO'
-        body = render_to_string('edit_lid_email.html', context={'lid': form.instance, 'oldlid': form.initial})
-        if settings.SEND_UPDATE_EMAILS:
-            send_mail(subject=subject, message=body, from_email=settings.EMAIL_SENDER,
-                      recipient_list=settings.EMAIL_RECIPIENTS_UPDATE)
-        return super().form_valid(form)
+        return reverse('members')
 
 
 class MemberCreateView(PermissionRequiredMixin, CreateView):
@@ -263,20 +254,29 @@ class InvoicePayPartView(PermissionRequiredMixin, UpdateView):
             return reverse('invoice_payment')
 
 
-class InvoiceSendView(PermissionRequiredMixin, FormMixin, ListView):
-    model = Invoice
+class InvoiceSendView(PermissionRequiredMixin, FormView):
     template_name = 'invoice_send.html'
-    extra_context = {'types': MemberType.objects.all()}
     required_permission = 'LedenAdministratie.view_invoice'
-    queryset = Invoice.objects.filter(sent=None)
     form_class = forms.InvoiceSelectionForm
+    success_url = reverse_lazy('invoice_send')
 
-    def post(self, request, *args, **kwargs):
-        raise
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['types'] = MemberType.objects.all()
+        context['object_list'] = Invoice.objects.filter(amount_payed__lt=F('amount'))
+        return context
 
     def form_valid(self, form):
         invoices = form.cleaned_data['invoices']
-        raise
+        for invoice in invoices:
+            try:
+                InvoiceTool.send_by_email(invoice)
+                invoice.sent = datetime.today()
+            except SMTPException as e:
+                invoice.smtp_error = "Fout bij versturen: " + e.strerror
+
+            invoice.save()
+            return super().form_valid(form)
 
 
 class ExportView(PermissionRequiredMixin, FormView):

@@ -1,9 +1,11 @@
 from django.template.loader import render_to_string
+from django.core.mail import EmailMessage
 from datetime import date, timedelta
 from weasyprint import HTML, CSS, default_url_fetcher
 from weasyprint.fonts import FontConfiguration
-from .settings import BASE_DIR
+from . import settings
 from .models import Member
+
 import os
 
 
@@ -23,7 +25,7 @@ class InvoiceTool:
             parts = url.split(':')
             path = parts[1]
             mime_type = parts[2]
-            path = os.path.join(BASE_DIR, path)
+            path = os.path.join(settings.BASE_DIR, path)
             file_obj = open(path, "rb")
             return dict(file_obj=file_obj, mime_type=mime_type)
         else:
@@ -127,3 +129,26 @@ class InvoiceTool:
         elif invoice_type == 'custom':
             members = Member.objects.all()
         return members
+
+    @staticmethod
+    def create_email(invoice):
+        member_types = [member_type.slug for member_type in invoice.member.types.all()]
+        subject = 'Factuur contributie {0} De Jonge Onderzoekers'.format(date.today().year)
+        body = render_to_string('send_invoice_email.html', context={'invoice': invoice, 'member_types': member_types})
+        recipients = [invoice.member.email_address]
+        if invoice.member.email_ouders != '':
+            recipients = [invoice.member.email_ouders]
+        message = EmailMessage()
+        message.from_email = settings.EMAIL_SENDER
+        message.to = recipients
+        message.bcc = settings.EMAIL_BCC
+        message.subject = subject
+        message.body = body
+        message.content_subtype = 'html'
+        message.attach(invoice.invoice_number+".pdf", invoice.pdf, 'application/pdf')
+        return message
+
+    @staticmethod
+    def send_by_email(invoice):
+        message = InvoiceTool.create_email(invoice)
+        return message.send()
