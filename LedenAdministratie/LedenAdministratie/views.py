@@ -271,7 +271,7 @@ class InvoiceSendView(PermissionRequiredMixin, FormView):
         for invoice in invoices:
             try:
                 InvoiceTool.send_by_email(invoice)
-                invoice.sent = datetime.today()
+                invoice.sent = datetime.now()
             except SMTPException as e:
                 invoice.smtp_error = "Fout bij versturen: " + e.strerror
 
