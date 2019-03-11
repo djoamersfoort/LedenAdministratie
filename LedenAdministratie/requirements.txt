@@ -4,3 +4,4 @@ mysqlclient
 python-dateutil
 gunicorn
 Weasyprint
+requests-oauthlib

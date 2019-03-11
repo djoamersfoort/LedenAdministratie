@@ -1,12 +1,16 @@
-from django.contrib.auth import logout, login as auth_login, authenticate
+from django.contrib.auth import logout, login as auth_login
+from django.contrib.auth.models import User
 from django.views.generic.edit import CreateView, UpdateView, DeleteView, FormView, BaseDetailView, View
 from django.views.generic.list import ListView
 from django.urls import reverse_lazy, reverse
 from django.forms import formset_factory
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden
 from django.db.models import F
 from smtplib import SMTPException
+from requests_oauthlib import OAuth2Session
+from . import settings
 import csv
+import uuid
 from datetime import datetime
 
 from .models import Member, MemberType, Note, Invoice
@@ -15,26 +19,55 @@ from .invoice import InvoiceTool
 from .mixins import PermissionRequiredMixin
 
 
-class LoginView(FormView):
-    form_class = forms.LoginForm
-    template_name = 'login.html'
+class LoginView(View):
+    def get(self, request, *args, **kwargs):
+        oauth = OAuth2Session(client_id=settings.IDP_CLIENT_ID,
+                              redirect_uri=settings.IDP_REDIRECT_URL,
+                              scope=['user/basic', 'user/account-type', 'user/names', 'user/email'])
+        auth_url, state = oauth.authorization_url(settings.IDP_AUTHORIZE_URL)
+        return HttpResponseRedirect(auth_url)
 
-    def form_valid(self, form):
-        username = form.cleaned_data['username']
-        password = form.cleaned_data['password']
-        user = authenticate(username=username, password=password)
-        if user and user.is_active:
-            auth_login(self.request, user)
-            return HttpResponseRedirect(reverse('members'))
+
+class LoginResponseView(View):
+    def get(self, request, *args, **kwargs):
+        oauth = OAuth2Session(client_id=settings.IDP_CLIENT_ID,
+                              redirect_uri=settings.IDP_REDIRECT_URL)
+        full_response_url = request.build_absolute_uri()
+        if settings.DEBUG:
+            full_response_url = full_response_url.replace('http:', 'https:')
+        access_token = oauth.fetch_token(settings.IDP_TOKEN_URL,
+                                         authorization_response=full_response_url,
+                                         client_secret=settings.IDP_CLIENT_SECRET)
+        if 'access_token' in access_token and access_token['access_token'] != '':
+            user_profile = oauth.get(settings.IDP_API_URL).json()
+            username = "idp-{0}".format(user_profile['result']['id'])
+            if settings.IDP_REQUIRED_ROLE not in user_profile['result']['accountType'].lower():
+                return HttpResponseForbidden('Geen begeleider')
+
+            try:
+                found_user = User.objects.get(username=username)
+            except User.DoesNotExist:
+                found_user = User()
+                found_user.username = username
+                found_user.password = uuid.uuid4()
+                found_user.email = user_profile['result']['email']
+                found_user.first_name = user_profile['result']['firstName']
+                found_user.last_name = user_profile['result']['lastName']
+                found_user.is_superuser = True
+                found_user.save()
+
+            auth_login(request, found_user)
+
+            return HttpResponseRedirect(settings.LOGIN_REDIRECT_URL)
         else:
-            return HttpResponseRedirect(reverse('login'))
+            return HttpResponseForbidden('IDP Login mislukt')
 
 
 class LogoffView(PermissionRequiredMixin, View):
 
     def get(self, request, *args, **kwargs):
         logout(request)
-        return HttpResponseRedirect('/')
+        return HttpResponse(content='Uitgelogd')
 
 
 class MemberListView(PermissionRequiredMixin, ListView):
@@ -107,7 +140,7 @@ class MemberAddNoteView(PermissionRequiredMixin, CreateView):
     def form_valid(self, form):
         member_id = self.kwargs['member_id']
         form.instance.member = Member.objects.get(pk=member_id)
-        form.instance.username = self.request.user.username
+        form.instance.username = self.request.user.first_name
         return super().form_valid(form)
 
 
@@ -193,7 +226,7 @@ class InvoiceCreateView(PermissionRequiredMixin, FormView):
             invoice.amount = InvoiceTool.calculate_grand_total(self.lines)
             invoice.amount_payed = 0.00
             invoice.created = datetime.now()
-            invoice.username = self.request.user.username
+            invoice.username = self.request.user.first_name
             invoice.save()
             invoice.pdf = InvoiceTool.render_invoice(member, self.lines, invoice.invoice_number,
                                                      form.cleaned_data['invoice_types'])

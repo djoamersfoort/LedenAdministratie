@@ -108,9 +108,18 @@ DATETIME_INPUT_FORMATS = [
     '%d-%m-%Y %H:%M',
     '%d-%m-%Y',
 ]
-
 DECIMAL_SEPARATOR = ','
 USE_THOUSAND_SEPARATOR = False
+
+
+# IDP Settings
+IDP_CLIENT_ID = 'XXXX-XXXX-XXXX-XXXX'
+IDP_CLIENT_SECRET = '3u4jgisjgslkjrgirjgirjigr'
+IDP_REDIRECT_URL = 'https://leden.djoamersfoort.nl/oauth/'
+IDP_AUTHORIZE_URL = 'https://idp.djoamersfoort.nl/oauth/authorize'
+IDP_TOKEN_URL = 'https://idp.djoamersfoort.nl/oauth/token'
+IDP_API_URL = 'https://idp.djoamersfoort.nl/api/primus/user/all'
+IDP_REQUIRED_ROLE = 'begeleider'
 
 
 # Static files (CSS, JavaScript, Images)
