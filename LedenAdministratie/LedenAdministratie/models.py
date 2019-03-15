@@ -84,7 +84,7 @@ class Invoice(models.Model):
     def amount_unpayed(self):
         return self.amount - self.amount_payed
 
-    member = models.ForeignKey(Member, on_delete=models.CASCADE, related_name='invoices')
+    member = models.ForeignKey(Member, on_delete=models.SET_NULL, related_name='invoices', null=True)
     created = models.DateField(auto_now_add=True, auto_now=False)
     username = models.CharField(max_length=255, null=False, default='')
     sent = models.DateTimeField(blank=True, null=True)
