@@ -259,7 +259,7 @@ class InvoiceDeleteView(PermissionRequiredMixin, View):
 
 class InvoicePaymentView(PermissionRequiredMixin, ListView):
     model = Invoice
-    queryset = Invoice.objects.filter(amount_payed__lt=F('amount'))
+    queryset = Invoice.objects.filter(amount_payed__lt=F('amount')).filter(member__isnull=False)
     template_name = 'invoice_payment.html'
     extra_context = {'types': MemberType.objects.all()}
     required_permission = 'LedenAdministratie.view_invoice'
@@ -297,7 +297,7 @@ class InvoiceSendView(PermissionRequiredMixin, FormView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['types'] = MemberType.objects.all()
-        context['object_list'] = Invoice.objects.filter(amount_payed__lt=F('amount'))
+        context['object_list'] = Invoice.objects.filter(amount_payed__lt=F('amount')).filter(member__isnull=False)
         return context
 
     def form_valid(self, form):
