@@ -43,7 +43,7 @@ class LoginResponseView(View):
             user_profile = oauth.get(settings.IDP_API_URL).json()
             username = "idp-{0}".format(user_profile['result']['id'])
             if settings.IDP_REQUIRED_ROLE not in user_profile['result']['accountType'].lower():
-                return HttpResponseForbidden('Geen begeleider')
+                return HttpResponseForbidden('Verplichte rol niet toegekend')
 
             try:
                 found_user = User.objects.get(username=username)

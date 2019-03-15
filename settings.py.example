@@ -119,7 +119,7 @@ IDP_REDIRECT_URL = 'https://leden.djoamersfoort.nl/oauth/'
 IDP_AUTHORIZE_URL = 'https://idp.djoamersfoort.nl/oauth/authorize'
 IDP_TOKEN_URL = 'https://idp.djoamersfoort.nl/oauth/token'
 IDP_API_URL = 'https://idp.djoamersfoort.nl/api/primus/user/all'
-IDP_REQUIRED_ROLE = 'begeleider'
+IDP_REQUIRED_ROLE = 'bestuur'
 
 
 # Static files (CSS, JavaScript, Images)
