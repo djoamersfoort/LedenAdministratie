@@ -4,11 +4,12 @@ from django.views.generic.edit import CreateView, UpdateView, DeleteView, FormVi
 from django.views.generic.list import ListView
 from django.urls import reverse_lazy, reverse
 from django.forms import formset_factory
-from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden
-from django.db.models import F
+from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden, JsonResponse
+from django.db.models import F, Q
 from smtplib import SMTPException
 from requests_oauthlib import OAuth2Session
 from . import settings
+from .templatetags.photo_filter import img2base64
 import csv
 import uuid
 from datetime import datetime
@@ -16,7 +17,7 @@ from datetime import datetime
 from .models import Member, MemberType, Note, Invoice
 from . import forms
 from .invoice import InvoiceTool
-from .mixins import PermissionRequiredMixin
+from .mixins import PermissionRequiredMixin, ApiPermissionRequired
 
 
 class LoginView(View):
@@ -346,3 +347,24 @@ class ExportView(PermissionRequiredMixin, FormView):
                              member.telnr_ouders, member.email_ouders])
 
         return response
+
+
+class ApiV1Smoelenboek(ApiPermissionRequired, View):
+
+    def get(self, request, *args, **kwargs):
+        members = Member.objects.filter(Q(afmeld_datum__lt=datetime.now()) | Q(afmeld_datum=None))
+        response = {'vrijdag': [], 'zaterdag': []}
+        for member in members:
+            memberdict = {
+                "id": member.id,
+                "first_name": member.first_name,
+                "last_name": member.last_name,
+                "photo": img2base64(member.foto)
+            }
+
+            if member.dag_vrijdag:
+                response['vrijdag'].append(memberdict)
+            if member.dag_zaterdag:
+                response['zaterdag'].append(memberdict)
+
+        return JsonResponse(data=response)
