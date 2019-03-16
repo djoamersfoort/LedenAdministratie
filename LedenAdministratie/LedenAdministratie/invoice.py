@@ -134,7 +134,7 @@ class InvoiceTool:
     def create_email(invoice, template='send_invoice_email.html'):
         member_types = [member_type.slug for member_type in invoice.member.types.all()]
         subject = 'Factuur contributie {0} De Jonge Onderzoekers'.format(date.today().year)
-        body = render_to_string('send_invoice_email.html', context={'invoice': invoice, 'member_types': member_types})
+        body = render_to_string(template, context={'invoice': invoice, 'member_types': member_types})
         recipients = [invoice.member.email_address]
         if invoice.member.email_ouders != '':
             recipients = [invoice.member.email_ouders]
