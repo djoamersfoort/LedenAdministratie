@@ -131,7 +131,7 @@ class InvoiceTool:
         return members
 
     @staticmethod
-    def create_email(invoice):
+    def create_email(invoice, template='send_invoice_email.html'):
         member_types = [member_type.slug for member_type in invoice.member.types.all()]
         subject = 'Factuur contributie {0} De Jonge Onderzoekers'.format(date.today().year)
         body = render_to_string('send_invoice_email.html', context={'invoice': invoice, 'member_types': member_types})
@@ -149,6 +149,9 @@ class InvoiceTool:
         return message
 
     @staticmethod
-    def send_by_email(invoice):
-        message = InvoiceTool.create_email(invoice)
+    def send_by_email(invoice, reminder=False):
+        if reminder:
+            message = InvoiceTool.create_email(invoice, 'send_invoice_reminder.html')
+        else:
+            message = InvoiceTool.create_email(invoice)
         return message.send()
