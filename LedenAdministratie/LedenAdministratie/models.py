@@ -77,6 +77,10 @@ class Invoice(models.Model):
         return 'F1{0:0>4}-{1:0>5}'.format(self.member.id, self.pk)
 
     @property
+    def old_invoice_number(self):
+        return 'F0{0:0>4}-{1:0>5}'.format(self.member.id, self.pk)
+
+    @property
     def payed(self):
         return self.amount == self.amount_payed
 

@@ -32,7 +32,7 @@ def map_types(member, types):
 
 def main():
     password = input("Password: ")
-    db = MySQLdb.connect(host='127.0.0.1', port=3306, user='djo_admin', password=password, db='djo_admin')
+    db = MySQLdb.connect(host='127.0.0.1', port=3306, user='djo_admin', password=password, db='djo_admin', charset='utf8')
     cursor = db.cursor(MySQLdb.cursors.DictCursor)
 
     query = """
@@ -78,6 +78,13 @@ def main():
             member.dag_vrijdag = True
         if contact['dagdeel.dag'] == 'za':
             member.dag_zaterdag = True
+
+        try:
+            with open("export/images/contacten/{0}.jpg".format(member.id), "rb") as f:
+                member.foto = f.read()
+        except:
+            print("Warning: no photo found for id {0}".format(member.id))
+
         member.save()
         member = map_types(member, contact['type'])
         member.save()
@@ -98,6 +105,33 @@ def main():
         newnote.username = 'Importer'
         newnote.done = (note['toekomst'] == '0')
         newnote.save()
+
+    # Imort invoices
+    cursor.execute("SELECT * FROM factuur")
+    for invoice in cursor.fetchall():
+        try:
+            member = Member.objects.get(id=invoice['contact_id'])
+        except Member.DoesNotExist:
+            continue
+        print(invoice)
+        newinvoice = Invoice()
+        newinvoice.id = invoice['id']
+        newinvoice.member = member
+        newinvoice.username = 'Importer'
+        newinvoice.amount = invoice['bedrag']
+        if invoice['betaald'] == '1':
+            newinvoice.amount_payed = newinvoice.amount
+            newinvoice.sent = newinvoice.created
+        newinvoice.created = invoice['datum']
+        newinvoice.save()
+
+        try:
+            with open("export/facturen/{0}.pdf".format(newinvoice.old_invoice_number), "rb") as f:
+                newinvoice.pdf = f.read()
+        except:
+            print("Warning: no invoice PDF found: export/facturen/{0}.pdf".format(newinvoice.old_invoice_number))
+
+        newinvoice.save()
 
 
 if __name__ == '__main__':
