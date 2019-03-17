@@ -8,7 +8,7 @@ import MySQLdb
 import django
 django.setup()
 from LedenAdministratie.LedenAdministratie.models import *
-from datetime import date
+from datetime import date, datetime
 from dateutil import parser
 
 
@@ -34,11 +34,20 @@ def main():
     password = input("Password: ")
     db = MySQLdb.connect(host='127.0.0.1', port=3306, user='djo_admin', password=password, db='djo_admin')
     cursor = db.cursor(MySQLdb.cursors.DictCursor)
-    cursor.execute('SELECT * FROM contact')
+
+    query = """
+        SELECT *, dagdeel.dag FROM contact
+        INNER JOIN contact_dagdeel cd
+        INNER JOIN dagdeel
+        ON (cd.contact_id = contact.id AND cd.dagdeel_id = dagdeel.id)
+        WHERE contact.eind_datum IS NULL
+        AND dagdeel.eind_datum IS NULL
+    """
+
+    cursor.execute(query)
     for contact in cursor.fetchall():
+        print(contact)
         member = Member()
-
-
         member.id = contact['id']
         member.first_name = contact['voornaam']
         if contact['tussenvoegsels'] and contact['tussenvoegsels'] != '':
@@ -65,9 +74,30 @@ def main():
             member.aanmeld_datum = date.today()
         member.afmeld_datum = contact['eind_datum']
         member.hoe_gevonden = contact['hoe_gevonden']
+        if contact['dagdeel.dag'] == 'vr':
+            member.dag_vrijdag = True
+        if contact['dagdeel.dag'] == 'za':
+            member.dag_zaterdag = True
         member.save()
         member = map_types(member, contact['type'])
         member.save()
+
+    # Import notes
+    cursor.execute("SELECT * FROM notitie")
+    for note in cursor.fetchall():
+        try:
+            member = Member.objects.get(id=note['contact_id'])
+        except Member.DoesNotExist:
+            continue
+        print(note)
+        newnote = Note()
+        newnote.id = note['id']
+        newnote.member = member
+        newnote.text = note['tekst']
+        newnote.created = datetime.fromtimestamp(int(note['datum_tijd']))
+        newnote.username = 'Importer'
+        newnote.done = (note['toekomst'] == '0')
+        newnote.save()
 
 
 if __name__ == '__main__':
