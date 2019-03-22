@@ -354,7 +354,17 @@ class ExportView(PermissionRequiredMixin, FormView):
 class ApiV1Smoelenboek(ApiPermissionRequired, View):
 
     def get(self, request, *args, **kwargs):
-        members = Member.objects.filter(Q(afmeld_datum__lt=datetime.now()) | Q(afmeld_datum=None))
+        day = self.kwargs.get('day', None)
+        if day:
+            if day == 'vrijdag':
+                members = Member.objects.filter(Q(afmeld_datum__lt=datetime.now()) | Q(afmeld_datum=None)).filter(
+                    dag_vrijdag=True)
+            else:
+                members = Member.objects.filter(Q(afmeld_datum__lt=datetime.now()) | Q(afmeld_datum=None)).filter(
+                    dag_zaterdag=True)
+        else:
+            members = Member.objects.filter(Q(afmeld_datum__lt=datetime.now()) | Q(afmeld_datum=None))
+
         response = {'vrijdag': [], 'zaterdag': []}
         for member in members:
             memberdict = {
