@@ -365,6 +365,8 @@ class ApiV1Smoelenboek(ApiPermissionRequired, View):
         else:
             members = Member.objects.filter(Q(afmeld_datum__lt=datetime.now()) | Q(afmeld_datum=None))
 
+        members = members.order_by('first_name')
+
         response = {'vrijdag': [], 'zaterdag': []}
         for member in members:
             memberdict = {
