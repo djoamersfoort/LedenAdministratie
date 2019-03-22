@@ -34,8 +34,7 @@ class LoginResponseView(View):
         oauth = OAuth2Session(client_id=settings.IDP_CLIENT_ID,
                               redirect_uri=settings.IDP_REDIRECT_URL)
         full_response_url = request.build_absolute_uri()
-        if settings.DEBUG:
-            full_response_url = full_response_url.replace('http:', 'https:')
+        full_response_url = full_response_url.replace('http:', 'https:')
         try:
             access_token = oauth.fetch_token(settings.IDP_TOKEN_URL,
                                              authorization_response=full_response_url,
