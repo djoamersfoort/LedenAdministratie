@@ -105,6 +105,8 @@ def main():
         newnote.username = 'Importer'
         newnote.done = (note['toekomst'] == '0')
         newnote.save()
+        newnote.created = datetime.fromtimestamp(int(note['datum_tijd']))
+        newnote.save()
 
     # Imort invoices
     cursor.execute("SELECT * FROM factuur")
@@ -131,6 +133,7 @@ def main():
         except:
             print("Warning: no invoice PDF found: export/facturen/{0}.pdf".format(newinvoice.old_invoice_number))
 
+        newinvoice.created = invoice['datum']
         newinvoice.save()
 
 
