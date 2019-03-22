@@ -36,9 +36,14 @@ class LoginResponseView(View):
         full_response_url = request.build_absolute_uri()
         if settings.DEBUG:
             full_response_url = full_response_url.replace('http:', 'https:')
-        access_token = oauth.fetch_token(settings.IDP_TOKEN_URL,
-                                         authorization_response=full_response_url,
-                                         client_secret=settings.IDP_CLIENT_SECRET)
+        try:
+            access_token = oauth.fetch_token(settings.IDP_TOKEN_URL,
+                                             authorization_response=full_response_url,
+                                             client_secret=settings.IDP_CLIENT_SECRET)
+        except:
+            # Something went wrong getting the token
+            return HttpResponseForbidden('Geen toegang')
+
         if 'access_token' in access_token and access_token['access_token'] != '':
             user_profile = oauth.get(settings.IDP_API_URL).json()
             username = "idp-{0}".format(user_profile['result']['id'])
