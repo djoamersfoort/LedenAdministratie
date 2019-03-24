@@ -41,6 +41,9 @@ urlpatterns = [
     path('invoice/send/', views.InvoiceSendView.as_view(), name='invoice_send'),
     path('api/v1/smoelenboek/', views.ApiV1Smoelenboek.as_view()),
     path('api/v1/smoelenboek/<str:day>/', views.ApiV1Smoelenboek.as_view()),
+    path('api/v1/idp/details/<str:fields>', views.ApiV1IDPGetDetails.as_view()),
+    path('api/v1/idp/verify/<str:fields>', views.ApiV1IDPVerify.as_view()),
+    path('api/v1/idp/avatar', views.ApiV1IDPAvatar.as_view()),
     re_path(r'oauth/.*', views.LoginResponseView.as_view()),
     path('', views.LoginView.as_view(), name='login'),
 ]

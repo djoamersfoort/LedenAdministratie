@@ -2,6 +2,8 @@ from django.contrib.auth import logout, login as auth_login
 from django.contrib.auth.models import User
 from django.views.generic.edit import CreateView, UpdateView, DeleteView, FormView, BaseDetailView, View
 from django.views.generic.list import ListView
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
 from django.urls import reverse_lazy, reverse
 from django.forms import formset_factory
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden, JsonResponse
@@ -355,8 +357,8 @@ class ExportView(PermissionRequiredMixin, FormView):
         return response
 
 
+@method_decorator(csrf_exempt, name='dispatch')
 class ApiV1Smoelenboek(ApiPermissionRequired, View):
-
     def get(self, request, *args, **kwargs):
         day = self.kwargs.get('day', None)
         if day:
@@ -386,3 +388,76 @@ class ApiV1Smoelenboek(ApiPermissionRequired, View):
                 response['zaterdag'].append(memberdict)
 
         return JsonResponse(data=response)
+
+
+@method_decorator(csrf_exempt, name='dispatch')
+class ApiV1IDPGetDetails(View):
+    def post(self, request, *args, **kwargs):
+        userid = request.POST.get('user-id', '0').strip('u-')
+        if not userid:
+            return JsonResponse(data={'ok': False, 'error': 'User-id required'}, status=412)
+        try:
+            member = Member.objects.get(id=userid)
+        except Member.DoesNotExist:
+            return JsonResponse(data={'ok': False, 'error': 'User not found'}, status=404)
+
+        response = {'user-id': member.id}
+        fields = self.kwargs['fields'].split(',')
+        for field in fields:
+            if field == 'is-member':
+                response['is-member'] = (member.afmeld_datum is None or member.afmeld_datum < datetime.now())
+            elif field == 'mail':
+                response['mail'] = member.email_address
+            elif field == 'mail-parents':
+                response['mail-parents'] = member.email_ouders
+            elif field == 'city':
+                response['city'] = member.woonplaats
+            elif field == 'zip':
+                response['zip'] = member.postcode
+            elif field == 'address':
+                response['address'] = member.straat
+            elif field == 'phone':
+                response['phone'] = member.telnr_ouders
+            elif field == 'mobile':
+                response['mobile'] = member.telnr
+            elif field == 'firstname':
+                response['firstname'] = member.first_name
+            elif field == 'lastname':
+                response['lastname'] = member.last_name
+            elif field == 'middlename':
+                response['middelname'] = ''
+            elif field == 'dob':
+                response['dob'] = member.gebdat
+            elif field == 'type':
+                response['type'] = ','.join([membertype.slug for membertype in member.types.all()])
+
+        result = {'ok': True, 'result': response}
+        return JsonResponse(data=result)
+
+
+@method_decorator(csrf_exempt, name='dispatch')
+class ApiV1IDPVerify(View):
+    def post(self, request, *args, **kwargs):
+        result = Member.objects.filter()
+
+        fields = self.kwargs['fields'].split(',')
+        for field in fields:
+            value = request.POST.get('email', 'xxxxx').lower()
+            if field == 'email':
+                result = result.filter(Q(email_address=value) | Q(email_ouders=value))
+            elif field == 'zip':
+                value = request.POST.get('zip', 'xxxxxx').lower().replace(' ', '')
+                result = result.filter(postcode=value)
+
+        try:
+            member = result.get()
+        except (Member.DoesNotExist, Member.MultipleObjectsReturned):
+            return JsonResponse(data={'ok': False, 'result': None})
+
+        return JsonResponse(data={'ok': True, 'result': 'u-{0}'.format(member.id)})
+
+
+@method_decorator(csrf_exempt, name='dispatch')
+class ApiV1IDPAvatar(View):
+    def post(self, request, *args, **kwargs):
+        return JsonResponse(data={'ok': False, 'error': 'Not implemented'}, status=200)
