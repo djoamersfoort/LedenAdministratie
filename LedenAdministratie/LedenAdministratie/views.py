@@ -311,11 +311,14 @@ class InvoiceSendView(PermissionRequiredMixin, FormView):
         is_reminder = 'reminder' in self.request.POST
         for invoice in invoices:
             try:
-                InvoiceTool.send_by_email(invoice, is_reminder)
-                invoice.sent = datetime.now()
-                invoice.smtp_error = None
-            except SMTPException as e:
-                invoice.smtp_error = "Fout bij versturen: " + e.strerror
+                count = InvoiceTool.send_by_email(invoice, is_reminder)
+                if count == 1:
+                    invoice.sent = datetime.now()
+                    invoice.smtp_error = None
+                else:
+                    invoice.smtp_error = "Fout bij versturen!"
+            except Exception as e:
+                invoice.smtp_error = "Fout bij versturen: " + str(e)
 
             invoice.save()
         return super().form_valid(form)

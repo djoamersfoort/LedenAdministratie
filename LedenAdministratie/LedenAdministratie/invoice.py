@@ -154,4 +154,4 @@ class InvoiceTool:
             message = InvoiceTool.create_email(invoice, 'send_invoice_reminder.html')
         else:
             message = InvoiceTool.create_email(invoice)
-        return message.send()
+        return message.send(fail_silently=False)
