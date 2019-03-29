@@ -8,7 +8,6 @@ from django.urls import reverse_lazy, reverse
 from django.forms import formset_factory
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden, JsonResponse
 from django.db.models import F, Q
-from smtplib import SMTPException
 from requests_oauthlib import OAuth2Session
 from . import settings
 from .templatetags.photo_filter import img2base64
@@ -82,10 +81,10 @@ class MemberListView(PermissionRequiredMixin, ListView):
     required_permission = 'LedenAdministratie.view_member'
 
     def get_queryset(self):
-        queryset = Member.objects.proper_lastname_order()
+        queryset = Member.objects.all()
         filter_slug = self.kwargs.get('filter_slug', '')
         if filter_slug != '':
-            queryset = Member.objects.proper_lastname_order(types__slug=filter_slug)
+            queryset = Member.objects.filter(types__slug=filter_slug)
 
         self.extra_context = {'types': MemberType.objects.all(), 'count': len(queryset), 'filter_slug': filter_slug}
 
@@ -339,9 +338,9 @@ class ExportView(PermissionRequiredMixin, FormView):
 
         print("Filter slug = {0}".format(filter_slug))
         if filter_slug == 'all':
-            members = Member.objects.proper_lastname_order()
+            members = Member.objects.all()
         else:
-            members = Member.objects.proper_lastname_order(types__slug=filter_slug)
+            members = Member.objects.filter(types__slug=filter_slug)
 
         filename = filter_slug + ".csv"
         response = HttpResponse(content_type='text/csv', charset='utf-8')
@@ -378,11 +377,15 @@ class ApiV1Smoelenboek(ApiPermissionRequired, View):
 
         response = {'vrijdag': [], 'zaterdag': []}
         for member in members:
+            photo = member.thumbnail
+            if photo is None:
+                photo = member.foto
+
             memberdict = {
                 "id": member.id,
                 "first_name": member.first_name,
                 "last_name": member.last_name,
-                "photo": img2base64(member.foto)
+                "photo": img2base64(photo)
             }
 
             if member.dag_vrijdag:

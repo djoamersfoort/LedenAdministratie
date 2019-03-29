@@ -1,6 +1,8 @@
 from django.db import models
 from datetime import date
 from django.core.validators import RegexValidator, EmailValidator
+from PIL import Image
+from io import BytesIO
 
 
 class MemberType(models.Model):
@@ -11,18 +13,29 @@ class MemberType(models.Model):
         return self.display_name
 
 
-class MemberManager(models.Manager):
-    def proper_lastname_order(self, *args, **kwargs):
-        qs = self.get_queryset().filter(*args, **kwargs)
-        return sorted(qs, key=lambda n: n.last_name.lower().split()[-1])
-
-
 class Member(models.Model):
-    objects = MemberManager()
 
     class Meta:
-        ordering = ["last_name", "first_name"]
+        ordering = ["first_name", "last_name"]
         verbose_name_plural = "Leden"
+
+    def save(self, force_insert=False, force_update=False, using=None,
+             update_fields=None):
+
+        if self.thumbnail is None and self.foto is not None:
+            try:
+                with BytesIO(self.foto) as f:
+                    with Image.open(f, "r") as photo:
+                        img_format = photo.format
+                        thumbnail = photo.copy()
+                        thumbnail.thumbnail((100, 150), Image.LANCZOS)
+                        thumbnail.format = img_format
+
+                        self.thumbnail = thumbnail.tobytes()
+            except Exception as e:
+                print("Warning: thumbnail creation failed: {0}".format(str(e)))
+
+        super().save(force_insert, force_update, using=using, update_fields=update_fields)
 
     def _calculate_age(self, ondate=date.today()):
         today = ondate
@@ -58,6 +71,7 @@ class Member(models.Model):
     dag_vrijdag = models.BooleanField(null=False, default=False)
     dag_zaterdag = models.BooleanField(null=False, default=False)
     foto = models.BinaryField(blank=True, null=True, verbose_name='Foto', editable=True)
+    thumbnail = models.BinaryField(blank=True, null=True, verbose_name='Thumbnail', editable=True)
     hoe_gevonden = models.CharField(max_length=255, blank=True, null=False, default='')
     age = property(_calculate_age)
 

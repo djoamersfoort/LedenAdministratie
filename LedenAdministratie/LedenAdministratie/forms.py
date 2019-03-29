@@ -20,14 +20,16 @@ class MemberForm(forms.ModelForm):
 
     class Meta:
         model = Member
-        exclude = []
+        exclude = ['thumbnail']
 
     def save(self, commit=True):
-        if self.cleaned_data.get('foto') is not None:
+        if 'foto' in self.changed_data:
             data = self.cleaned_data['foto']
             if isinstance(data, UploadedFile):
                 data = data.file.read()
             self.instance.foto = data
+            # Force re-gen of thumbnail
+            self.instance.thumbnail = None
         return super().save(commit)
 
 
