@@ -30,8 +30,9 @@ class Member(models.Model):
                         thumbnail = photo.copy()
                         thumbnail.thumbnail((100, 150), Image.LANCZOS)
                         thumbnail.format = img_format
-
-                        self.thumbnail = thumbnail.tobytes()
+                        encoded_thumb = BytesIO()
+                        thumbnail.save(encoded_thumb, img_format)
+                        self.thumbnail = encoded_thumb.getvalue()
             except Exception as e:
                 print("Warning: thumbnail creation failed: {0}".format(str(e)))
 
