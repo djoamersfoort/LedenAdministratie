@@ -51,3 +51,11 @@ Je krijgt dus per dag een array van leden terug. Je kunt ook 1 specifieke dag op
 curl https://<ledensite>/api/v1/smoelenboek/vrijdag/ -H 'Authorization: IDP fosjfweijfadojfeiojfaioejeijfeidojf'
 ```
 Je krijgt dan dezelfde output als hierboven, alleen zal in dit geval de zaterdag array leeg zijn ("zaterdag": [])
+
+## Docker
+Van dit project wordt automatisch een docker container gebouwd. Deze is hier te vinden:
+
+https://cloud.docker.com/u/djoamersfoort/repository/docker/djoamersfoort/ledenadministratie
+
+Om de image te downloaden kun je dit doen:
+docker pull djoamersfoort/ledenadministratie
