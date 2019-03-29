@@ -137,7 +137,7 @@ class InvoiceTool:
         body = render_to_string(template, context={'invoice': invoice, 'member_types': member_types})
         recipients = [invoice.member.email_address]
         if invoice.member.email_ouders != '':
-            recipients = [invoice.member.email_ouders]
+            recipients = invoice.member.email_ouders.split(',')
         message = EmailMessage()
         message.from_email = settings.EMAIL_SENDER
         message.to = recipients
