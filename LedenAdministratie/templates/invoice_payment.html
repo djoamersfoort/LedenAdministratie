@@ -1,4 +1,9 @@
 {% extends 'base.html' %}
+{% load static %}
+
+{% block searchbar %}
+    <input class="form-control form-control-dark w-100" type="text" placeholder="Zoek factuurnummer..." id="searchbar">
+{% endblock %}
 
 {% block content %}
 
@@ -89,4 +94,9 @@
         </table>
     </div>
 
+{% endblock %}
+
+
+{% block customscript %}
+<script src="{% static 'js/search.js' %}"></script>
 {% endblock %}
