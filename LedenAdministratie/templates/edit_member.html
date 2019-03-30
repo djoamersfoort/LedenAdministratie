@@ -9,12 +9,12 @@
 <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
 
-    <div class="col-md-10">
+    <div class="col-lg-10 col-md-12 col-12">
         <div class="card">
             <div class="card-body">
                 <div class="card-header text-white bg-secondary">Basisgegevens</div>
                 <div class="form-row">
-                    <div class="col-md-5">
+                    <div class="col-lg-5 col-md-6">
                         <label for="id_first_name">Voornaam *</label>
                         {{ form.first_name|add_class:'form-control' }}
 
@@ -36,7 +36,7 @@
                         <label for="id_hoe_gevonden">Hoe gevonden?</label>
                         {{ form.hoe_gevonden|add_class:'form-control' }}
                     </div>
-                    <div class="col-md-5">
+                    <div class="col-lg-5 col-md-6">
                         <label for="id_last_name">Achternaam *</label>
                         {{ form.last_name|add_class:'form-control' }}
 
@@ -65,7 +65,7 @@
         </div>
     </div>
 
-    <div class="col-10">
+    <div class="col-lg-10 col-md-12">
         <div class="card">
             <div class="card-body">
                 <div class="card-header text-white bg-secondary">Contactgegevens en Foto</div>
@@ -105,16 +105,16 @@
 
 
     {% if object %}
-    <div class="col-10">
+    <div class="col-lg-10 col-md-12">
         <div class="card">
             <div class="card-body">
                 <div class="card-header text-white bg-secondary">Notities en Facturen</div>
 
                 <div class="form-row">
-                    <div class="col-5">
+                    <div class="col-6">
                         {% include 'notes_table.html' %}
                     </div>
-                    <div class="col-5">
+                    <div class="col-6">
                         {% include 'invoices_table.html' %}
                     </div>
                 </div>

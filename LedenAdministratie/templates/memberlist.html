@@ -12,8 +12,6 @@
             <thead class="thead-light">
             <tr>
                 <th>Naam</th>
-                <th>E-mail</th>
-                <th>Geb. Datum</th>
                 <th>Straat</th>
                 <th>Woonplaats</th>
                 <th>Tel. Nr.</th>
@@ -28,9 +26,7 @@
             {% for lid in object_list %}
 
                 <tr>
-                    <td>{{ lid }}</td>
-                    <td>{{ lid.email_address }}</td>
-                    <td>{{ lid.gebdat|date:"d-m-Y" }}</td>
+                    <td><a href="{% url 'lid_edit' lid.pk %}" class="text-dark">{{ lid }}</a></td>
                     <td>{{ lid.straat }}</td>
                     <td>{{ lid.woonplaats }}</td>
                     <td>{{ lid.telnr }}</td>
