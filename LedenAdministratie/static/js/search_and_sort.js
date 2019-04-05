@@ -22,8 +22,10 @@ $(document).ready(function() {
     });
 
     $("table:first > thead > tr").children('th').each(function() {
-        $(this).click(tableSort);
-        $(this).css('cursor', 'ns-resize');
+        if ($(this)[0].innerText != '') {
+            $(this).click(tableSort);
+            $(this).css('cursor', 'ns-resize');
+        }
     })
 });
 
