@@ -49,6 +49,7 @@ class InvoiceCreateForm(forms.Form):
         ('senior', 'Senior Lid factuur voor 1 jaar'),
         ('maart', 'Factuur voor lid ingeschreven na 1 Maart'),
         ('sponsor', 'Sponsor factuur'),
+        ('strippenkaart', 'Factuur voor lid met strippenkaart'),
         ('custom', 'Aangepaste factuur')
     )
 

@@ -13,7 +13,7 @@ from . import settings
 from .templatetags.photo_filter import img2base64
 import csv
 import uuid
-from datetime import datetime
+from datetime import datetime, date
 
 from .models import Member, MemberType, Note, Invoice
 from . import forms
@@ -81,10 +81,10 @@ class MemberListView(PermissionRequiredMixin, ListView):
     required_permission = 'LedenAdministratie.view_member'
 
     def get_queryset(self):
-        queryset = Member.objects.all()
+        queryset = Member.objects.filter(Q(afmeld_datum__gt=date.today()) | Q(afmeld_datum=None))
         filter_slug = self.kwargs.get('filter_slug', '')
         if filter_slug != '':
-            queryset = Member.objects.filter(types__slug=filter_slug)
+            queryset = queryset.filter(types__slug=filter_slug)
 
         self.extra_context = {'types': MemberType.objects.all(), 'count': len(queryset), 'filter_slug': filter_slug}
 
@@ -336,11 +336,9 @@ class ExportView(PermissionRequiredMixin, FormView):
     def form_valid(self, form):
         filter_slug = form.cleaned_data['filter_slug'].slug
 
-        print("Filter slug = {0}".format(filter_slug))
-        if filter_slug == 'all':
-            members = Member.objects.all()
-        else:
-            members = Member.objects.filter(types__slug=filter_slug)
+        members = Member.objects.filter(Q(afmeld_datum__gt=datetime.now()) | Q(afmeld_datum=None))
+        if filter_slug != 'all':
+            members = members.filter(types__slug=filter_slug)
 
         filename = filter_slug + ".csv"
         response = HttpResponse(content_type='text/csv', charset='utf-8')
@@ -362,16 +360,13 @@ class ExportView(PermissionRequiredMixin, FormView):
 @method_decorator(csrf_exempt, name='dispatch')
 class ApiV1Smoelenboek(ApiPermissionRequired, View):
     def get(self, request, *args, **kwargs):
+        members = Member.objects.filter(Q(afmeld_datum__gt=datetime.now()) | Q(afmeld_datum=None))
         day = self.kwargs.get('day', None)
         if day:
             if day == 'vrijdag':
-                members = Member.objects.filter(Q(afmeld_datum__lt=datetime.now()) | Q(afmeld_datum=None)).filter(
-                    dag_vrijdag=True)
+                members = members.filter(dag_vrijdag=True)
             else:
-                members = Member.objects.filter(Q(afmeld_datum__lt=datetime.now()) | Q(afmeld_datum=None)).filter(
-                    dag_zaterdag=True)
-        else:
-            members = Member.objects.filter(Q(afmeld_datum__lt=datetime.now()) | Q(afmeld_datum=None))
+                members = members.filter(dag_zaterdag=True)
 
         members = members.order_by('first_name')
 
@@ -411,7 +406,7 @@ class ApiV1IDPGetDetails(View):
         fields = self.kwargs['fields'].split(',')
         for field in fields:
             if field == 'is-member':
-                response['is-member'] = (member.afmeld_datum is None or member.afmeld_datum < datetime.now())
+                response['is-member'] = (member.afmeld_datum is None or member.afmeld_datum > datetime.now())
             elif field == 'mail':
                 response['mail'] = member.email_address
             elif field == 'mail-parents':
@@ -444,7 +439,7 @@ class ApiV1IDPGetDetails(View):
 @method_decorator(csrf_exempt, name='dispatch')
 class ApiV1IDPVerify(View):
     def post(self, request, *args, **kwargs):
-        result = Member.objects.filter()
+        result = Member.objects.filter(Q(afmeld_datum__gt=date.today()) | Q(afmeld_datum=None))
 
         fields = self.kwargs['fields'].split(',')
         for field in fields:

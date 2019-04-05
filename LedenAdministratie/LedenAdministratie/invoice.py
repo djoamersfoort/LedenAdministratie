@@ -1,5 +1,6 @@
 from django.template.loader import render_to_string
 from django.core.mail import EmailMessage
+from django.db.models import Q
 from datetime import date, timedelta
 from weasyprint import HTML, CSS, default_url_fetcher
 from weasyprint.fonts import FontConfiguration
@@ -69,14 +70,14 @@ class InvoiceTool:
     @staticmethod
     def get_title_for_invoice_type(invoice_type):
         title = 'Aan de ouders/verzorgers van:'
-        if invoice_type in ['sponsor', 'custom']:
+        if invoice_type in ['sponsor', 'custom', 'senior']:
             title = 'Aan:'
         return title
 
     @staticmethod
     def get_extra_text_for_invoice_type(invoice_type):
         extra_text = ''
-        if invoice_type in ['standaard', 'senior']:
+        if invoice_type in ['standaard', 'senior'] and date.today() < date(date.today().year, 5, 1):
             extra_text = "Het is mogelijk om in 2 termijnen te betalen\n" \
                          "De eerste helft zal binnen 14 dagen overgemaakt moeten worden.\n" \
                          "Het tweede deel zal uiterlijk 31 mei overgemaakt moeten worden."
@@ -106,6 +107,14 @@ class InvoiceTool:
                     'amount': 13.75
                 },
             ]
+        elif invoice_type == 'strippenkaart':
+            defaults = [
+            {
+                'description': 'Strippenkaart {0} DJO Amersfoort'.format(date.today().year),
+                'count': 10,
+                'amount': 5.50
+            }
+        ]
         elif invoice_type == 'sponsor':
             defaults = [
                 {
@@ -121,13 +130,21 @@ class InvoiceTool:
 
     @staticmethod
     def get_members_invoice_type(invoice_type):
-        members = Member.objects.filter(types__slug='member')
+        members = Member.objects.filter(types__slug='member', aanmeld_datum__lt=date(date.today().year, 3, 1))
         if invoice_type == 'senior':
             members = Member.objects.filter(types__slug='senior')
         elif invoice_type == 'sponsor':
             members = Member.objects.filter(types__slug='sponsor')
+        elif invoice_type == 'maart':
+            members = Member.objects.filter(aanmeld_datum__gt=date(date.today().year, 2, 28))
+        elif invoice_type == 'strippenkaart':
+            members = Member.objects.filter(types__slug='strippenkaart')
         elif invoice_type == 'custom':
             members = Member.objects.all()
+
+        # Only return active members
+        members = members.filter(Q(afmeld_datum__gt=date.today()) | Q(afmeld_datum=None))
+
         return members
 
     @staticmethod
