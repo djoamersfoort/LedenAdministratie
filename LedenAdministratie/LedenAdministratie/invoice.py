@@ -136,7 +136,7 @@ class InvoiceTool:
         elif invoice_type == 'sponsor':
             members = Member.objects.filter(types__slug='sponsor')
         elif invoice_type == 'maart':
-            members = Member.objects.filter(aanmeld_datum__gt=date(date.today().year, 2, 28))
+            members = Member.objects.filter(types__slug='member', aanmeld_datum__gt=date(date.today().year, 2, 28))
         elif invoice_type == 'strippenkaart':
             members = Member.objects.filter(types__slug='strippenkaart')
         elif invoice_type == 'custom':
