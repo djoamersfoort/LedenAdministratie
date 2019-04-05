@@ -20,4 +20,24 @@ $(document).ready(function() {
             }
         }
     });
+
+    $("table:first > thead > tr").children('th').each(function() {
+        $(this).click(tableSort);
+        $(this).css('cursor', 'ns-resize');
+    })
 });
+
+
+function tableSort(column) {
+    var rows = $('table:first > tbody').children('tr').get();
+    rows.sort(function(a, b) {
+
+        text1 = a.children[column.target.cellIndex].innerText.toLowerCase();
+        text2 = b.children[column.target.cellIndex].innerText.toLowerCase();
+
+        return text1 > text2;
+    });
+    for (var i = 0; i < rows.length; i++) {
+        $('table:first > tbody').append(rows[i]);
+    }
+}
