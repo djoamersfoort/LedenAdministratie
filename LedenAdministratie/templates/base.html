@@ -50,6 +50,12 @@
                             </li>
                         {% endfor %}
 
+                        <li class="nav-item">
+                            <a {% if filter_slug == 'inactive' %} class="nav-link active" {% else %} class="nav-link" {% endif %} href="{% url 'members' 'inactive' %}">
+                                <span data-feather="trash-2"></span>Inactieve leden
+                            </a>
+                        </li>
+
                         {% if perms.LedenAdministratie.change_lid %}
                             <li class="nav-item">
                                 <a class="nav-link" href="{% url 'lid_create' %}">
