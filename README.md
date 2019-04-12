@@ -52,6 +52,24 @@ curl https://<ledensite>/api/v1/smoelenboek/vrijdag/ -H 'Authorization: IDP fosj
 ```
 Je krijgt dan dezelfde output als hierboven, alleen zal in dit geval de zaterdag array leeg zijn ("zaterdag": [])
 
+### Smoelenboek details van 1 lid opvragen
+Als je alleen de foto van 1 gebruiker wilt opvragen, kan dat als volgt:
+
+```
+curl https://<ledensite>/api/v1/smoelenboek/<userid>/ -H 'Authorization: IDP fosjfweijfadojfeiojfaioejeijfeidojf'
+```
+
+Je krijgt dan 1 json hash terug met de details van die user:
+
+```json
+  {
+    "id": "<member id>",
+    "first_name": "<voornaam>",
+    "last_name": "<achternaam>",
+    "photo": "data:image/jpg:base64,<thumbnail base64 encoded>"
+  }
+```
+
 ## Docker
 Van dit project wordt automatisch een docker container gebouwd. Deze is hier te vinden:
 
