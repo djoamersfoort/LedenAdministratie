@@ -363,6 +363,7 @@ class ExportView(PermissionRequiredMixin, FormView):
 @method_decorator(csrf_exempt, name='dispatch')
 class ApiV1Smoelenboek(ApiPermissionRequired, View):
     def get(self, request, *args, **kwargs):
+        large = request.GET.get('large', '0') == '1'
         members = Member.objects.filter(Q(afmeld_datum__gt=datetime.now()) | Q(afmeld_datum=None))
         day = self.kwargs.get('day', None)
         if day:
@@ -375,14 +376,18 @@ class ApiV1Smoelenboek(ApiPermissionRequired, View):
 
         response = {'vrijdag': [], 'zaterdag': []}
         for member in members:
-            photo = member.thumbnail
-            if photo is None:
+            if large:
                 photo = member.foto
+            else:
+                photo = member.thumbnail
+                if photo is None:
+                    photo = member.foto
 
             memberdict = {
                 "id": member.id,
                 "first_name": member.first_name,
                 "last_name": member.last_name,
+                "types": ','.join([tmptype.slug for tmptype in member.types.all()]),
                 "photo": img2base64(photo)
             }
 
@@ -397,20 +402,25 @@ class ApiV1Smoelenboek(ApiPermissionRequired, View):
 @method_decorator(csrf_exempt, name='dispatch')
 class ApiV1SmoelenboekUser(ApiPermissionRequired, View):
     def get(self, request, *args, **kwargs):
+        large = request.GET.get('large', '0') == '1'
         userid = self.kwargs['pk']
         try:
             member = Member.objects.get(pk=userid)
         except Member.DoesNotExist:
             return HttpResponse(status=404)
 
-        photo = member.thumbnail
-        if photo is None:
+        if large:
             photo = member.foto
+        else:
+            photo = member.thumbnail
+            if photo is None:
+                photo = member.foto
 
         memberdict = {
             "id": member.id,
             "first_name": member.first_name,
             "last_name": member.last_name,
+            "types": ','.join([tmptype.slug for tmptype in member.types.all()]),
             "photo": img2base64(photo)
         }
         return JsonResponse(data=memberdict)
