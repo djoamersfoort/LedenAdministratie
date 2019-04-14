@@ -29,6 +29,7 @@ Dit geeft:
     "id": "<member id>",
     "first_name": "<voornaam>",
     "last_name": "<achternaam>",
+    "types": "begeleider,bestuur",
     "photo": "data:image/jpg:base64,<thumbnail base64 encoded>"
   },
   {
@@ -40,6 +41,7 @@ Dit geeft:
     "id": "<member id>",
     "first_name": "<voornaam>",
     "last_name": "<achternaam>",
+    "types": "member",
     "photo": "data:image/jpg:base64,<thumbnail base64 encoded>"
   }
 ]
@@ -66,6 +68,7 @@ Je krijgt dan 1 json hash terug met de details van die user:
     "id": "<member id>",
     "first_name": "<voornaam>",
     "last_name": "<achternaam>",
+    "types": "begeleider,bestuur",
     "photo": "data:image/jpg:base64,<thumbnail base64 encoded>"
   }
 ```
