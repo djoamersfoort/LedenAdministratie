@@ -465,7 +465,7 @@ class ApiV1IDPGetDetails(View):
             elif field == 'dob':
                 response['dob'] = member.gebdat
             elif field == 'type':
-                response['type'] = ','.join([membertype.slug for membertype in member.types.all()])
+                response['type'] = member.idp_types()
 
         result = {'ok': True, 'result': response}
         return JsonResponse(data=result)

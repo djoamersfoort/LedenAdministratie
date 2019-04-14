@@ -50,6 +50,17 @@ class Member(models.Model):
     def get_types_display(self):
         return ','.join([tmptype.display_name for tmptype in self.types.all()])
 
+    def idp_types(self):
+        result = []
+        for membertype in self.types.all():
+            name = membertype.slug
+            if name == 'member':
+                name = 'lid'
+            elif name == 'aspirant':
+                name = 'aspirant_begeleider'
+            result.append(name)
+        return ','.join(result)
+
     def __str__(self):
         return "%s %s" % (self.first_name, self.last_name)
 
