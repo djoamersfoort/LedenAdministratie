@@ -47,7 +47,10 @@ class LoginResponseView(View):
         if 'access_token' in access_token and access_token['access_token'] != '':
             user_profile = oauth.get(settings.IDP_API_URL).json()
             username = "idp-{0}".format(user_profile['result']['id'])
-            if settings.IDP_REQUIRED_ROLE not in user_profile['result']['accountType'].lower():
+            for granted_role in user_profile['result']['accountType'].lower().split(','):
+                if settings.IDP_REQUIRED_ROLE == granted_role:
+                    break
+            else:
                 return HttpResponseForbidden('Verplichte rol niet toegekend')
 
             try:
