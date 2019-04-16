@@ -77,7 +77,7 @@ class Member(models.Model):
     woonplaats = models.CharField(max_length=100)
     telnr = models.CharField(max_length=30)
     telnr_ouders = models.CharField(max_length=30, blank=True)
-    email_ouders = models.EmailField(max_length=150, blank=True)
+    email_ouders = models.CharField(max_length=200, blank=True)
     aanmeld_datum = models.DateField(verbose_name='Aanmeld datum', auto_now=False)
     afmeld_datum = models.DateField(verbose_name='Afmeld datum', null=True, blank=True)
     dag_vrijdag = models.BooleanField(null=False, default=False)
