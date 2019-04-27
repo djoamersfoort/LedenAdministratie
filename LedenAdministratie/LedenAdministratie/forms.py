@@ -34,7 +34,7 @@ class MemberForm(forms.ModelForm):
 
 
 class ExportForm(forms.Form):
-    filter_slug = forms.ModelChoiceField(label='Filter', required=True, queryset=MemberType.objects.all())
+    filter_slug = forms.ModelChoiceField(label='Filter', required=False, empty_label='Alles', queryset=MemberType.objects.all())
 
 
 class LidNoteForm(forms.ModelForm):

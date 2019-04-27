@@ -340,7 +340,9 @@ class ExportView(PermissionRequiredMixin, FormView):
         return context
 
     def form_valid(self, form):
-        filter_slug = form.cleaned_data['filter_slug'].slug
+        filter_slug = 'all'
+        if form.cleaned_data['filter_slug']:
+            filter_slug = form.cleaned_data['filter_slug'].slug
 
         members = Member.objects.filter(Q(afmeld_datum__gt=datetime.now()) | Q(afmeld_datum=None))
         if filter_slug != 'all':
