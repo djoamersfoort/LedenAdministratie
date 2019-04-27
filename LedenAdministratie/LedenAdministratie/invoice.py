@@ -1,10 +1,10 @@
 from django.template.loader import render_to_string
 from django.core.mail import EmailMessage
 from django.db.models import Q
+from django.conf import settings
 from datetime import date, timedelta
 from weasyprint import HTML, CSS, default_url_fetcher
 from weasyprint.fonts import FontConfiguration
-from . import settings
 from .models import Member
 
 import os

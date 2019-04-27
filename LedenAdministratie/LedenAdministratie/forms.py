@@ -1,7 +1,7 @@
 from django import forms
 from django.core.files.uploadedfile import UploadedFile
+from django.conf import settings
 from .models import Member, MemberType, Note, Invoice
-from .settings import DATETIME_INPUT_FORMATS
 from datetime import date
 
 
@@ -12,10 +12,10 @@ class LoginForm(forms.Form):
 
 class MemberForm(forms.ModelForm):
     foto = forms.FileField(required=False)
-    gebdat = forms.DateField(widget=forms.DateInput(format='%d-%m-%Y'), input_formats=DATETIME_INPUT_FORMATS)
-    aanmeld_datum = forms.DateField(widget=forms.DateInput(format='%d-%m-%Y'), input_formats=DATETIME_INPUT_FORMATS,
+    gebdat = forms.DateField(widget=forms.DateInput(format='%d-%m-%Y'), input_formats=settings.DATETIME_INPUT_FORMATS)
+    aanmeld_datum = forms.DateField(widget=forms.DateInput(format='%d-%m-%Y'), input_formats=settings.DATETIME_INPUT_FORMATS,
                                     initial=date.today())
-    afmeld_datum = forms.DateField(widget=forms.DateInput(format='%d-%m-%Y'), input_formats=DATETIME_INPUT_FORMATS,
+    afmeld_datum = forms.DateField(widget=forms.DateInput(format='%d-%m-%Y'), input_formats=settings.DATETIME_INPUT_FORMATS,
                                    required=False)
 
     class Meta:

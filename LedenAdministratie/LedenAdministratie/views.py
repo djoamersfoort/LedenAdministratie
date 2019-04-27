@@ -8,8 +8,8 @@ from django.urls import reverse_lazy, reverse
 from django.forms import formset_factory
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden, JsonResponse
 from django.db.models import F, Q
+from django.conf import settings
 from requests_oauthlib import OAuth2Session
-from . import settings
 from .templatetags.photo_filter import img2base64
 import csv
 import uuid
