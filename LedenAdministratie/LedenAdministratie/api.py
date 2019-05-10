@@ -6,7 +6,7 @@ from django.db.models import Q
 from datetime import datetime, date
 from .models import Member
 from .templatetags.photo_filter import img2base64
-from .mixins import ApiPermissionRequired
+from .mixins import ApiPermissionRequired, APITokenMixin
 
 
 @method_decorator(csrf_exempt, name='dispatch')
@@ -76,8 +76,13 @@ class ApiV1SmoelenboekUser(ApiPermissionRequired, View):
 
 
 @method_decorator(csrf_exempt, name='dispatch')
-class ApiV1IDPGetDetails(View):
+class ApiV1IDPGetDetails(APITokenMixin, View):
+
     def post(self, request, *args, **kwargs):
+
+        if not self.check_api_token():
+            return HttpResponse(status=403)
+
         userid = request.POST.get('user-id', '0').strip('u-')
         if not userid:
             return JsonResponse(data={'ok': False, 'error': 'User-id required'}, status=412)
@@ -121,8 +126,12 @@ class ApiV1IDPGetDetails(View):
 
 
 @method_decorator(csrf_exempt, name='dispatch')
-class ApiV1IDPVerify(View):
+class ApiV1IDPVerify(APITokenMixin, View):
+
     def post(self, request, *args, **kwargs):
+        if not self.check_api_token():
+            return HttpResponse(status=403)
+
         result = Member.objects.filter(Q(afmeld_datum__gt=date.today()) | Q(afmeld_datum=None))
 
         fields = self.kwargs['fields'].split(',')
@@ -143,6 +152,10 @@ class ApiV1IDPVerify(View):
 
 
 @method_decorator(csrf_exempt, name='dispatch')
-class ApiV1IDPAvatar(View):
+class ApiV1IDPAvatar(APITokenMixin, View):
     def post(self, request, *args, **kwargs):
+
+        if not self.check_api_token():
+            return HttpResponse(status=403)
+
         return JsonResponse(data={'ok': False, 'error': 'Not implemented'}, status=200)

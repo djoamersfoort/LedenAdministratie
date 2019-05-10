@@ -1,5 +1,6 @@
 from django.contrib.auth.mixins import UserPassesTestMixin
-from . import settings
+from django.conf import settings
+from .models import APIToken
 import requests
 
 
@@ -33,5 +34,23 @@ class ApiPermissionRequired(UserPassesTestMixin):
         response = requests.get(settings.IDP_API_URL, headers=headers)
         if response.ok:
             return True
+
+        return False
+
+class APITokenMixin:
+
+    token_type = 'idp'
+
+    def check_api_token(self):
+        token = self.request.POST.get('token', '')
+        if token == '':
+            return False
+
+        try:
+            apitoken = APIToken.objects.get(token_type=self.token_type)
+            if apitoken.token == token:
+                return True
+        except APIToken.DoesNotExist:
+            return False
 
         return False

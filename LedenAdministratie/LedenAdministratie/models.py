@@ -123,3 +123,11 @@ class Invoice(models.Model):
     amount_payed = models.DecimalField(verbose_name='Bedrag Betaald', blank=False, default=0.00, decimal_places=2,
                                        max_digits=6)
     pdf = models.BinaryField(blank=True, null=True, editable=True)
+
+
+class APIToken(models.Model):
+    token_type = models.CharField(max_length=12)
+    token = models.CharField(max_length=32)
+
+    def __str__(self):
+        return "{0} - {1}".format(self.token_type,self.token)
