@@ -196,11 +196,17 @@ class InvoiceCreateView(PermissionRequiredMixin, FormView):
     template_name = 'invoice_create.html'
     form_class = forms.InvoiceCreateForm
     LinesFormSet = formset_factory(forms.InvoiceLineForm, extra=5)
-    success_url = reverse_lazy('members')
     lines = None
     invoice_type = None
     refresh_only = False
     required_permission = 'LedenAdministratie.add_invoice'
+
+    def get_success_url(self):
+        if self.kwargs.get('member_id'):
+            url = reverse('lid_edit', kwargs={'pk': self.kwargs.get('member_id')})
+        else:
+            url = reverse('members')
+        return url
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
