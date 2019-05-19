@@ -148,9 +148,11 @@ class InvoiceTool:
         return members
 
     @staticmethod
-    def create_email(invoice, template='send_invoice_email.html'):
+    def create_email(invoice, template='send_invoice_email.html', reminder=False):
         member_types = [member_type.slug for member_type in invoice.member.types.all()]
         subject = 'Factuur contributie {0} De Jonge Onderzoekers'.format(date.today().year)
+        if reminder:
+            subject = 'Herinnering: {0}'.format(subject)
         body = render_to_string(template, context={'invoice': invoice, 'member_types': member_types})
         recipients = [invoice.member.email_address]
         if invoice.member.email_ouders != '':
@@ -168,7 +170,7 @@ class InvoiceTool:
     @staticmethod
     def send_by_email(invoice, reminder=False):
         if reminder:
-            message = InvoiceTool.create_email(invoice, 'send_invoice_reminder.html')
+            message = InvoiceTool.create_email(invoice, 'send_invoice_reminder.html', reminder=True)
         else:
             message = InvoiceTool.create_email(invoice)
         return message.send(fail_silently=False)
