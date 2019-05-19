@@ -23,7 +23,9 @@
                 <th>Aangemeld op</th>
                 <th>Leeftijd</th>
                 <th>Type</th>
-                <th></th>
+                {% if filter_slug == 'inactive' %}
+                    <th></th>
+                {% endif %}
                 <th></th>
             </tr>
             </thead>
@@ -44,11 +46,13 @@
                                 <span data-feather="edit"></span>
                             </a>
                         </td>
+                        {% if filter_slug == 'inactive' %}
                         <td>
                             <a href="{% url 'lid_delete' lid.pk %}" class="btn-sm btn-danger">
                                 <span data-feather="trash-2"></span>
                             </a>
                         </td>
+                        {% endif %}
                     {% else %}
                         <td>
                             <a href="{% url 'lid_edit' lid.pk %}" class="btn-sm btn-success">
