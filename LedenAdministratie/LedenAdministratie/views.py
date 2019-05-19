@@ -136,7 +136,7 @@ class MemberDeleteView(PermissionRequiredMixin, DeleteView):
 class MemberAddNoteView(PermissionRequiredMixin, CreateView):
     model = Note
     form_class = forms.LidNoteForm
-    template_name = 'lid_note.html'
+    template_name = 'member_note.html'
     required_permission = 'LedenAdministratie.add_note'
 
     def get_context_data(self, **kwargs):
@@ -170,7 +170,7 @@ class MemberDeleteNoteView(PermissionRequiredMixin, View):
 class MemberEditNoteView(PermissionRequiredMixin, UpdateView):
     model = Note
     form_class = forms.LidNoteForm
-    template_name = 'lid_note.html'
+    template_name = 'member_note.html'
     required_permission = 'LedenAdministratie.change_note'
 
     def get_context_data(self, **kwargs):
