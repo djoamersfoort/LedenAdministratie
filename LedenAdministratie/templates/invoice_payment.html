@@ -32,7 +32,7 @@
             <tbody>
             {% for invoice in object_list %}
                 <tr>
-                    <td>{{ invoice.invoice_number }}</td>
+                    <td><a target="_blank" href="{% url 'invoice_display' invoice.id %}" class="text-dark">{{ invoice.invoice_number }}</a></td>
                     <td><a href="{% url 'lid_edit' invoice.member.pk %}" class="text-dark">{{ invoice.member.full_name }}</a></td>
                     <td>{{ invoice.created }}</td>
                     <td>{{ invoice.username|capfirst }}</td>
