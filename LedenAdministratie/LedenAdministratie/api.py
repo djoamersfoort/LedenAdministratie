@@ -3,7 +3,8 @@ from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse, JsonResponse
 from django.views.generic.edit import View
 from django.db.models import Q
-from datetime import datetime, date
+from django.utils import timezone
+from datetime import date
 from .models import Member
 from .templatetags.photo_filter import img2base64
 from .mixins import ApiPermissionRequired, APITokenMixin
@@ -13,7 +14,7 @@ from .mixins import ApiPermissionRequired, APITokenMixin
 class ApiV1Smoelenboek(ApiPermissionRequired, View):
     def get(self, request, *args, **kwargs):
         large = request.GET.get('large', '0') == '1'
-        members = Member.objects.filter(Q(afmeld_datum__gt=datetime.now()) | Q(afmeld_datum=None))
+        members = Member.objects.filter(Q(afmeld_datum__gt=timezone.now()) | Q(afmeld_datum=None))
         day = self.kwargs.get('day', None)
         if day:
             if day == 'vrijdag':
@@ -95,7 +96,7 @@ class ApiV1IDPGetDetails(APITokenMixin, View):
         fields = self.kwargs['fields'].split(',')
         for field in fields:
             if field == 'is-member':
-                response['is-member'] = (member.afmeld_datum is None or member.afmeld_datum > datetime.now())
+                response['is-member'] = (member.afmeld_datum is None or member.afmeld_datum > timezone.now())
             elif field == 'mail':
                 response['mail'] = member.email_address
             elif field == 'mail-parents':

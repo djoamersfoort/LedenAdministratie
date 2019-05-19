@@ -7,10 +7,11 @@ from django.forms import formset_factory
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden
 from django.db.models import F, Q
 from django.conf import settings
+from django.utils import timezone
 from requests_oauthlib import OAuth2Session
 import csv
 import uuid
-from datetime import datetime, date
+from datetime import date
 
 from .models import Member, MemberType, Note, Invoice
 from . import forms
@@ -240,7 +241,7 @@ class InvoiceCreateView(PermissionRequiredMixin, FormView):
             invoice.member = member
             invoice.amount = InvoiceTool.calculate_grand_total(self.lines)
             invoice.amount_payed = 0.00
-            invoice.created = datetime.now()
+            invoice.created = timezone.now()
             invoice.username = self.request.user.first_name
             invoice.save()
             invoice.pdf = InvoiceTool.render_invoice(member, self.lines, invoice.invoice_number,
@@ -321,7 +322,7 @@ class InvoiceSendView(PermissionRequiredMixin, FormView):
             try:
                 count = InvoiceTool.send_by_email(invoice, is_reminder)
                 if count == 1:
-                    invoice.sent = datetime.now()
+                    invoice.sent = timezone.now()
                     invoice.smtp_error = None
                 else:
                     invoice.smtp_error = "Fout bij versturen!"
@@ -347,7 +348,7 @@ class ExportView(PermissionRequiredMixin, FormView):
         if form.cleaned_data['filter_slug']:
             filter_slug = form.cleaned_data['filter_slug'].slug
 
-        members = Member.objects.filter(Q(afmeld_datum__gt=datetime.now()) | Q(afmeld_datum=None))
+        members = Member.objects.filter(Q(afmeld_datum__gt=timezone.now()) | Q(afmeld_datum=None))
         if filter_slug != 'all':
             members = members.filter(types__slug=filter_slug)
 
