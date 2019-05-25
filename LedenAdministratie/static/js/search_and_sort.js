@@ -31,13 +31,19 @@ $(document).ready(function() {
 
 
 function tableSort(column) {
+    column.target.order = !column.target.order;
+    console.log(column.target.order);
     var rows = $('table:first > tbody').children('tr').get();
     rows.sort(function(a, b) {
 
         text1 = a.children[column.target.cellIndex].innerText.toLowerCase();
         text2 = b.children[column.target.cellIndex].innerText.toLowerCase();
 
-        return text1 > text2;
+        if (column.target.order) {
+            return text1 > text2;
+        } else {
+            return text2 > text1;
+        }
     });
     for (var i = 0; i < rows.length; i++) {
         $('table:first > tbody').append(rows[i]);
