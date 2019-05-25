@@ -32,7 +32,6 @@ $(document).ready(function() {
 
 function tableSort(column) {
     column.target.order = !column.target.order;
-    console.log(column.target.order);
     var rows = $('table:first > tbody').children('tr').get();
     rows.sort(function(a, b) {
 
