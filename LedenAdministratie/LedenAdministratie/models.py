@@ -75,7 +75,7 @@ class Member(models.Model):
     postcode = models.CharField(max_length=7, validators=[
         RegexValidator(regex='\d\d\d\d\s?[A-Za-z]{2}', message='De postcode is ongeldig')])
     woonplaats = models.CharField(max_length=100)
-    telnr = models.CharField(max_length=30)
+    telnr = models.CharField(max_length=30, blank=True)
     telnr_ouders = models.CharField(max_length=30, blank=True)
     email_ouders = models.CharField(max_length=200, blank=True)
     aanmeld_datum = models.DateField(verbose_name='Aanmeld datum', auto_now=False)
