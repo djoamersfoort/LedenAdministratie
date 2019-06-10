@@ -1,6 +1,7 @@
 from django import forms
 from django.core.files.uploadedfile import UploadedFile
 from django.conf import settings
+from tinymce.widgets import TinyMCE
 from .models import Member, MemberType, Note, Invoice
 from datetime import date
 
@@ -82,4 +83,4 @@ class EmailSendForm(forms.Form):
     )
     recipients = forms.MultipleChoiceField(choices=VALID_RECIPIENTS, widget=forms.CheckboxSelectMultiple)
     subject = forms.CharField(max_length=255)
-    body = forms.CharField(widget=forms.Textarea)
+    body = forms.CharField(widget=TinyMCE(mce_attrs={'cols': 80, 'height': 500}))

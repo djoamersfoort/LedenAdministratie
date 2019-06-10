@@ -135,3 +135,13 @@ STATICFILES_DIRS = (
 # Session and cookie settings
 SESSION_COOKIE_SECURE = True
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
+
+TINYMCE_INCLUDE_JQUERY=False
+TINYMCE_DEFAULT_CONFIG = {
+    'theme': "advanced",
+    'cleanup_on_startup': True,
+    'custom_undo_redo_levels': 10,
+    'content_css': '/static/css/bootstrap.min.css'
+}
+TINYMCE_COMPRESSOR=True

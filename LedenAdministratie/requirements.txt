@@ -6,3 +6,4 @@ gunicorn
 Weasyprint
 requests-oauthlib
 Pillow
+django-tinymce
