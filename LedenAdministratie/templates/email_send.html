@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+{% load static %}
+
+{% block content %}
+
+{% include 'alerts.html' %}
+
+
+<form method="post" id="mainform">
+    {% csrf_token %}
+
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="card-header text-white bg-secondary">E-mail versturen</div>
+                <div class="form-row">
+
+                    <div class="form-row col-12 mt-2">
+                        <span class="mr-2"><b>Selecteer Ontvangers:</b></span>
+
+                        {% for pk, choice in form.recipients.field.widget.choices %}
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input" id="id_recipients_{{ forloop.counter0 }}"
+                                   value="{{ pk }}" name="recipients">
+                            <label class="form-check-label mr-5" for="id_recipients_{{ forloop.counter0 }}">{{ choice }}</label>
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="form-row col-10 my-3">
+                        <label for="id_subject">Onderwerp</label>
+                        {{ form.subject|add_class:'form-control' }}
+
+                        <label for="id_subject">E-mail</label>
+                        {{ form.body|add_class:'form-control' }}
+                    </div>
+                </div>
+
+                <div class="my-3">
+                    <button type="submit" class="btn btn-success">Versturen</button>
+                    <button onclick="javascript:history.go(-1)" type="button" class="btn btn-secondary">Annuleren
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+{% endblock %}

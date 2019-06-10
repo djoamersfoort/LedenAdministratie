@@ -73,3 +73,13 @@ class InvoicePartialPaymentForm(forms.ModelForm):
 class InvoiceSelectionForm(forms.Form):
     invoices = forms.ModelMultipleChoiceField(queryset=Invoice.objects.all(),
                                               widget=forms.CheckboxSelectMultiple)
+
+class EmailSendForm(forms.Form):
+    VALID_RECIPIENTS = (
+        ('members','Leden'),
+        ('members_parents', 'Leden + Ouders'),
+        ('begeleiders', 'Begeleiders')
+    )
+    recipients = forms.MultipleChoiceField(choices=VALID_RECIPIENTS, widget=forms.CheckboxSelectMultiple)
+    subject = forms.CharField(max_length=255)
+    body = forms.CharField(widget=forms.Textarea)

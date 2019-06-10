@@ -8,6 +8,7 @@ from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidde
 from django.db.models import F, Q
 from django.conf import settings
 from django.utils import timezone
+from django.core.mail import EmailMessage
 from requests_oauthlib import OAuth2Session
 import csv
 import uuid
@@ -367,3 +368,45 @@ class ExportView(PermissionRequiredMixin, FormView):
                              member.telnr_ouders, member.email_ouders])
 
         return response
+
+
+class EmailSendView(PermissionRequiredMixin, FormView):
+    form_class = forms.EmailSendForm
+    template_name = 'email_send.html'
+    required_permission = 'LedenAdministratie.add_member'
+
+    def form_valid(self, form):
+
+        log = []
+        recipients = Member.objects.filter(Q(afmeld_datum__gt=date.today()) | Q(afmeld_datum=None))
+        for recipient in recipients:
+            message = EmailMessage()
+            message.from_email = settings.EMAIL_SENDER
+            message.to = []
+            if recipient.is_begeleider():
+                if 'begeleiders' in form.cleaned_data['recipients']:
+                    message.to.append(recipient.email_address)
+            else:
+                if 'members_parents' in form.cleaned_data['recipients']:
+                    for address in recipient.email_ouders.split(','):
+                        message.to.append(address)
+                if 'members' in form.cleaned_data['recipients']:
+                    message.to.append(recipient.email_address)
+
+            message.subject = form.cleaned_data['subject']
+            message.body = form.cleaned_data['body']
+            message.content_subtype = 'html'
+
+            try:
+                count = message.send(fail_silently=False)
+                print(count)
+                if count == 1:
+                    log.append('Message sent to {0}'.format(', '.join(message.recipients())))
+                else:
+                    log.append('Fout bij versturen naar {0}!'.format(', '.join(message.recipients())))
+            except Exception as e:
+                log.append("Fout bij versturen naar {0}: {1}".format(', '.join(message.recipients()), str(e)))
+
+        print(log)
+
+        return HttpResponseRedirect(reverse_lazy('members'))

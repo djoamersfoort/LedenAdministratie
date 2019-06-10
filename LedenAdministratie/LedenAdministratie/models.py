@@ -61,6 +61,10 @@ class Member(models.Model):
             result.append(name)
         return ','.join(result)
 
+    def is_begeleider(self):
+        slugs = [membertype.slug for membertype in self.types.all()]
+        return 'begeleider' in slugs or 'aspirant_begeleider' in slugs
+
     def __str__(self):
         return "%s %s" % (self.first_name, self.last_name)
 
@@ -76,8 +80,8 @@ class Member(models.Model):
         RegexValidator(regex='\d\d\d\d\s?[A-Za-z]{2}', message='De postcode is ongeldig')])
     woonplaats = models.CharField(max_length=100)
     telnr = models.CharField(max_length=30, blank=True)
-    telnr_ouders = models.CharField(max_length=30, blank=True)
-    email_ouders = models.CharField(max_length=200, blank=True)
+    telnr_ouders = models.CharField(max_length=30, blank=False)
+    email_ouders = models.CharField(max_length=200, blank=False)
     aanmeld_datum = models.DateField(verbose_name='Aanmeld datum', auto_now=False)
     afmeld_datum = models.DateField(verbose_name='Afmeld datum', null=True, blank=True)
     dag_vrijdag = models.BooleanField(null=False, default=False)
