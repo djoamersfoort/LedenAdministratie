@@ -374,6 +374,7 @@ class EmailSendView(PermissionRequiredMixin, FormView):
     form_class = forms.EmailSendForm
     template_name = 'email_send.html'
     required_permission = 'LedenAdministratie.add_member'
+    extra_context = {'types': MemberType.objects.all()}
 
     def form_valid(self, form):
 
@@ -420,3 +421,4 @@ class EmailLogView(PermissionRequiredMixin, ListView):
     model = Email
     queryset = Email.objects.all().order_by('-sent')
     template_name = 'email_list.html'
+    extra_context = {'types': MemberType.objects.all()}
