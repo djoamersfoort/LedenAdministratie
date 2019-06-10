@@ -9,6 +9,7 @@ Dit is de source voor de DJO Ledenadminstratie. Geschreven in Python/Django. Fea
 - Notities per lid, met auteur, datum en tijd
 - Todo lijst (notitie kan als TODO worden aangemerkt)
 - API voor DJO IDP en het Smoelenboek
+- Versturen van e-mail met HTML opmaak vanuit de leden-administratie
 
 ## Smoelenboek API
 Via de smoelenboek API kun je een lijst opvragen met de volgende gegevens:
