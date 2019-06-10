@@ -14,7 +14,7 @@ import csv
 import uuid
 from datetime import date
 
-from .models import Member, MemberType, Note, Invoice
+from .models import Member, MemberType, Note, Invoice, Email
 from . import forms
 from .invoice import InvoiceTool
 from .mixins import PermissionRequiredMixin
@@ -397,16 +397,26 @@ class EmailSendView(PermissionRequiredMixin, FormView):
             message.body = form.cleaned_data['body']
             message.content_subtype = 'html'
 
+            log = Email()
+            log.member = recipient
+            log.sent = timezone.now()
+            log.subject = message.subject
+            log.recipients = ','.join(message.recipients())
+            log.sent_by = self.request.user.first_name
             try:
                 count = message.send(fail_silently=False)
-                print(count)
                 if count == 1:
-                    log.append('Message sent to {0}'.format(', '.join(message.recipients())))
+                    log.status = 'OK'
                 else:
-                    log.append('Fout bij versturen naar {0}!'.format(', '.join(message.recipients())))
+                    log.status = 'Fout bij versturen!'
             except Exception as e:
-                log.append("Fout bij versturen naar {0}: {1}".format(', '.join(message.recipients()), str(e)))
+                log.status = "Fout bij versturen: {0}".format(str(e))
+            log.save()
 
-        print(log)
+        return HttpResponseRedirect(reverse_lazy('email_log'))
 
-        return HttpResponseRedirect(reverse_lazy('members'))
+
+class EmailLogView(PermissionRequiredMixin, ListView):
+    model = Email
+    queryset = Email.objects.all().order_by('-sent')
+    template_name = 'email_list.html'

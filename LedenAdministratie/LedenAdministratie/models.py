@@ -135,3 +135,12 @@ class APIToken(models.Model):
 
     def __str__(self):
         return "{0} - {1}".format(self.token_type,self.token)
+
+
+class Email(models.Model):
+    sent = models.DateTimeField(blank=True, null=True)
+    member = models.ForeignKey(Member, on_delete=models.CASCADE, related_name='emails')
+    recipients = models.CharField(max_length=4096)
+    subject = models.CharField(max_length=255)
+    status = models.CharField(max_length=4096)
+    sent_by = models.CharField(max_length=255, null=False, default='')

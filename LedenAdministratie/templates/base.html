@@ -70,7 +70,7 @@
                     <span>Facturen</span>
                 </h6>
 
-               <ul class="nav flex-column">
+                <ul class="nav flex-column">
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'invoice_create' %}">
                             <span data-feather="plus-circle"></span>Aanmaken
@@ -86,35 +86,52 @@
                             <span data-feather="dollar-sign"></span>Betaling verwerken
                         </a>
                     </li>
-               </ul>
+                </ul>
 
                 <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
-                    <span>Overig</span>
+                   <span>E-Mail</span>
                 </h6>
 
                 <ul class="nav flex-column">
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'todolist' %}">
-                            <span data-feather="calendar"></span>Todo lijst
+                        <a class="nav-link" href="{% url 'email_send' %}">
+                            <span data-feather="mail"></span>Versturen
                         </a>
                     </li>
-
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'export' %}">
-                            <span data-feather="file-text"></span>Excel Export</a>
+                        <a class="nav-link" href="{% url 'email_log' %}">
+                            <span data-feather="list"></span>Logboek
+                        </a>
                     </li>
-
-                    {% if request.user.is_superuser %}
-                    <li>
-                        <a class="nav-link" href="/admin/">
-                            <span data-feather="users"></span>Gebruikers</a>
-                    </li>
-                    {% endif %}
                 </ul>
 
-                <ul class="nav flex-column mt-4 mb-1">
+                <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+                   <span>Overig</span>
+                </h6>
+
+                <ul class="nav flex-column">
+                   <li class="nav-item">
+                       <a class="nav-link" href="{% url 'todolist' %}">
+                           <span data-feather="calendar"></span>Todo lijst
+                       </a>
+                   </li>
+
+                   <li class="nav-item">
+                       <a class="nav-link" href="{% url 'export' %}">
+                           <span data-feather="file-text"></span>Excel Export</a>
+                   </li>
+
+                   {% if request.user.is_superuser %}
+                   <li>
+                       <a class="nav-link" href="/admin/">
+                           <span data-feather="users"></span>Gebruikers</a>
+                   </li>
+                   {% endif %}
+                 </ul>
+
+                 <ul class="nav flex-column mt-4 mb-1">
                     <li><a class="nav-link" href="{% url 'logoff' %}"><span data-feather="log-out"></span>Uitloggen</a></li>
-                </ul>
+                 </ul>
             </div>
         </nav>
 

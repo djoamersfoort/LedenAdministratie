@@ -40,6 +40,7 @@ urlpatterns = [
     path('invoice/pay_part/<int:pk>/<int:member_id>', views.InvoicePayPartView.as_view(), name='invoice_pay_part'),
     path('invoice/send/', views.InvoiceSendView.as_view(), name='invoice_send'),
     path('email/send/', views.EmailSendView.as_view(), name='email_send'),
+    path('email/log/', views.EmailLogView.as_view(), name='email_log'),
     path('api/v1/smoelenboek/', api.ApiV1Smoelenboek.as_view()),
     path('api/v1/smoelenboek/<int:pk>/', api.ApiV1SmoelenboekUser.as_view()),
     path('api/v1/smoelenboek/<str:day>/', api.ApiV1Smoelenboek.as_view()),
