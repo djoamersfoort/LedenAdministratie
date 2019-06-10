@@ -79,7 +79,8 @@ class EmailSendForm(forms.Form):
     VALID_RECIPIENTS = (
         ('members','Leden'),
         ('members_parents', 'Leden + Ouders'),
-        ('begeleiders', 'Begeleiders')
+        ('begeleiders', 'Begeleiders'),
+        ('self', 'Mezelf')
     )
     recipients = forms.MultipleChoiceField(choices=VALID_RECIPIENTS, widget=forms.CheckboxSelectMultiple)
     subject = forms.CharField(max_length=255)

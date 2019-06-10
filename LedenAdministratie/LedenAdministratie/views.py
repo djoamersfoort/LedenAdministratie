@@ -376,43 +376,53 @@ class EmailSendView(PermissionRequiredMixin, FormView):
     required_permission = 'LedenAdministratie.add_member'
     extra_context = {'types': MemberType.objects.all()}
 
-    def form_valid(self, form):
+    def send_email(self, form, recipients, member=None):
+        if len(recipients) == 0:
+            return None
 
-        log = []
+        message = EmailMessage()
+        message.from_email = settings.EMAIL_SENDER
+        message.to = recipients
+        message.subject = form.cleaned_data['subject']
+        message.body = form.cleaned_data['body']
+        message.content_subtype = 'html'
+
+        log = Email()
+        log.member = member
+        log.sent = timezone.now()
+        log.subject = message.subject
+        log.recipients = ','.join(message.recipients())
+        log.sent_by = self.request.user.first_name
+        try:
+            count = message.send(fail_silently=False)
+            if count == 1:
+                log.status = 'OK'
+            else:
+                log.status = 'Fout bij versturen!'
+        except Exception as e:
+            log.status = "Fout bij versturen: {0}".format(str(e))
+        log.save()
+
+        return message
+
+    def form_valid(self, form):
+        if 'self' in form.cleaned_data['recipients']:
+            self.send_email(form, [self.request.user.email])
+
         recipients = Member.objects.filter(Q(afmeld_datum__gt=date.today()) | Q(afmeld_datum=None))
         for recipient in recipients:
-            message = EmailMessage()
-            message.from_email = settings.EMAIL_SENDER
-            message.to = []
+            to_list = []
             if recipient.is_begeleider():
                 if 'begeleiders' in form.cleaned_data['recipients']:
-                    message.to.append(recipient.email_address)
+                    to_list.append(recipient.email_address)
             else:
                 if 'members_parents' in form.cleaned_data['recipients']:
                     for address in recipient.email_ouders.split(','):
-                        message.to.append(address)
+                        to_list.append(address)
                 if 'members' in form.cleaned_data['recipients']:
-                    message.to.append(recipient.email_address)
+                    to_list.append(recipient.email_address)
 
-            message.subject = form.cleaned_data['subject']
-            message.body = form.cleaned_data['body']
-            message.content_subtype = 'html'
-
-            log = Email()
-            log.member = recipient
-            log.sent = timezone.now()
-            log.subject = message.subject
-            log.recipients = ','.join(message.recipients())
-            log.sent_by = self.request.user.first_name
-            try:
-                count = message.send(fail_silently=False)
-                if count == 1:
-                    log.status = 'OK'
-                else:
-                    log.status = 'Fout bij versturen!'
-            except Exception as e:
-                log.status = "Fout bij versturen: {0}".format(str(e))
-            log.save()
+            self.send_email(form, to_list, recipient)
 
         return HttpResponseRedirect(reverse_lazy('email_log'))
 

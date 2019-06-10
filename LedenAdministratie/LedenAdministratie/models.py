@@ -139,7 +139,7 @@ class APIToken(models.Model):
 
 class Email(models.Model):
     sent = models.DateTimeField(blank=True, null=True)
-    member = models.ForeignKey(Member, on_delete=models.CASCADE, related_name='emails')
+    member = models.ForeignKey(Member, on_delete=models.CASCADE, related_name='emails', null=True)
     recipients = models.CharField(max_length=4096)
     subject = models.CharField(max_length=255)
     status = models.CharField(max_length=4096)

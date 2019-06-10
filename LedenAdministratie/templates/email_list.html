@@ -25,7 +25,11 @@
                 <tr>
                     <td>{{ email.sent }}</td>
                     <td>{{ email.subject|truncatechars:100 }}</td>
-                    <td><a href="{% url 'lid_edit' email.member.pk %}" class="text-dark">{{ email.member }}</a></td>
+                    {% if email.member %}
+                        <td><a href="{% url 'lid_edit' email.member.pk %}" class="text-dark">{{ email.member }}</a></td>
+                    {% else %}
+                        <td>{{ email.sent_by|capfirst }}</td>
+                    {% endif %}
                     <td>{{ email.sent_by|capfirst }}</td>
                     <td>{{ email.recipients }}</td>
                     <td>{{ email.status }}</td>

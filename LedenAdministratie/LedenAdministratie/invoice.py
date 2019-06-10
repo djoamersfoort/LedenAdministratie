@@ -158,7 +158,7 @@ class InvoiceTool:
         if invoice.member.email_ouders != '':
             recipients = invoice.member.email_ouders.split(',')
         message = EmailMessage()
-        message.from_email = settings.EMAIL_SENDER
+        message.from_email = settings.EMAIL_SENDER_INVOICE
         message.to = recipients
         message.bcc = settings.EMAIL_BCC
         message.subject = subject

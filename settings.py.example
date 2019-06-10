@@ -27,6 +27,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.sites',
     'widget_tweaks',
+    'tinymce',
     'LedenAdministratie'
 ]
 
@@ -74,6 +75,7 @@ EMAIL_PORT=587
 EMAIL_HOST_USER='mailuser'
 EMAIL_HOST_PASSWORD='mailpass'
 EMAIL_SENDER = '"Mail Sender" <sender@example.nl>'
+EMAIL_SENDER_INVOICE = '"Invoice Sender" <invoice@example.nl>'
 EMAIL_USE_TLS = True
 EMAIL_BCC = ['bcc@example.nl']
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
