@@ -63,7 +63,7 @@ class Member(models.Model):
 
     def is_begeleider(self):
         slugs = [membertype.slug for membertype in self.types.all()]
-        return 'begeleider' in slugs or 'aspirant_begeleider' in slugs
+        return 'begeleider' in slugs or 'aspirant' in slugs
 
     def __str__(self):
         return "%s %s" % (self.first_name, self.last_name)
