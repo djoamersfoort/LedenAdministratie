@@ -30,13 +30,31 @@ $(document).ready(function() {
 });
 
 
+function fixForSorting(text) {
+
+    number = Number(text);
+    if (isNaN(number)) {
+        var re = /(\d\d)-(\d\d)-(\d\d\d\d)/;
+        match = text.match(text);
+        if (match) {
+            text = text.replace(re, "$3-$2-$1");
+        }
+        return text;
+    } else {
+        return number;
+    }
+}
+
 function tableSort(column) {
     column.target.order = !column.target.order;
-    var rows = $('table:first > tbody').children('tr').get();
+    let rows = $('table:first > tbody').children('tr').get();
     rows.sort(function(a, b) {
 
         text1 = a.children[column.target.cellIndex].innerText.toLowerCase();
         text2 = b.children[column.target.cellIndex].innerText.toLowerCase();
+
+        text1 = fixForSorting(text1);
+        text2 = fixForSorting(text2);
 
         if (column.target.order) {
             return text1 > text2;
