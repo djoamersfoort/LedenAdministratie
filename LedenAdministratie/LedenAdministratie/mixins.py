@@ -1,5 +1,6 @@
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.conf import settings
+from django.utils import timezone
 from .models import APIToken
 import requests
 
@@ -29,11 +30,25 @@ class ApiPermissionRequired(UserPassesTestMixin):
         token = token.split(' ')
         token = token[1]
 
-        # Check the token against IDP
-        headers = {'Authorization': 'Bearer {0}'.format(token)}
-        response = requests.get(settings.IDP_API_URL, headers=headers)
-        if response.ok:
+        # Delete all expired session tokens
+        APIToken.objects.delete(expires_lt=timezone.now(), token_type='session')
+
+        # Check if token is in the cache
+        try:
+            APIToken.objects.get(token_type='session', token=token)
             return True
+        except APIToken.DoesNotExist:
+            # Cached token not found, check the token against IDP
+            headers = {'Authorization': 'Bearer {0}'.format(token)}
+            response = requests.get(settings.IDP_API_URL, headers=headers)
+            if response.ok:
+                # Cache the token for 24 hours
+                cached_token = APIToken()
+                cached_token.token = token
+                cached_token.expires = timezone.now() + timezone.timedelta(hours=24)
+                cached_token.token_type = 'session'
+                cached_token.save()
+                return True
 
         return False
 
