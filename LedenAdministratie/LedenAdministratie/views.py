@@ -416,10 +416,9 @@ class EmailSendView(PermissionRequiredMixin, FormView):
                 if 'begeleiders' in form.cleaned_data['recipients']:
                     to_list.append(recipient.email_address)
             else:
-                if 'members_parents' in form.cleaned_data['recipients']:
+                if 'parents' in form.cleaned_data['recipients']:
                     for address in recipient.email_ouders.split(','):
                         to_list.append(address)
-                    to_list.append(recipient.email_address)
                 if 'members' in form.cleaned_data['recipients']:
                     to_list.append(recipient.email_address)
 

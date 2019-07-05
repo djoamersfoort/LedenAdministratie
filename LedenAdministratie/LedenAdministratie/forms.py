@@ -78,7 +78,7 @@ class InvoiceSelectionForm(forms.Form):
 class EmailSendForm(forms.Form):
     VALID_RECIPIENTS = (
         ('members','Leden'),
-        ('members_parents', 'Leden + Ouders'),
+        ('parents', 'Ouders'),
         ('begeleiders', 'Begeleiders'),
         ('self', 'Mezelf')
     )
