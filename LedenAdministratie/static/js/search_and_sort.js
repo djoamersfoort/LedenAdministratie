@@ -32,6 +32,7 @@ $(document).ready(function() {
 
 function fixForSorting(text) {
 
+    text = text.replace(',', '.');
     number = Number(text);
     if (isNaN(number)) {
         var re = /(\d\d)-(\d\d)-(\d\d\d\d)/;
