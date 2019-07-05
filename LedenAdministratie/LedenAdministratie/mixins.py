@@ -31,7 +31,7 @@ class ApiPermissionRequired(UserPassesTestMixin):
         token = token[1]
 
         # Delete all expired session tokens
-        APIToken.objects.delete(expires_lt=timezone.now(), token_type='session')
+        APIToken.objects.filter(expires__lt=timezone.now(), token_type='session').delete()
 
         # Check if token is in the cache
         try:

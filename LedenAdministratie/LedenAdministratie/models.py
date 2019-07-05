@@ -131,7 +131,7 @@ class Invoice(models.Model):
 
 class APIToken(models.Model):
     token_type = models.CharField(max_length=12)
-    token = models.CharField(max_length=32)
+    token = models.CharField(max_length=64)
     expires = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
