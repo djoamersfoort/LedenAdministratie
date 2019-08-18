@@ -3,7 +3,7 @@ FROM python:3.7-alpine
 # Set the file maintainer (your name - the file's author)
 MAINTAINER Ronald Moesbergen
 
-COPY LedenAdministratie/requirements.txt /srv/LedenAdministratie/requirements.txt
+COPY requirements.txt /srv/LedenAdministratie/requirements.txt
 
 RUN apk update && \
     apk add nginx mariadb-dev zlib-dev gcc musl-dev jpeg-dev freetype-dev libffi-dev cairo-dev pango-dev ttf-dejavu && \

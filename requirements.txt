@@ -7,3 +7,4 @@ Weasyprint
 requests-oauthlib
 Pillow
 django-tinymce
+django-dkim
