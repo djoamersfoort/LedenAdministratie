@@ -382,6 +382,8 @@ class EmailSendView(PermissionRequiredMixin, FormView):
 
         message = EmailMessage()
         message.from_email = settings.EMAIL_SENDER
+        if form.cleaned_data['reply_to'] == 'personal':
+            message.reply_to = [self.request.user.email]
         message.to = recipients
         message.subject = form.cleaned_data['subject']
         message.body = form.cleaned_data['body']

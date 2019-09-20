@@ -29,6 +29,9 @@
                     </div>
 
                     <div class="form-row col-10 my-3">
+                        <label for="id_reply_to">Antwoorden sturen naar</label>
+                        {{ form.reply_to|add_class:'form-control' }}
+
                         <label for="id_subject">Onderwerp</label>
                         {{ form.subject|add_class:'form-control' }}
 

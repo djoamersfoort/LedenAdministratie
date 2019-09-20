@@ -75,6 +75,7 @@ class InvoiceSelectionForm(forms.Form):
     invoices = forms.ModelMultipleChoiceField(queryset=Invoice.objects.all(),
                                               widget=forms.CheckboxSelectMultiple)
 
+
 class EmailSendForm(forms.Form):
     VALID_RECIPIENTS = (
         ('members','Leden'),
@@ -82,6 +83,11 @@ class EmailSendForm(forms.Form):
         ('begeleiders', 'Begeleiders'),
         ('self', 'Mezelf')
     )
+    REPLY_TO = (
+        ('info', settings.EMAIL_SENDER),
+        ('personal', 'Persoonlijke Mail')
+    )
+    reply_to = forms.ChoiceField(choices=REPLY_TO)
     recipients = forms.MultipleChoiceField(choices=VALID_RECIPIENTS, widget=forms.CheckboxSelectMultiple)
     subject = forms.CharField(max_length=255)
     body = forms.CharField(widget=TinyMCE(mce_attrs={'cols': 80, 'height': 500}))
