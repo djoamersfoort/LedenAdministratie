@@ -141,8 +141,9 @@ class ApiV1IDPVerify(APITokenMixin, View):
             if field == 'email':
                 result = result.filter(Q(email_address=value) | Q(email_ouders=value))
             elif field == 'zip':
-                value = request.POST.get('zip', 'xxxxxx').lower().replace(' ', '')
-                result = result.filter(postcode=value)
+                zip = request.POST.get('zip', 'xxxxxx').lower()
+                zip_stripped = zip.replace(' ', '')
+                result = result.filter(Q(postcode=zip) | Q(postcode=zip_stripped))
 
         try:
             member = result.get()
