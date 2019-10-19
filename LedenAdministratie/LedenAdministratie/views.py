@@ -87,7 +87,7 @@ class MemberListView(PermissionRequiredMixin, ListView):
         filter_slug = self.kwargs.get('filter_slug', '')
 
         if filter_slug == 'inactive':
-            queryset = Member.objects.filter(afmeld_datum__lt=date.today())
+            queryset = Member.objects.filter(afmeld_datum__lte=date.today())
         elif filter_slug != '':
             queryset = queryset.filter(types__slug=filter_slug)
 
