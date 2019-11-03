@@ -77,7 +77,7 @@ class InvoiceTool:
     @staticmethod
     def get_extra_text_for_invoice_type(invoice_type):
         extra_text = ''
-        if invoice_type in ['standaard', 'senior'] and date.today() < date(date.today().year, 5, 1):
+        if invoice_type in ['standaard', '2dagen', 'senior'] and date.today() < date(date.today().year, 5, 1):
             extra_text = "Het is mogelijk om in 2 termijnen te betalen\n" \
                          "De eerste helft zal binnen 14 dagen overgemaakt moeten worden.\n" \
                          "Het tweede deel zal uiterlijk 31 mei overgemaakt moeten worden."
@@ -88,23 +88,23 @@ class InvoiceTool:
         defaults = [{
             'description': 'Contributie {0} DJO Amersfoort'.format(date.today().year),
             'count': 1,
-            'amount': 165.00}]
+            'amount': settings.INVOICE_AMOUNT_YEAR}]
 
         if invoice_type == 'senior':
             defaults = [{
                 'description': 'Contributie senior lid {0} DJO Amersfoort'.format(date.today().year),
                 'count': 1,
-                'amount': 200.00}]
+                'amount': settings.INVOICE_AMOUNT_YEAR_SENIOR}]
         elif invoice_type == 'maart':
             defaults = [{
                     'description': 'Contributie {0} DJO Amersfoort'.format(date.today().year),
                     'count': 1,
-                    'amount': 165.00
+                    'amount': settings.INVOICE_AMOUNT_YEAR
                 },
                 {
                     'description': 'Correctie vanwege ingangsdatum - -{0}'.format(date.today().year),
                     'count': -1,
-                    'amount': 13.75
+                    'amount': settings.INVOICE_AMOUNT_YEAR / 12
                 },
             ]
         elif invoice_type == 'strippenkaart':
@@ -112,7 +112,7 @@ class InvoiceTool:
             {
                 'description': 'Strippenkaart {0} DJO Amersfoort'.format(date.today().year),
                 'count': 10,
-                'amount': 5.50
+                'amount': settings.INVOICE_AMOUNT_DAY
             }
         ]
         elif invoice_type == 'sponsor':
@@ -120,8 +120,21 @@ class InvoiceTool:
                 {
                     'description': 'Sponsor {0} DJO Amersfoort'.format(date.today().year),
                     'count': 1,
-                    'amount': 150.00
+                    'amount': settings.INVOICE_AMOUNT_SPONSOR
                 }
+            ]
+        elif invoice_type == '2dagen':
+            defaults = [
+                {
+                    'description': 'Contributie {0} DJO Amersfoort'.format(date.today().year),
+                    'count': 1,
+                    'amount': settings.INVOICE_AMOUNT_YEAR
+                },
+                {
+                    'description': 'Toeslag voor deelname op beide dagen'.format(date.today().year),
+                    'count': 1,
+                    'amount': settings.INVOICE_AMOUNT_YEAR / 2
+                },
             ]
         elif invoice_type == 'custom':
             defaults = []
@@ -139,11 +152,15 @@ class InvoiceTool:
             members = Member.objects.filter(types__slug='member', aanmeld_datum__gt=date(date.today().year, 2, 28))
         elif invoice_type == 'strippenkaart':
             members = Member.objects.filter(types__slug='strippenkaart')
+        elif invoice_type == '2dagen':
+            members = Member.objects.filter(types__slug='member', dag_vrijdag=True, dag_zaterdag=True)
         elif invoice_type == 'custom':
             members = Member.objects.all()
 
         # Only return active members
         members = members.filter(Q(afmeld_datum__gt=date.today()) | Q(afmeld_datum=None))
+        if invoice_type != '2dagen':
+            members = members.exclude(dag_vrijdag=True, dag_zaterdag=True)
 
         return members
 
