@@ -135,7 +135,7 @@ class APIToken(models.Model):
     expires = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
-        return "{0} - {1}".format(self.token_type,self.token)
+        return "{0} - {1}".format(self.token_type, self.token)
 
 
 class Email(models.Model):

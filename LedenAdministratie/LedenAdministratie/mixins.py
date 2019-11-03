@@ -27,11 +27,11 @@ class ApiPermissionRequired(UserPassesTestMixin):
         if not token.startswith('IDP '):
             return False
 
-        token = token.split(' ')
+        token = token.strip().split(' ')
         token = token[1]
 
         # Delete all expired session tokens
-        APIToken.objects.filter(expires__gt=timezone.now(), token_type='session').delete()
+        APIToken.objects.filter(expires__lt=timezone.now(), token_type='session').delete()
 
         # Check if token is in the cache
         try:
@@ -52,8 +52,8 @@ class ApiPermissionRequired(UserPassesTestMixin):
 
         return False
 
-class APITokenMixin:
 
+class APITokenMixin:
     token_type = 'idp'
 
     def check_api_token(self):
