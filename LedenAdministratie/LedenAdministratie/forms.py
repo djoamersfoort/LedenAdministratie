@@ -86,6 +86,7 @@ class EmailSendForm(forms.Form):
     )
     REPLY_TO = (
         ('info', settings.EMAIL_SENDER),
+        ('lanparty', settings.EMAIL_LANPARTY),
         ('personal', 'Persoonlijke Mail')
     )
     reply_to = forms.ChoiceField(choices=REPLY_TO)

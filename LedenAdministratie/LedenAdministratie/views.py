@@ -384,6 +384,8 @@ class EmailSendView(PermissionRequiredMixin, FormView):
         message.from_email = settings.EMAIL_SENDER
         if form.cleaned_data['reply_to'] == 'personal':
             message.reply_to = [self.request.user.email]
+        elif form.cleaned_data['reply_to'] == 'lanparty':
+            message.reply_to = [settings.EMAIL_LANPARTY]
         message.to = recipients
         message.subject = form.cleaned_data['subject']
         message.body = form.cleaned_data['body']
