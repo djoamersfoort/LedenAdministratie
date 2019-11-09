@@ -1,4 +1,4 @@
-FROM python:3.7-alpine3.9
+FROM python:3.7-alpine
 
 # Set the file maintainer (your name - the file's author)
 MAINTAINER Ronald Moesbergen

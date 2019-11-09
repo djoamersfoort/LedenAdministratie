@@ -2,7 +2,7 @@ Django>2
 django-widget-tweaks==1.4.3
 mysqlclient
 python-dateutil
-gunicorn
+gunicorn==19.9.0
 Weasyprint
 requests-oauthlib
 Pillow
