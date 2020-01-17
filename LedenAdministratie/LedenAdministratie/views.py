@@ -391,6 +391,13 @@ class EmailSendView(PermissionRequiredMixin, FormView):
         message.body = form.cleaned_data['body']
         message.content_subtype = 'html'
 
+        if 'attachment' in form.files:
+            attachment = form.files['attachment']
+            content = b''
+            for chunk in attachment.chunks():
+                content += chunk
+            message.attach(attachment.name, content)
+
         log = Email()
         log.member = member
         log.sent = timezone.now()

@@ -93,3 +93,4 @@ class EmailSendForm(forms.Form):
     recipients = forms.MultipleChoiceField(choices=VALID_RECIPIENTS, widget=forms.CheckboxSelectMultiple)
     subject = forms.CharField(max_length=255)
     body = forms.CharField(widget=TinyMCE(mce_attrs={'cols': 80, 'height': 500}))
+    attachment = forms.FileField(required=False)

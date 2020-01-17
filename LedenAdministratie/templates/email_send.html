@@ -7,7 +7,7 @@
 {% include 'alerts.html' %}
 
 
-<form method="post" id="mainform">
+<form method="post" id="mainform" enctype="multipart/form-data">
     {% csrf_token %}
 
     <div class="col-12">
@@ -37,6 +37,9 @@
 
                         <label for="id_subject">E-mail</label>
                         {{ form.body|add_class:'form-control' }}
+
+                        <label for="id_subject">Attachment</label>
+                        {{ form.attachment|add_class:'form-control' }}
                     </div>
                 </div>
 
