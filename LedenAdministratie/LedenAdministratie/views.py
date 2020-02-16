@@ -426,6 +426,8 @@ class EmailSendView(PermissionRequiredMixin, FormView):
             if recipient.is_begeleider():
                 if 'begeleiders' in form.cleaned_data['recipients']:
                     to_list.append(recipient.email_address)
+                elif 'ondersteuning' in form.cleaned_data['recipients']:
+                    to_list.append(recipient.email_address)
             else:
                 if 'parents' in form.cleaned_data['recipients']:
                     for address in recipient.email_ouders.split(','):
@@ -439,6 +441,7 @@ class EmailSendView(PermissionRequiredMixin, FormView):
 
 
 class EmailLogView(PermissionRequiredMixin, ListView):
+    paginate_by = 100
     model = Email
     queryset = Email.objects.all().order_by('-sent')
     template_name = 'email_list.html'

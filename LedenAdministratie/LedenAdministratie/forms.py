@@ -82,6 +82,7 @@ class EmailSendForm(forms.Form):
         ('members','Leden'),
         ('parents', 'Ouders'),
         ('begeleiders', 'Begeleiders'),
+        ('ondersteuning', 'Ondersteuning'),
         ('self', 'Mezelf')
     )
     REPLY_TO = (
