@@ -8,3 +8,4 @@ Pillow
 django-tinymce
 django-dkim
 gunicorn
+requests

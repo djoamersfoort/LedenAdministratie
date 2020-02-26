@@ -6,6 +6,7 @@ from datetime import date, timedelta
 from weasyprint import HTML, CSS, default_url_fetcher
 from weasyprint.fonts import FontConfiguration
 from .models import Member
+from .utils import Utils
 
 import os
 
@@ -165,7 +166,7 @@ class InvoiceTool:
         return members
 
     @staticmethod
-    def create_email(invoice, template='send_invoice_email.html', reminder=False):
+    def create_email(invoice, template='emails/send_invoice_email.html', reminder=False):
         member_types = [member_type.slug for member_type in invoice.member.types.all()]
         subject = 'Factuur contributie {0} De Jonge Onderzoekers'.format(date.today().year)
         if reminder:
@@ -187,7 +188,7 @@ class InvoiceTool:
     @staticmethod
     def send_by_email(invoice, reminder=False):
         if reminder:
-            message = InvoiceTool.create_email(invoice, 'send_invoice_reminder.html', reminder=True)
+            message = InvoiceTool.create_email(invoice, 'emails/send_invoice_reminder.html', reminder=True)
         else:
             message = InvoiceTool.create_email(invoice)
         return message.send(fail_silently=False)

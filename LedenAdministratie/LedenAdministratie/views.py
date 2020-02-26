@@ -10,14 +10,17 @@ from django.conf import settings
 from django.utils import timezone
 from django.core.mail import EmailMessage
 from requests_oauthlib import OAuth2Session
+from django.template.loader import render_to_string
 import csv
 import uuid
+import requests
 from datetime import date
 
 from .models import Member, MemberType, Note, Invoice, Email
 from . import forms
 from .invoice import InvoiceTool
 from .mixins import PermissionRequiredMixin
+from .utils import Utils
 
 
 class LoginView(View):
@@ -123,6 +126,28 @@ class MemberCreateView(PermissionRequiredMixin, CreateView):
     form_class = forms.MemberForm
     extra_context = {'types': MemberType.objects.all()}
     required_permission = 'LedenAdministratie.add_member'
+
+    def form_valid(self, form):
+        # Save form fist
+        redirect = super().form_valid(form)
+
+        # Send 'welcome' e-mail to new member + parents
+        recipients = form.cleaned_data['email_ouders'].split(',')
+        recipients.append(form.cleaned_data['email_address'])
+
+        message = EmailMessage()
+        message.to = recipients
+        message.subject = "Welkom bij DJO Amersfoort!"
+        message.from_email = settings.EMAIL_SENDER
+        message.body = render_to_string('emails/welcome_email.html', context={'member': form.instance})
+        message.content_subtype = 'html'
+
+        response = requests.get(settings.WELCOME_PDF_LOCATION)
+        if response.ok:
+            message.attach('Welkom bij DJO Amersfoort.pdf', response.content)
+            Utils.send_email(message, self.request.user.first_name, form.instance)
+
+        return redirect
 
 
 class MemberDeleteView(PermissionRequiredMixin, DeleteView):
@@ -398,22 +423,7 @@ class EmailSendView(PermissionRequiredMixin, FormView):
                 content += chunk
             message.attach(attachment.name, content)
 
-        log = Email()
-        log.member = member
-        log.sent = timezone.now()
-        log.subject = message.subject
-        log.recipients = ','.join(message.recipients())
-        log.sent_by = self.request.user.first_name
-        try:
-            count = message.send(fail_silently=False)
-            if count == 1:
-                log.status = 'OK'
-            else:
-                log.status = 'Fout bij versturen!'
-        except Exception as e:
-            log.status = "Fout bij versturen: {0}".format(str(e))
-        log.save()
-
+        Utils.send_email(message, self.request.user.first_name, member)
         return message
 
     def form_valid(self, form):
