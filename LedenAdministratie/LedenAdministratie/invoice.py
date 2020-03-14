@@ -135,7 +135,7 @@ class InvoiceTool:
                 {
                     'description': 'Toeslag voor deelname op beide dagen'.format(date.today().year),
                     'count': 1,
-                    'amount': Utils.get_setting('invoice_amount_year') / 2
+                    'amount': float(Utils.get_setting('invoice_amount_year')) / 2
                 },
             ]
         elif invoice_type == 'custom':
