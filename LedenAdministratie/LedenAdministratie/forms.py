@@ -108,7 +108,7 @@ class SettingsForm(forms.Form):
     invoice_amount_day = forms.DecimalField(max_digits=7, decimal_places=2, required=True, initial=6.00,
                                             label='Factuurbedrag per dag (strippenkaart)')
     invoice_amount_month = forms.DecimalField(max_digits=7, decimal_places=2, required=True, initial=14.50,
-                                              label='Factuurbedrag per dag (strippenkaart)')
+                                              label='Kortingsbedrag per maand na 1 maart')
     invoice_amount_sponsor = forms.DecimalField(max_digits=7, decimal_places=2, required=True, initial=150.00,
                                                 label='Factuurbedrag voor 1 jaar, Sponsor')
     welcome_pdf_location = forms.CharField(max_length=1024, required=True, label='Locatie van DJO Welkom PDF',
