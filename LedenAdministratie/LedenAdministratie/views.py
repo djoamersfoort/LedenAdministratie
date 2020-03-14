@@ -16,7 +16,7 @@ import uuid
 import requests
 from datetime import date
 
-from .models import Member, MemberType, Note, Invoice, Email
+from .models import *
 from . import forms
 from .invoice import InvoiceTool
 from .mixins import PermissionRequiredMixin
@@ -142,7 +142,7 @@ class MemberCreateView(PermissionRequiredMixin, CreateView):
         message.body = render_to_string('emails/welcome_email.html', context={'member': form.instance})
         message.content_subtype = 'html'
 
-        response = requests.get(settings.WELCOME_PDF_LOCATION)
+        response = requests.get(Utils.get_setting('welcome_pdf_location'))
         if response.ok:
             message.attach('Welkom bij DJO Amersfoort.pdf', response.content)
             Utils.send_email(message, self.request.user.first_name, form.instance)
@@ -456,3 +456,27 @@ class EmailLogView(PermissionRequiredMixin, ListView):
     queryset = Email.objects.all().order_by('-sent')
     template_name = 'email_list.html'
     extra_context = {'types': MemberType.objects.all()}
+
+
+class SettingsView(PermissionRequiredMixin, FormView):
+    form_class = forms.SettingsForm
+    template_name = 'settings.html'
+    extra_context = {'settings': Setting.objects.all(), 'types': MemberType.objects.all()}
+    success_url = reverse_lazy('members')
+
+    def get_initial(self):
+        initial = super().get_initial()
+        for setting in Setting.objects.all():
+            initial[setting.name] = setting.value
+        return initial
+
+    def form_valid(self, form):
+        for field in form.fields:
+            try:
+                setting = Setting.objects.get(name=field)
+            except Setting.DoesNotExist:
+                setting = Setting()
+                setting.name = field
+            setting.value = form.cleaned_data[field]
+            setting.save()
+        return super().form_valid(form)

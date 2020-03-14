@@ -133,8 +133,6 @@ STATICFILES_DIRS = (
     os.path.join(BASE_DIR, "static"),
 )
 
-WELCOME_PDF_LOCATION = 'https://www.djoamersfoort.nl/welkom.pdf'
-
 # Session and cookie settings
 SESSION_COOKIE_SECURE = True
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True

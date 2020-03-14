@@ -38,7 +38,7 @@
                     <td>{{ invoice.username|capfirst }}</td>
                     <td>{{ invoice.sent|default:"Niet verstuurd" }}</td>
                     <td>{{ invoice.amount }}</td>
-                    <td>{{ invoice.amount_unpayed }}</td>
+                    <td>{{ invoice.amount_unpaid }}</td>
                     <td><a class="btn-sm btn-success" href="#" data-toggle="modal" data-target="#showInvoicePayFullModal{{ invoice.pk }}"><span data-feather="check"></span>
                     </a>
                         <!-- Invoice Pay Full confirm Modal -->

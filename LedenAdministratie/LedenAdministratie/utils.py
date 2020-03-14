@@ -1,6 +1,6 @@
 from django.core.mail import EmailMessage
 from django.utils import timezone
-from .models import Email
+from .models import Email, Setting
 
 
 class Utils:
@@ -25,3 +25,11 @@ class Utils:
 
         log.save_base()
         return count == 1
+
+    @staticmethod
+    def get_setting(name):
+        try:
+            setting = Setting.objects.get(name=name)
+        except Setting.DoesNotExist:
+            return ""
+        return setting.value

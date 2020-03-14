@@ -5,7 +5,9 @@ from django.conf import settings
 from datetime import date, timedelta
 from weasyprint import HTML, CSS, default_url_fetcher
 from weasyprint.fonts import FontConfiguration
+from decimal import Decimal
 from .models import Member
+from .utils import Utils
 
 import os
 
@@ -88,23 +90,23 @@ class InvoiceTool:
         defaults = [{
             'description': 'Contributie {0} DJO Amersfoort'.format(date.today().year),
             'count': 1,
-            'amount': settings.INVOICE_AMOUNT_YEAR}]
+            'amount': Utils.get_setting('invoice_amount_year')}]
 
         if invoice_type == 'senior':
             defaults = [{
                 'description': 'Contributie senior lid {0} DJO Amersfoort'.format(date.today().year),
                 'count': 1,
-                'amount': settings.INVOICE_AMOUNT_YEAR_SENIOR}]
+                'amount': Utils.get_setting('invoice_amount_year_senior')}]
         elif invoice_type == 'maart':
             defaults = [{
                     'description': 'Contributie {0} DJO Amersfoort'.format(date.today().year),
                     'count': 1,
-                    'amount': settings.INVOICE_AMOUNT_YEAR
+                    'amount': Utils.get_setting('invoice_amount_year')
                 },
                 {
                     'description': 'Correctie vanwege ingangsdatum - -{0}'.format(date.today().year),
                     'count': -1,
-                    'amount': settings.INVOICE_AMOUNT_YEAR / 12
+                    'amount':  Utils.get_setting('invoice_amount_month')
                 },
             ]
         elif invoice_type == 'strippenkaart':
@@ -112,7 +114,7 @@ class InvoiceTool:
             {
                 'description': 'Strippenkaart {0} DJO Amersfoort'.format(date.today().year),
                 'count': 10,
-                'amount': settings.INVOICE_AMOUNT_DAY
+                'amount': Utils.get_setting('invoice_amount_day')
             }
         ]
         elif invoice_type == 'sponsor':
@@ -120,7 +122,7 @@ class InvoiceTool:
                 {
                     'description': 'Sponsor {0} DJO Amersfoort'.format(date.today().year),
                     'count': 1,
-                    'amount': settings.INVOICE_AMOUNT_SPONSOR
+                    'amount': Utils.get_setting('invoice_amount_sponsor')
                 }
             ]
         elif invoice_type == '2dagen':
@@ -128,12 +130,12 @@ class InvoiceTool:
                 {
                     'description': 'Contributie {0} DJO Amersfoort'.format(date.today().year),
                     'count': 1,
-                    'amount': settings.INVOICE_AMOUNT_YEAR
+                    'amount': Utils.get_setting('invoice_amount_year')
                 },
                 {
                     'description': 'Toeslag voor deelname op beide dagen'.format(date.today().year),
                     'count': 1,
-                    'amount': settings.INVOICE_AMOUNT_YEAR / 2
+                    'amount': Utils.get_setting('invoice_amount_year') / 2
                 },
             ]
         elif invoice_type == 'custom':

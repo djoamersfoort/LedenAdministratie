@@ -14,9 +14,11 @@ class LoginForm(forms.Form):
 class MemberForm(forms.ModelForm):
     foto = forms.FileField(required=False)
     gebdat = forms.DateField(widget=forms.DateInput(format='%d-%m-%Y'), input_formats=settings.DATETIME_INPUT_FORMATS)
-    aanmeld_datum = forms.DateField(widget=forms.DateInput(format='%d-%m-%Y'), input_formats=settings.DATETIME_INPUT_FORMATS,
+    aanmeld_datum = forms.DateField(widget=forms.DateInput(format='%d-%m-%Y'),
+                                    input_formats=settings.DATETIME_INPUT_FORMATS,
                                     initial=date.today())
-    afmeld_datum = forms.DateField(widget=forms.DateInput(format='%d-%m-%Y'), input_formats=settings.DATETIME_INPUT_FORMATS,
+    afmeld_datum = forms.DateField(widget=forms.DateInput(format='%d-%m-%Y'),
+                                   input_formats=settings.DATETIME_INPUT_FORMATS,
                                    required=False)
 
     class Meta:
@@ -35,7 +37,8 @@ class MemberForm(forms.ModelForm):
 
 
 class ExportForm(forms.Form):
-    filter_slug = forms.ModelChoiceField(label='Filter', required=False, empty_label='Alles', queryset=MemberType.objects.all())
+    filter_slug = forms.ModelChoiceField(label='Filter', required=False, empty_label='Alles',
+                                         queryset=MemberType.objects.all())
 
 
 class LidNoteForm(forms.ModelForm):
@@ -79,7 +82,7 @@ class InvoiceSelectionForm(forms.Form):
 
 class EmailSendForm(forms.Form):
     VALID_RECIPIENTS = (
-        ('members','Leden'),
+        ('members', 'Leden'),
         ('parents', 'Ouders'),
         ('begeleiders', 'Begeleiders'),
         ('ondersteuning', 'Ondersteuning'),
@@ -95,3 +98,18 @@ class EmailSendForm(forms.Form):
     subject = forms.CharField(max_length=255)
     body = forms.CharField(widget=TinyMCE(mce_attrs={'cols': 80, 'height': 500}))
     attachment = forms.FileField(required=False)
+
+
+class SettingsForm(forms.Form):
+    invoice_amount_year = forms.DecimalField(max_digits=7, decimal_places=2, required=True, initial=175.00,
+                                             label='Factuurbedrag voor 1 jaar')
+    invoice_amount_year_senior = forms.DecimalField(max_digits=7, decimal_places=2, required=True, initial=215.00,
+                                                    label='Factuurbedrag voor 1 jaar, Senior lid')
+    invoice_amount_day = forms.DecimalField(max_digits=7, decimal_places=2, required=True, initial=6.00,
+                                            label='Factuurbedrag per dag (strippenkaart)')
+    invoice_amount_month = forms.DecimalField(max_digits=7, decimal_places=2, required=True, initial=14.50,
+                                              label='Factuurbedrag per dag (strippenkaart)')
+    invoice_amount_sponsor = forms.DecimalField(max_digits=7, decimal_places=2, required=True, initial=150.00,
+                                                label='Factuurbedrag voor 1 jaar, Sponsor')
+    welcome_pdf_location = forms.CharField(max_length=1024, required=True, label='Locatie van DJO Welkom PDF',
+                                           initial='https://')

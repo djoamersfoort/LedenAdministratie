@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+
+{% block content %}
+
+{% include 'alerts.html' %}
+
+<form method="post">
+    {% csrf_token %}
+
+    <div class="col-lg-10 col-md-12 col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="card-header text-white bg-secondary">Factuur instellingen</div>
+                <div class="form-row">
+                    <div class="col-lg-5 col-md-6">
+
+                        <label for="id_invoice_amount_year">{{form.invoice_amount_year.label}}</label>
+                        {{ form.invoice_amount_year|add_class:'form-control' }}
+
+                        <label for="id_invoice_amount_year_senior">{{form.invoice_amount_year_senior.label}}</label>
+                        {{ form.invoice_amount_year_senior|add_class:'form-control' }}
+
+                        <label for="id_invoice_amount_day">{{form.invoice_amount_day.label}}</label>
+                        {{ form.invoice_amount_day|add_class:'form-control' }}
+
+                        <label for="id_invoice_amount_month">{{form.invoice_amount_month.label}}</label>
+                        {{ form.invoice_amount_month|add_class:'form-control' }}
+
+                        <label for="id_invoice_amount_sponsor">{{form.invoice_amount_sponsor.label}}</label>
+                        {{ form.invoice_amount_sponsor|add_class:'form-control' }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-10 col-md-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="card-header text-white bg-secondary">Overige instellingen</div>
+
+                <div class="form-row">
+                    <div class="col-10">
+                        <label for="id_welcome_pdf_location">{{form.welcome_pdf_location.label}}</label>
+                        {{ form.welcome_pdf_location|add_class:'form-control' }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-success my-5">Opslaan</button>
+    <button onclick="javascript:history.go(-1)" type="button" class="btn btn-secondary my-5">Annuleren</button>
+
+</form>
+
+{% endblock %}

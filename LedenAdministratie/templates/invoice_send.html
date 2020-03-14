@@ -41,7 +41,7 @@
                       <td>{{ invoice.sent|default:"Niet verstuurd" }}</td>
                     {% endif %}
                     <td>{{ invoice.amount }}</td>
-                    <td>{{ invoice.amount_unpayed }}</td>
+                    <td>{{ invoice.amount_unpaid }}</td>
 
                     <td><a target="_blank" href="{% url 'invoice_display' invoice.id %}"><span
                             data-feather="eye"></span></a></td>

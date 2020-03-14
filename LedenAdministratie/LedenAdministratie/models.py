@@ -115,7 +115,7 @@ class Invoice(models.Model):
         return self.amount == self.amount_payed
 
     @property
-    def amount_unpayed(self):
+    def amount_unpaid(self):
         return self.amount - self.amount_payed
 
     member = models.ForeignKey(Member, on_delete=models.SET_NULL, related_name='invoices', null=True)
@@ -145,3 +145,11 @@ class Email(models.Model):
     subject = models.CharField(max_length=255)
     status = models.CharField(max_length=4096)
     sent_by = models.CharField(max_length=255, null=False, default='')
+
+
+class Setting(models.Model):
+    name = models.CharField(blank=False, null=False, max_length=50)
+    value = models.CharField(blank=True, null=True, max_length=1024)
+
+    def __str__(self):
+        return "{0} = {1}".format(self.name, self.value)
