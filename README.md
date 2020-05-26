@@ -1,3 +1,5 @@
+![Docker](https://github.com/djoamersfoort/LedenAdministratie/workflows/Docker/badge.svg)
+
 # DJO LedenAdministratie
 Dit is de source voor de DJO Ledenadminstratie. Geschreven in Python/Django. Features:
 
@@ -77,7 +79,8 @@ Je krijgt dan 1 json hash terug met de details van die user:
 ## Docker
 Van dit project wordt automatisch een docker container gebouwd. Deze is hier te vinden:
 
-https://cloud.docker.com/u/djoamersfoort/repository/docker/djoamersfoort/ledenadministratie
+https://github.com/djoamersfoort/LedenAdministratie/packages
 
 Om de image te downloaden kun je dit doen:
-docker pull djoamersfoort/ledenadministratie
+docker pull docker.pkg.github.com/djoamersfoort/ledenadministratie/ledenadministratie:latest
+Je moet dan wel eerst 'docker login' doen met je github username en een personal access token met packages:read scope.
