@@ -142,8 +142,9 @@ class ApiV1IDPVerify(APITokenMixin, View):
                 result = result.filter(Q(email_address=value) | Q(email_ouders=value))
             elif field == 'zip':
                 zipcode = request.POST.get('zip', 'xxxxxx').lower()
+                zip_spaced = zipcode[0:4] + ' ' + zipcode[-2:]
                 zip_stripped = zipcode.replace(' ', '')
-                result = result.filter(Q(postcode=zipcode) | Q(postcode=zip_stripped))
+                result = result.filter(Q(postcode=zip_spaced) | Q(postcode=zip_stripped))
 
         try:
             member = result.get()
