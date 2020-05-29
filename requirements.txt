@@ -5,7 +5,7 @@ python-dateutil
 Weasyprint
 requests-oauthlib
 Pillow
-django-tinymce
+django-tinymce==2.9.0
 django-dkim
 gunicorn
 requests
