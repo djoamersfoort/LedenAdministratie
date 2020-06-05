@@ -149,7 +149,7 @@ class ApiV1IDPVerify(APITokenMixin, View):
         try:
             member = result.get()
         except (Member.DoesNotExist, Member.MultipleObjectsReturned):
-            return JsonResponse(data={'ok': False, 'result': None})
+            return JsonResponse(data={'ok': True, 'result': None})
 
         return JsonResponse(data={'ok': True, 'result': 'u-{0}'.format(member.id)})
 
