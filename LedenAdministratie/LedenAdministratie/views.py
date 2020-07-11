@@ -413,7 +413,7 @@ class EmailSendView(PermissionRequiredMixin, FormView):
             message.reply_to = [settings.EMAIL_LANPARTY]
         message.to = recipients
         message.subject = form.cleaned_data['subject']
-        message.body = form.cleaned_data['body']
+        message.body = '<html>' + form.cleaned_data['body'] + '</html>'
         message.content_subtype = 'html'
 
         if 'attachment' in form.files:
