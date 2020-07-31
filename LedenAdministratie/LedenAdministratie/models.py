@@ -65,6 +65,10 @@ class Member(models.Model):
         slugs = [membertype.slug for membertype in self.types.all()]
         return 'begeleider' in slugs or 'aspirant' in slugs or 'ondersteuning' in slugs
 
+    def is_senior(self):
+        slugs = [membertype.slug for membertype in self.types.all()]
+        return 'senior' in slugs
+
     def __str__(self):
         return "%s %s" % (self.first_name, self.last_name)
 
