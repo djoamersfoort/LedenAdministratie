@@ -1,0 +1,90 @@
+    <h6 class="mt-2">Notities</h6>
+    <div class="table-responsive">
+        <table class="table table-hover table-sm">
+            <thead class="thead-light">
+                <tr>
+                    <th>Datum</th>
+                    <th>Gebruiker</th>
+                    <th>Notitie</th>
+                    <th>Afgerond</th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for note in object.notes.all %}
+                <tr>
+                    <td>{{ note.created }}</td>
+                    <td>{{ note.username|capfirst }}</td>
+                    <td>{{ note.text|truncatechars:20 }}</td>
+                    <td>
+                        {% if note.done %}
+                            <span data-feather="check"></span>
+                        {% else %}
+                            <span data-feather="x"></span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="{% url 'lid_editnote' note.id %}">
+                            <span data-feather="edit"></span>
+                        </a>
+                    </td>
+                    <td>
+                        <a href="#" data-toggle="modal" data-target="#showNoteDeleteModal{{ note.id }}">
+                            <span data-feather="trash-2"></span>
+                        </a>
+                        <!-- Note Delete confirm Modal -->
+                        <div class="modal fade" id="showNoteDeleteModal{{ note.id }}" tabindex="-1" role="dialog">
+                          <div class="modal-dialog modal-dialog-centered" role="document">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <h5 class="modal-title">Notitie verwijderen?</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                  <span aria-hidden="true">&times;</span>
+                                </button>
+                              </div>
+                              <div class="modal-body">
+                                <p>Weet u zeker dat u de notitie wilt verwijderen?</p>
+                              </div>
+                              <div class="modal-footer">
+                                  <a href="{% url 'lid_delnote' note.id %}" class="btn btn-primary">Verwijderen</a>
+                                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuleren</button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                    </td>
+                    <td>
+                        <a href="#" data-toggle="modal" data-target="#showNoteModal{{ note.id }}">
+                            <span data-feather="eye"></span>
+                        </a>
+                        <!-- Show Note Modal -->
+                        <div class="modal fade" id="showNoteModal{{ note.id }}" tabindex="-1" role="dialog">
+                          <div class="modal-dialog modal-dialog-centered" role="document">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <h5 class="modal-title">Notitie gemaakt door {{ note.username|capfirst }}</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                  <span aria-hidden="true">&times;</span>
+                                </button>
+                              </div>
+                              <div class="modal-body">
+                                <p>[{{ note.created }}] {{ note.text|linebreaks }}</p>
+                              </div>
+                              <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Sluiten</button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <a class="btn btn-primary btn-sm" role="button" href="{% url 'lid_addnote' object.id %}">
+            Toevoegen</span>
+        </a>
+    </div>

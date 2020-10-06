@@ -1,0 +1,72 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <link href="invoice.css" media="print" rel="stylesheet">
+    <title>Factuur</title>
+  </head>
+
+  <body>
+    <img src="local:static/img/djo-logo.png:image/png" id="logo">
+    <h1>Factuur</h1>
+
+    <aside>
+      <address id="from">
+        Stichting De Jonge Onderzoekers
+        Computerweg 20A
+        3821 AB Amersfoort
+      </address>
+
+      <address id="to">
+        {{ title }}
+        {{ member.full_name }}
+      </address>
+    </aside>
+
+    <dl id="informations">
+      <dt>Factuurnummer</dt>
+      <dd>{{ invoicenr }}</dd>
+      <dt>Datum</dt>
+      <dd>{{ date }}</dd>
+    </dl>
+
+    <table>
+      <thead>
+        <th>Omschrijving</th>
+        <th>Prijs</th>
+        <th>Aantal</th>
+        <th>Subtotaal</th>
+      </thead>
+      <tbody>
+        {% for line in lines %}
+        <tr>
+          <td>{{ line.description }}</td>
+          <td id="amount">{{ line.amount|floatformat:2 }}</td>
+          <td>{{ line.count }}</td>
+          <td>{{ line.line_total|floatformat:2 }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <table id="total">
+      <thead>
+        <th>Te betalen voor</th>
+        <th>Rekening nummer</th>
+        <th>Totaal bedrag</th>
+      </thead>
+      <tbody>
+        <tr>
+          <td>{{ due_date }}</td>
+          <td>NL45 INGB 0004 4338 56</td>
+          <td>{{ grand_total|floatformat:2 }}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p id="extra_text">
+      {{ extra_text|linebreaks }}
+    </p>
+
+  </body>
+</html>

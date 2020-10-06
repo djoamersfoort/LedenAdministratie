@@ -1,0 +1,18 @@
+<html>
+
+{% if 'member' in member_types %}
+Beste ouders/verzorgers van {{ invoice.member.full_name }},<br>
+{% else %}
+Beste {{ invoice.member.full_name }},<br>
+{% endif %}
+<br>
+Hierbij sturen wij de factuur voor de contributie van {{ invoice.created.year }}<br>
+<br>
+<br>
+Met vriendelijke groet,<br>
+<br>
+Jeroen Stroeve<br>
+Penningmeester<br>
+Stichting De Jonge Onderzoekers Amersfoort<br>
+
+</html>

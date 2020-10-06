@@ -3,70 +3,38 @@ from datetime import date
 from django.core.validators import RegexValidator, EmailValidator
 
 
-class LidManager(models.Manager):
+class MemberType(models.Model):
+    slug = models.SlugField()
+    display_name = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.display_name
+
+
+class MemberManager(models.Manager):
     def proper_lastname_order(self, *args, **kwargs):
         qs = self.get_queryset().filter(*args, **kwargs)
         return sorted(qs, key=lambda n: n.last_name.lower().split()[-1])
 
 
-class Lid(models.Model):
-    objects = LidManager()
+class Member(models.Model):
+    objects = MemberManager()
+
     class Meta:
         ordering = ["last_name", "first_name"]
         verbose_name_plural = "Leden"
-        permissions = (
-            ('read_lid', 'Can read leden'),
-        )
 
-    LIJST_CHOICES=[
-        ('wachtlijst', 'Wachtlijst'),
-        ('bevers', 'Bevers'),
-        ('welpen', 'Welpen'),
-        ('scouts', 'Scouts'),
-        ('explorers', 'Explorers'),
-        ('roverscouts', 'Roverscouts'),
-        ('stam', 'Stam'),
-        ('leiding', 'Leiding'),
-        ('bestuur', 'Bestuur'),
-        ('vrijwilliger', 'Vrijwilligers'),
-        ('oudleden', 'Oud-Leden'),
-        ('oudleiding', 'Oud-Leiding'),
-    ]
-
-    def _calculate_age(self, ondate = date.today()):
+    def _calculate_age(self, ondate=date.today()):
         today = ondate
         born = self.gebdat
         return today.year - born.year - ((today.month, today.day) < (born.month, born.day))
 
+    @property
+    def full_name(self):
+        return "{0} {1}".format(self.first_name, self.last_name)
 
-    def _calculate_speltak(self):
-        endofyear = date.today().replace(month=12, day=31)
-
-        age_at_endofyear = self._calculate_age(endofyear)
-        speltak = 'Onbekend'
-        if age_at_endofyear < 5:
-            speltak = 'Te Jong'
-        elif age_at_endofyear >= 5 and age_at_endofyear < 7:
-            speltak = 'Bevers'
-        elif age_at_endofyear >=7 and age_at_endofyear < 11:
-            speltak = 'Welpen'
-        elif age_at_endofyear >=11 and age_at_endofyear < 15:
-            speltak = 'Scouts'
-        elif age_at_endofyear >=15 and age_at_endofyear < 18:
-            speltak = 'Explorers'
-        elif age_at_endofyear >= 18 and age_at_endofyear < 21:
-            speltak = 'Roverscouts'
-        elif age_at_endofyear >=21 and age_at_endofyear < 25:
-            speltak = 'Stam'
-        elif age_at_endofyear >=25:
-            speltak = 'Leiding'
-        return speltak
-
-    def _calculate_foto(self):
-        if self.fotopubliek:
-            return 'Ja'
-        else:
-            return 'Nee'
+    def get_types_display(self):
+        return ','.join([tmptype.display_name for tmptype in self.types.all()])
 
     def __str__(self):
         return "%s %s" % (self.first_name, self.last_name)
@@ -74,27 +42,54 @@ class Lid(models.Model):
     first_name = models.CharField(max_length=40)
     last_name = models.CharField(max_length=200)
     gebdat = models.DateField(verbose_name='Geboorte Datum')
-    geslacht = models.CharField(max_length=1, choices=(('m', 'M'),('v','V')), blank=False, null=False, default='m')
-    speltak = models.CharField(max_length=40, choices=LIJST_CHOICES, default='wachtlijst', blank=False, null=False)
-    email_address = models.EmailField(max_length=150, validators=[EmailValidator(message='E-mail adres is ongeldig')])
+    geslacht = models.CharField(max_length=1, choices=(('m', 'Man'), ('v', 'Vrouw'), ('o', 'Anders')), blank=False,
+                                null=False, default='m')
+    types = models.ManyToManyField(MemberType)
+    email_address = models.EmailField(max_length=200, validators=[EmailValidator(message='E-mail adres is ongeldig')])
     straat = models.CharField(max_length=255)
-    postcode = models.CharField(max_length=7, validators=[RegexValidator(regex='\d\d\d\d\s?[A-Za-z]{2}', message='De postcode is ongeldig')])
+    postcode = models.CharField(max_length=7, validators=[
+        RegexValidator(regex='\d\d\d\d\s?[A-Za-z]{2}', message='De postcode is ongeldig')])
     woonplaats = models.CharField(max_length=100)
     telnr = models.CharField(max_length=30)
-    mobiel = models.CharField(max_length=20, blank=True, validators=[RegexValidator(regex='06.*', message='Mobiel nummer is ongeldig')])
-    mobiel_ouder1 = models.CharField(max_length=20, blank=True, validators=[RegexValidator(regex='06.*', message='Mobiel nummer is ongeldig')])
-    mobiel_ouder2 = models.CharField(max_length=20, blank=True, validators=[RegexValidator(regex='06.*', message='Mobiel nummer is ongeldig')])
-    email_ouder1 = models.EmailField(max_length=150, blank=True)
-    email_ouder2 = models.EmailField(max_length=150, blank=True)
-    aanmeld_datum = models.DateField(auto_now_add=True, auto_now=False)
-    inschrijf_datum_sn = models.DateField(null=True, blank=True)
-    scouting_nr = models.CharField(max_length=20, blank=True)
-    tshirt_maat = models.CharField(max_length=20, blank=True)
-    jub_badge = models.CharField(max_length=20, blank=True)
-    verzekerings_nr = models.CharField(max_length=20, blank=True)
-    opmerkingen = models.TextField(max_length=1024, blank=True)
-    bijzonderheden = models.TextField(max_length=1024, blank=True)
-    fotopubliek = models.BooleanField(default=True, blank=False, verbose_name="Foto's publiceren toegestaan")
+    telnr_ouders = models.CharField(max_length=30, blank=True)
+    email_ouders = models.EmailField(max_length=150, blank=True)
+    aanmeld_datum = models.DateField(verbose_name='Aanmeld datum', auto_now=False)
+    afmeld_datum = models.DateField(verbose_name='Afmeld datum', null=True, blank=True)
+    dag_vrijdag = models.BooleanField(null=False, default=False)
+    dag_zaterdag = models.BooleanField(null=False, default=False)
+    foto = models.BinaryField(blank=True, null=True, verbose_name='Foto', editable=True)
+    hoe_gevonden = models.CharField(max_length=255, blank=True, null=False, default='')
     age = property(_calculate_age)
-    wachtlijst_speltak = property(_calculate_speltak)
-    foto = property(_calculate_foto)
+
+
+class Note(models.Model):
+    member = models.ForeignKey(Member, on_delete=models.CASCADE, related_name='notes')
+    created = models.DateField(auto_now_add=True, auto_now=False)
+    username = models.CharField(max_length=255, null=False, default='')
+    done = models.BooleanField(verbose_name='Afgerond', null=False, default=False)
+    text = models.TextField(max_length=65535, null=False, default='')
+
+
+class Invoice(models.Model):
+
+    @property
+    def invoice_number(self):
+        return 'F1{0:0>4}-{1:0>5}'.format(self.member.id, self.pk)
+
+    @property
+    def payed(self):
+        return self.amount == self.amount_payed
+
+    @property
+    def amount_unpayed(self):
+        return self.amount - self.amount_payed
+
+    member = models.ForeignKey(Member, on_delete=models.CASCADE, related_name='invoices')
+    created = models.DateField(auto_now_add=True, auto_now=False)
+    username = models.CharField(max_length=255, null=False, default='')
+    sent = models.DateTimeField(blank=True, null=True)
+    smtp_error = models.CharField(max_length=4096, null=True, blank=True)
+    amount = models.DecimalField(verbose_name='Bedrag', blank=False, default=0.00, decimal_places=2, max_digits=6)
+    amount_payed = models.DecimalField(verbose_name='Bedrag Betaald', blank=False, default=0.00, decimal_places=2,
+                                       max_digits=6)
+    pdf = models.BinaryField(blank=True, null=True, editable=True)

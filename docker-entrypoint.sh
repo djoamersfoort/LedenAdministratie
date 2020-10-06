@@ -1,6 +1,4 @@
 #!/bin/sh
-python3 manage.py makemigrations LedenAdministratie    # Apply database migrations
-python3 manage.py makemigrations           # Apply database migrations
 python3 manage.py migrate                  # Apply database migrations
 python3 manage.py collectstatic --noinput  # Collect static files
 
@@ -8,6 +6,9 @@ python3 manage.py collectstatic --noinput  # Collect static files
 touch /srv/logs/gunicorn.log
 touch /srv/logs/access.log
 tail -n 0 -f /srv/logs/*.log &
+
+# Update font cache
+/usr/bin/fc-cache
 
 # Start nginx
 nginx

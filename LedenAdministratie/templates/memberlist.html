@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+    <div class="alert alert-info bg-secondary text-white">
+        Aantal leden op deze lijst:
+        <span class="badge badge-light">{{ count }}</span>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-hover table-sm">
+            <thead class="thead-light">
+            <tr>
+                <th>Naam</th>
+                <th>E-mail</th>
+                <th>Geb. Datum</th>
+                <th>Straat</th>
+                <th>Woonplaats</th>
+                <th>Tel. Nr.</th>
+                <th>Aangemeld op</th>
+                <th>Leeftijd</th>
+                <th>Type</th>
+                <th></th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for lid in object_list %}
+
+                <tr>
+                    <td>{{ lid }}</td>
+                    <td>{{ lid.email_address }}</td>
+                    <td>{{ lid.gebdat|date:"d-m-Y" }}</td>
+                    <td>{{ lid.straat }}</td>
+                    <td>{{ lid.woonplaats }}</td>
+                    <td>{{ lid.telnr }}</td>
+                    <td>{{ lid.aanmeld_datum|date:"d-m-Y" }}</td>
+                    <td>{{ lid.age }}</td>
+                    <td>{{ lid.get_types_display }}</td>
+                    {% if perms.LedenAdministratie.change_lid %}
+                        <td>
+                            <a href="{% url 'lid_edit' lid.pk %}" class="btn-sm btn-success">
+                                <span data-feather="edit"></span>
+                            </a>
+                        </td>
+                        <td>
+                            <a href="{% url 'lid_delete' lid.pk %}" class="btn-sm btn-danger">
+                                <span data-feather="trash-2"></span>
+                            </a>
+                        </td>
+                    {% else %}
+                        <td>
+                            <a href="{% url 'lid_edit' lid.pk %}" class="btn-sm btn-success">
+                                <span data-feather="edit"></span>
+                            </a>
+                        </td>
+                    {% endif %}
+                </tr>
+
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+{% endblock %}

@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+    <div class="alert alert-info bg-secondary text-white">
+        Aantal openstaande facturen:
+        <span class="badge badge-light">{{ object_list.count }}</span>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-hover table-sm">
+            <thead class="thead-light">
+            <tr>
+                <th>Factuur Nr.</th>
+                <th>Factuur voor</th>
+                <th>Aangemaakt op</th>
+                <th>Aangemaakt door</th>
+                <th>Verstuurd op</th>
+                <th>Bedrag</th>
+                <th>Openstaand bedrag</th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for invoice in object_list %}
+                <tr>
+                    <td>{{ invoice.invoice_number }}</td>
+                    <td><a href="{% url 'lid_edit' invoice.member.pk %}" class="text-dark">{{ invoice.member.full_name }}</a></td>
+                    <td>{{ invoice.created }}</td>
+                    <td>{{ invoice.username|capfirst }}</td>
+                    <td>{{ invoice.sent|default:"Niet verstuurd" }}</td>
+                    <td>{{ invoice.amount }}</td>
+                    <td>{{ invoice.amount_unpayed }}</td>
+                    <td><a class="btn-sm btn-success" href="#" data-toggle="modal" data-target="#showInvoicePayFullModal{{ invoice.pk }}"><span data-feather="check"></span>
+                    </a>
+                        <!-- Invoice Pay Full confirm Modal -->
+                        <div class="modal fade" id="showInvoicePayFullModal{{ invoice.id }}" tabindex="-1" role="dialog">
+                          <div class="modal-dialog modal-dialog-centered" role="document">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <h5 class="modal-title">Factuur betaald?</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                  <span aria-hidden="true">&times;</span>
+                                </button>
+                              </div>
+                              <div class="modal-body">
+                                <p>Weet u zeker dat u de factuur {{ invoice.invoice_number }} als volledig betaald wilt markeren?</p>
+                              </div>
+                              <div class="modal-footer">
+                                  <a class="btn btn-primary" href="{% url 'invoice_pay_full' invoice.pk %}">Betaald</a>
+                                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuleren</button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                    </td>
+
+                    <td><a class="btn-sm btn-secondary" href="{% url 'invoice_pay_part' invoice.pk %}"><span data-feather="dollar-sign"></span></a></td>
+                    <td><a class="btn-sm btn-danger"    href="#" data-toggle="modal" data-target="#showInvoiceDeleteModal{{ invoice.pk }}"><span data-feather="trash"></span>
+                        </a>
+                        <!-- Invoice Delete confirm Modal -->
+                        <div class="modal fade" id="showInvoiceDeleteModal{{ invoice.id }}" tabindex="-1" role="dialog">
+                          <div class="modal-dialog modal-dialog-centered" role="document">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <h5 class="modal-title">Factuur verwijderen?</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                  <span aria-hidden="true">&times;</span>
+                                </button>
+                              </div>
+                              <div class="modal-body">
+                                <p>Weet u zeker dat u de factuur {{ invoice.invoice_number }} wilt verwijderen?</p>
+                              </div>
+                              <div class="modal-footer">
+                                  <a class="btn btn-primary" href="{% url 'invoice_delete' invoice.pk %}">Verwijderen</a>
+                                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuleren</button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                    </td>
+                    <td><a target="_blank" href="{% url 'invoice_display' invoice.id %}"><span data-feather="eye"></span></a></td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+{% endblock %}

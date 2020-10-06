@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+    <div class="alert alert-info bg-secondary text-white">
+        Aantal Todo's:
+        <span class="badge badge-light">{{ object_list.count }}</span>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-hover table-sm">
+            <thead class="thead-light">
+                <tr>
+                    <th>Datum</th>
+                    <th>Todo voor</th>
+                    <th>Aangemaakt door</th>
+                    <th>Notitie</th>
+                    <th>Afgerond</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for note in object_list %}
+                <tr>
+                    <td>{{ note.created }}</td>
+                    <td><a href="{% url 'lid_edit' note.member.pk %}" class="text-dark">{{ note.member.full_name }}</a></td>
+                    <td>{{ note.username|capfirst }}</td>
+                    <td>{{ note.text|truncatechars:60 }}</td>
+                    <td>
+                        {% if note.done %}
+                            <span data-feather="check"></span>
+                        {% else %}
+                            <span data-feather="x"></span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="{% url 'lid_editnote' note.id %}">
+                            <span data-feather="edit"></span>
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+{% endblock %}

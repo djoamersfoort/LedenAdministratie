@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+{% load static %}
+{% load photo_filter %}
+
+{% block content %}
+
+{% include 'alerts.html' %}
+
+<form method="post" id="mainform">
+    {% csrf_token %}
+
+    <div class="form-row">
+        {% if not member %}
+
+        <div class="col-3">
+            <div class="card">
+                <div class="card-body">
+                    <div class="card-header text-white bg-secondary">Selecteer leden</div>
+
+                    <div class="table mt-2">
+                        <table class="table table-hover table-sm table-responsive">
+                            <thead class="thead-light">
+                            <tr>
+                                <th><input type="checkbox" id="selectAll" checked></th>
+                                <th>Naam</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for member in form.members %}
+                            <tr>
+                                <td>{{ member.tag }}</td>
+                                <td>{{ member.choice_label }}</td>
+                            </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% else %}
+
+        <div class="col-2">
+            <div class="card shadow">
+                <img class="card-img-top img-fluid" src="{{ member.foto|img2base64 }}">
+                <div class="card-body">
+                        <input type="hidden" id="id_members_0" name="members" value="{{ member.id }}">
+                        <h5 class="my-2">{{ member.full_name }}</h5>
+                        <p>{{ member.get_types_display }}</p>
+                </div>
+            </div>
+        </div>
+
+        {% endif %}
+
+        <div class="col-7">
+            <div class="card">
+                <div class="card-body">
+
+                    <div class="card-header text-white bg-secondary">Factuur gegevens</div>
+                    <label for="id_invoice_types" class="mt-2">Factuur soort</label>
+                    {{ form.invoice_types|add_class:'form-control' }}
+                </div>
+            </div>
+
+            <div class="card mt-3">
+                <div class="card-body">
+                    <div class="card-header text-white bg-secondary">Factuur regels</div>
+                    {{ invoice_lines.management_form }}
+
+                    <div class="form-row">
+                        <div class="col-8 mt-2">
+                            <span>Omschrijving</span>
+                        </div>
+                        <div class="col-2 mt-2">
+                            <span>Aantal</span>
+                        </div>
+                        <div class="col-2 mt-2">
+                            <span>Bedrag</span>
+                        </div>
+
+                        {% for invoice_line in invoice_lines %}
+                        <div class="col-8 mt-1">
+                            {{ invoice_line.description|add_class:'form-control' }}
+                        </div>
+                        <div class="col-2 mt-1">
+                            {{ invoice_line.count|add_class:'form-control' }}
+                        </div>
+                        <div class="col-2 mt-1">
+                            {{ invoice_line.amount|add_class:'form-control' }}
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <button name="create" type="submit" class="btn btn-primary mt-2">Aanmaken</button>
+        </div>
+    </div>
+
+</form>
+
+{% endblock %}
+
+{% block customscript %}
+    <script src="{% static 'js/checkbox.js' %}"></script>
+{% endblock %}

@@ -1,7 +1,6 @@
-Django~=1.11
-django-widget-tweaks==1.4.1
+Django>2
+django-widget-tweaks==1.4.3
 mysqlclient
 python-dateutil
-django-allauth
-django-simple-captcha
 gunicorn
+Weasyprint

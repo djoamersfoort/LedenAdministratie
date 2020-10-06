@@ -1,0 +1,91 @@
+@charset "UTF-8";
+@page {
+  margin: 3cm;
+  @bottom-left {
+    color: #000000;
+    font-family: DejaVu Sans;
+    content: 'DJO Amersfoort'; }
+  @bottom-right {
+    color: #a9a;
+    content: 'info@djoamersfoort.nl | Tel. 06-166 28 350 | www.djoamersfoort.nl';
+    font-family: DejaVu Sans;
+    font-size: 9pt; } }
+
+html {
+  color: #14213d;
+  font-family: DejaVu Sans;
+  font-size: 11pt;
+  line-height: 1.6; }
+  html body {
+    margin: 0; }
+  html img#logo {
+    width: 260px;
+    margin: 0; }
+  html h1 {
+    color: #000000;
+    font-family: DejaVu Sans;
+    font-size: 22pt;
+    margin: 0.5em 0 0 0; }
+  html aside {
+    display: flex;
+    margin: 1em 0 4em; }
+    html aside address {
+      font-style: normal;
+      white-space: pre-line; }
+      html aside address#from {
+        color: #a9a;
+        flex: 1; }
+      html aside address#to {
+        text-align: right; }
+  html dl {
+    text-align: right;
+    position: absolute;
+    right: 0;
+    top: 0; }
+    html dl dt, html dl dd {
+      display: inline;
+      margin: 0; }
+    html dl dt {
+      color: #a9a; }
+      html dl dt::before {
+        content: '';
+        display: block; }
+      html dl dt::after {
+        content: ':'; }
+  html table {
+    border-collapse: collapse;
+    width: 100%; }
+    html table th {
+      border-bottom: .2mm solid #a9a;
+      color: #a9a;
+      font-size: 10pt;
+      font-weight: 400;
+      padding-bottom: .25cm;
+      text-transform: uppercase; }
+    html table td#amount {
+        text-align: right; }
+    html table td {
+      padding-top: 7mm; }
+      html table td:last-of-type {
+        color: #000000;
+        font-weight: bold;
+        text-align: right; }
+    html table th, html table td {
+      text-align: center; }
+      html table th:first-of-type, html table td:first-of-type {
+        text-align: left; }
+      html table th:last-of-type, html table td:last-of-type {
+        text-align: right; }
+    html table#total {
+      background: #f6f6f6;
+      border-color: #f6f6f6;
+      border-style: solid;
+      border-width: 2cm 3cm;
+      bottom: 0;
+      font-size: 12pt;
+      margin: 0 -3cm;
+      position: absolute;
+      width: 18cm; }
+    html p {
+      margin-top: 3em;
+      font-size: 10pt; }
