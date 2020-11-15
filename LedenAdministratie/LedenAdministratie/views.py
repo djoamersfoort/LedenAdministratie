@@ -14,7 +14,6 @@ from django.template.loader import render_to_string
 import csv
 import uuid
 import requests
-from datetime import date
 
 from .models import *
 from . import forms
