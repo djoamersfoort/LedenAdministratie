@@ -63,7 +63,15 @@ class Member(models.Model):
 
     def is_begeleider(self):
         slugs = [membertype.slug for membertype in self.types.all()]
-        return 'begeleider' in slugs or 'aspirant' in slugs or 'ondersteuning' in slugs
+        return 'begeleider' in slugs
+
+    def is_ondersteuner(self):
+        slugs = [membertype.slug for membertype in self.types.all()]
+        return 'ondersteuning' in slugs
+
+    def is_aspirant(self):
+        slugs = [membertype.slug for membertype in self.types.all()]
+        return 'aspirant' in slugs
 
     def is_senior(self):
         slugs = [membertype.slug for membertype in self.types.all()]

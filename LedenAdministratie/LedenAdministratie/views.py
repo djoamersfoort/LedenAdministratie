@@ -433,10 +433,11 @@ class EmailSendView(PermissionRequiredMixin, FormView):
         recipients = Member.objects.filter(Q(afmeld_datum__gt=date.today()) | Q(afmeld_datum=None))
         for recipient in recipients:
             to_list = []
-            if recipient.is_begeleider():
+            if recipient.is_begeleider() or recipient.is_aspirant():
                 if 'begeleiders' in form.cleaned_data['recipients']:
                     to_list.append(recipient.email_address)
-                elif 'ondersteuning' in form.cleaned_data['recipients']:
+            elif recipient.is_ondersteuner():
+                if 'ondersteuning' in form.cleaned_data['recipients']:
                     to_list.append(recipient.email_address)
             else:
                 if 'parents' in form.cleaned_data['recipients']:
