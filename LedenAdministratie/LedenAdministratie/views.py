@@ -1,5 +1,4 @@
 from django.contrib.auth import logout, login as auth_login
-from django.contrib.auth.models import User
 from django.views.generic.edit import CreateView, UpdateView, DeleteView, FormView, BaseDetailView, View
 from django.views.generic.list import ListView
 from django.urls import reverse_lazy, reverse
@@ -22,13 +21,13 @@ from .mixins import PermissionRequiredMixin
 from .utils import Utils
 
 
-class LoginView(View):
-    def get(self, request, *args, **kwargs):
-        oauth = OAuth2Session(client_id=settings.IDP_CLIENT_ID,
-                              redirect_uri=settings.IDP_REDIRECT_URL,
-                              scope=['user/basic', 'user/account-type', 'user/names', 'user/email'])
-        auth_url, state = oauth.authorization_url(settings.IDP_AUTHORIZE_URL)
-        return HttpResponseRedirect(auth_url)
+# class LoginView(View):
+#     def get(self, request, *args, **kwargs):
+#         # oauth = OAuth2Session(client_id=settings.IDP_CLIENT_ID,
+#         #                       redirect_uri=settings.IDP_REDIRECT_URL,
+#         #                       scope=['user/basic', 'user/account-type', 'user/names', 'user/email'])
+#         # auth_url, state = oauth.authorization_url(settings.IDP_AUTHORIZE_URL)
+#         return HttpResponseRedirect(settings.LOGIN_URL)
 
 
 class LoginResponseView(View):

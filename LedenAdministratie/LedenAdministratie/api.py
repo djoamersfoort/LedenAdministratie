@@ -4,14 +4,15 @@ from django.http import HttpResponse, JsonResponse
 from django.views.generic.edit import View
 from django.db.models import Q
 from django.utils import timezone
+from oauth2_provider.views.mixins import ProtectedResourceMixin
 from datetime import date
 from .models import Member
 from .templatetags.photo_filter import img2base64
-from .mixins import ApiPermissionRequired, APITokenMixin
+from .mixins import APITokenMixin
 
 
 @method_decorator(csrf_exempt, name='dispatch')
-class ApiV1Smoelenboek(ApiPermissionRequired, View):
+class ApiV1Smoelenboek(ProtectedResourceMixin, View):
     def get(self, request, *args, **kwargs):
         large = request.GET.get('large', '0') == '1'
         members = Member.objects.filter(Q(afmeld_datum__gt=timezone.now()) | Q(afmeld_datum=None))
@@ -50,7 +51,7 @@ class ApiV1Smoelenboek(ApiPermissionRequired, View):
 
 
 @method_decorator(csrf_exempt, name='dispatch')
-class ApiV1SmoelenboekUser(ApiPermissionRequired, View):
+class ApiV1SmoelenboekUser(ProtectedResourceMixin, View):
     def get(self, request, *args, **kwargs):
         large = request.GET.get('large', '0') == '1'
         userid = self.kwargs['pk']

@@ -23,7 +23,7 @@ class MemberForm(forms.ModelForm):
 
     class Meta:
         model = Member
-        exclude = ['thumbnail']
+        exclude = ['thumbnail', 'user']
 
     def save(self, commit=True):
         if 'foto' in self.changed_data:

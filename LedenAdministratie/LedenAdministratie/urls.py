@@ -15,6 +15,7 @@ Including another URLconf
 """
 from django.urls import path, re_path, include
 from django.contrib import admin
+from django.contrib.auth import views as auth_views
 from . import views, api
 
 urlpatterns = [
@@ -49,6 +50,6 @@ urlpatterns = [
     path('api/v1/idp/details/<str:fields>', api.ApiV1IDPGetDetails.as_view()),
     path('api/v1/idp/verify/<str:fields>', api.ApiV1IDPVerify.as_view()),
     path('api/v1/idp/avatar', api.ApiV1IDPAvatar.as_view()),
-    re_path(r'oauth/.*', views.LoginResponseView.as_view()),
-    path('', views.LoginView.as_view(), name='login'),
+    path('o/', include('oauth2_provider.urls', namespace='oauth2_provider')),
+    path('', auth_views.LoginView.as_view(template_name='admin/login.html'), name='login'),
 ]
