@@ -6,11 +6,6 @@ from .models import Member, MemberType, Note, Invoice
 from datetime import date
 
 
-class LoginForm(forms.Form):
-    username = forms.CharField(label='Gebruikersnaam', max_length=50, min_length=1)
-    password = forms.CharField(label='Password', max_length=50, min_length=1, widget=forms.PasswordInput)
-
-
 class MemberForm(forms.ModelForm):
     foto = forms.FileField(required=False)
     gebdat = forms.DateField(widget=forms.DateInput(format='%d-%m-%Y'), input_formats=settings.DATETIME_INPUT_FORMATS)

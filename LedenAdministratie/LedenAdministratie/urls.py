@@ -23,7 +23,7 @@ urlpatterns = [
     re_path(r'^tinymce/', include('tinymce.urls')),
     path('members/<filter_slug>/', views.MemberListView.as_view(), name='members'),
     path('members/', views.MemberListView.as_view(), name='members'),
-    path('logoff/', views.LogoffView.as_view(), name='logoff'),
+    path('logoff/', auth_views.LogoutView.as_view(), name='logoff'),
     path('export/', views.ExportView.as_view(), name='export'),
     path('member/edit/<int:pk>/', views.MemberUpdateView.as_view(), name='lid_edit'),
     path('member/delete/<int:pk>/', views.MemberDeleteView.as_view(), name='lid_delete'),
