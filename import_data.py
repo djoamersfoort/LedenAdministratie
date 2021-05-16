@@ -8,133 +8,51 @@ import MySQLdb
 import django
 django.setup()
 from LedenAdministratie.LedenAdministratie.models import *
-from datetime import date, datetime
-from dateutil import parser
 
 
-def map_types(member, types):
-    type_map = {
-        'lid': MemberType.objects.get(slug='member'),
-        'begeleider': MemberType.objects.get(slug='begeleider'),
-        'aspirant_begeleider': MemberType.objects.get(slug='aspirant'),
-        'bestuur': MemberType.objects.get(slug='bestuur'),
-        'sponsor': MemberType.objects.get(slug='sponsor'),
-        'senior': MemberType.objects.get(slug='senior'),
-        'strippenkaart': MemberType.objects.get(slug='strippenkaart')
-    }
-
-    for member_type in types.split(','):
-        if member_type != '':
-            member.types.add(type_map[member_type])
-
-    return member
+def convert_pw_hash(old_hash):
+    new_hash = old_hash.replace('pwh$', 'bcrypt$$')
+    return new_hash
 
 
 def main():
     password = input("Password: ")
-    db = MySQLdb.connect(host='127.0.0.1', port=3306, user='djo_admin', password=password, db='djo_admin', charset='utf8')
+    db = MySQLdb.connect(host='127.0.0.1', port=3306, user='idp_prod', password=password, db='idp_main', charset='utf8')
     cursor = db.cursor(MySQLdb.cursors.DictCursor)
 
     query = """
-        SELECT *, dagdeel.dag FROM contact
-        INNER JOIN contact_dagdeel cd
-        INNER JOIN dagdeel
-        ON (cd.contact_id = contact.id AND cd.dagdeel_id = dagdeel.id)
-        WHERE contact.eind_datum IS NULL
-        AND dagdeel.eind_datum IS NULL
+        SELECT userID, backendID, mail, password
+        FROM Users
     """
 
     cursor.execute(query)
-    for contact in cursor.fetchall():
-        print(contact)
-        member = Member()
-        member.id = contact['id']
-        member.first_name = contact['voornaam']
-        if contact['tussenvoegsels'] and contact['tussenvoegsels'] != '':
-            member.last_name = contact['tussenvoegsels'] + " "  + contact['achternaam']
-        else:
-            member.last_name = contact['achternaam']
-        member.email_address = contact['emailadres']
-        if contact['emailadres_ouders']:
-            member.email_ouders = contact['emailadres_ouders']
-        else:
-            member.email_ouders = ''
-        if contact['geboortedatum']:
-            member.gebdat = contact['geboortedatum']
-        else:
-            member.gebdat = parser.parse('1970-01-01')
-        member.straat = contact['adres']
-        member.postcode = contact['postcode']
-        member.woonplaats = contact['woonplaats']
-        member.telnr = contact['mobielnummer']
-        member.telnr_ouders = contact['telefoonnummer']
-        if contact['begin_datum']:
-            member.aanmeld_datum = contact['begin_datum']
-        else:
-            member.aanmeld_datum = date.today()
-        member.afmeld_datum = contact['eind_datum']
-        member.hoe_gevonden = contact['hoe_gevonden']
-        if contact['dagdeel.dag'] == 'vr':
-            member.dag_vrijdag = True
-        if contact['dagdeel.dag'] == 'za':
-            member.dag_zaterdag = True
-
+    for idp_user in cursor.fetchall():
+        print(idp_user)
         try:
-            with open("export/images/contacten/{0}.jpg".format(member.id), "rb") as f:
-                member.foto = f.read()
-        except:
-            print("Warning: no photo found for id {0}".format(member.id))
+            user = User.objects.get(pk=idp_user['userID'])
+            print("Updating existing user...")
+        except User.DoesNotExist:
+            user = User()
+            print("Creating new user...")
+        user.pk = idp_user['userID']
+        user.username = idp_user['mail'].strip()
+        user.email = idp_user['mail'].strip()
+        user.password = convert_pw_hash(idp_user['password'])
+        user.save()
 
-        member.save()
-        member = map_types(member, contact['type'])
+        member_id = idp_user['backendID'].replace('u-', '')
+        try:
+            member = Member.objects.get(pk=member_id)
+        except Member.DoesNotExist:
+            print(f"Member for user not found!")
+            continue
+        user.first_name = member.first_name
+        user.last_name = member.last_name
+        user.save()
+        member.user = user
         member.save()
 
-    # Import notes
-    cursor.execute("SELECT * FROM notitie")
-    for note in cursor.fetchall():
-        try:
-            member = Member.objects.get(id=note['contact_id'])
-        except Member.DoesNotExist:
-            continue
-        print(note)
-        newnote = Note()
-        newnote.id = note['id']
-        newnote.member = member
-        newnote.text = note['tekst']
-        newnote.created = datetime.fromtimestamp(int(note['datum_tijd']))
-        newnote.username = 'Importer'
-        newnote.done = (note['toekomst'] == '0')
-        newnote.save()
-        newnote.created = datetime.fromtimestamp(int(note['datum_tijd']))
-        newnote.save()
-
-    # Imort invoices
-    cursor.execute("SELECT * FROM factuur")
-    for invoice in cursor.fetchall():
-        try:
-            member = Member.objects.get(id=invoice['contact_id'])
-        except Member.DoesNotExist:
-            continue
-        print(invoice)
-        newinvoice = Invoice()
-        newinvoice.id = invoice['id']
-        newinvoice.member = member
-        newinvoice.username = 'Importer'
-        newinvoice.amount = invoice['bedrag']
-        if invoice['betaald'] == '1':
-            newinvoice.amount_payed = newinvoice.amount
-            newinvoice.sent = newinvoice.created
-        newinvoice.created = invoice['datum']
-        newinvoice.save()
-
-        try:
-            with open("export/facturen/{0}.pdf".format(newinvoice.old_invoice_number), "rb") as f:
-                newinvoice.pdf = f.read()
-        except:
-            print("Warning: no invoice PDF found: export/facturen/{0}.pdf".format(newinvoice.old_invoice_number))
-
-        newinvoice.created = invoice['datum']
-        newinvoice.save()
+    cursor.close()
 
 
 if __name__ == '__main__':

@@ -27,11 +27,11 @@ class Member(models.Model):
             # Create new linked User
             self.user = User()
             self.user.set_unusable_password()
-            self.user.username = self.get_unique_username()
 
         # Update user fields
         self.user.first_name = self.first_name
         self.user.last_name = self.last_name
+        self.user.username = self.email_address
         self.user.email = self.email_address
         self.user.save()
 
@@ -89,14 +89,6 @@ class Member(models.Model):
     def is_senior(self):
         slugs = [membertype.slug for membertype in self.types.all()]
         return 'senior' in slugs
-
-    def get_unique_username(self) -> str:
-        username = self.first_name[0].lower() + self.last_name.replace(' ', '').lower()
-        offset = 2
-        while len(User.objects.filter(username=username)) > 0:
-            username = self.first_name[0:offset].lower() + self.last_name.replace(' ', '').lower()
-            offset += 1
-        return username
 
     def __str__(self):
         return "%s %s" % (self.first_name, self.last_name)

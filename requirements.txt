@@ -11,3 +11,4 @@ gunicorn
 requests
 django-cors-headers
 django-oauth-toolkit
+bcrypt
