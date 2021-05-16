@@ -20,10 +20,10 @@ from . import views, api
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('accounts/', include('django.contrib.auth.urls')),
     re_path(r'^tinymce/', include('tinymce.urls')),
     path('members/<filter_slug>/', views.MemberListView.as_view(), name='members'),
     path('members/', views.MemberListView.as_view(), name='members'),
-    path('logoff/', auth_views.LogoutView.as_view(), name='logoff'),
     path('export/', views.ExportView.as_view(), name='export'),
     path('member/edit/<int:pk>/', views.MemberUpdateView.as_view(), name='lid_edit'),
     path('member/delete/<int:pk>/', views.MemberDeleteView.as_view(), name='lid_delete'),
@@ -51,5 +51,5 @@ urlpatterns = [
     path('api/v1/idp/verify/<str:fields>', api.ApiV1IDPVerify.as_view()),
     path('api/v1/idp/avatar', api.ApiV1IDPAvatar.as_view()),
     path('o/', include('oauth2_provider.urls', namespace='oauth2_provider')),
-    path('', auth_views.LoginView.as_view(template_name='admin/login.html'), name='login'),
+    path('', auth_views.LoginView.as_view(), name='login'),
 ]

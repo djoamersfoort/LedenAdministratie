@@ -1,5 +1,7 @@
+import uuid
 from django.db import models
 from django.contrib.auth.models import User
+from django.contrib.auth.hashers import make_password
 from datetime import date
 from django.core.validators import RegexValidator, EmailValidator
 from PIL import Image
@@ -26,7 +28,8 @@ class Member(models.Model):
         if self.user is None:
             # Create new linked User
             self.user = User()
-            self.user.set_unusable_password()
+            # Can't set an 'unusable_password' here, because it disables password resets
+            self.user.password = make_password(uuid.uuid4())
 
         # Update user fields
         self.user.first_name = self.first_name
