@@ -2,6 +2,7 @@ import uuid
 from django.db import models
 from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
+from django.utils import timezone
 from datetime import date
 from django.core.validators import RegexValidator, EmailValidator
 from PIL import Image
@@ -32,8 +33,9 @@ class Member(models.Model):
         # Update user fields
         self.user.first_name = self.first_name
         self.user.last_name = self.last_name
-        self.user.username = self.email_address
+        self.user.username = self.email_address.lower()
         self.user.email = self.email_address
+        self.user.is_active = self.is_active()
         self.user.save()
 
         if self.thumbnail is None and self.foto is not None:
@@ -90,6 +92,9 @@ class Member(models.Model):
     def is_senior(self):
         slugs = [membertype.slug for membertype in self.types.all()]
         return 'senior' in slugs
+
+    def is_active(self):
+        return self.afmeld_datum is None or self.afmeld_datum > timezone.now().date()
 
     def __str__(self):
         return "%s %s" % (self.first_name, self.last_name)

@@ -97,7 +97,7 @@ class ApiV1IDPGetDetails(APITokenMixin, View):
         fields = self.kwargs['fields'].split(',')
         for field in fields:
             if field == 'is-member':
-                response['is-member'] = (member.afmeld_datum is None or member.afmeld_datum > timezone.now())
+                response['is-member'] = member.is_active()
             elif field == 'mail':
                 response['mail'] = member.email_address
             elif field == 'mail-parents':
