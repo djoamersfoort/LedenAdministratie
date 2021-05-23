@@ -1,25 +1,8 @@
-html, body {
+.row {
   height: 100%;
 }
 
-body {
-  display: -ms-flexbox;
-  display: -webkit-box;
-  display: flex;
-  -ms-flex-align: center;
-  -ms-flex-pack: center;
-  -webkit-box-align: center;
-  align-items: center;
-  -webkit-box-pack: center;
-  justify-content: center;
-  padding-top: 40px;
-  padding-bottom: 40px;
-  background-color: black;
-}
-
 .form-signin {
-  width: 40%;
-  max-width: 330px;
   padding: 15px;
   margin: 0 auto;
 
@@ -86,8 +69,6 @@ label {
 }
 }
 
-
-
 @media (max-width: 768px) {
     label {
         display: none;
@@ -104,18 +85,6 @@ label {
     .logo-form {
         display: block;
     }
-    .login-form {
-        width: 94%;
-        margin: 0 !important;
-        position: relative;
-    }
-    .form-signin {
-        width: 94%;
-        margin: 0 !important;
-    }
-    html, body, main {
-        height: 100%;
-    }
     .logo-link {
         display: none;
     }
@@ -124,33 +93,6 @@ label {
     }
     .form-logo {
         display: block;
-    }
-    .login-form {
-
-        left: 0;
-        top: 0;
-        position: absolute;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transform: none;
-        position: relative;
-        margin: 20px;
-
-    }
-    .form-signin {
-        position: relative !important;
-    }
-    .login-form .form-group {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
-    .login-form form {
-        width: 100%;
-    }
-    .logo-form {
-        width: 100%;
     }
 }
 input[type="checkbox"] {

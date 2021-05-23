@@ -1,5 +1,7 @@
 function turnondark() {
-    document.getElementById('toggle').checked = true;
+    if (toggle = document.getElementById('toggle')) {
+        toggle.checked = true;
+    }
     localStorage.setItem('dark', 1);
     var all = document.getElementsByClassName('dark');
     for (var i = 0; i < all.length; i++) {
@@ -17,13 +19,15 @@ function turnondark() {
     for (var i = 0; i < all.length; i++) {
         all[i].classList.add('darkborder-toggled');
     }
-    document.getElementsByClassName('background')[0].style.backgroundColor = '#030b80';
-    document.getElementsByClassName('logo-upper-left')[0].style.filter = 'none';
-    document.getElementsByClassName('logo-form')[0].style.filter = 'brightness(20)';
+    Array.from(document.getElementsByClassName('background')).forEach(element => element.style.backgroundColor = '#030b80');
+    Array.from(document.getElementsByClassName('logo-upper-left')).forEach(element => element.style.filter = 'none' );
+    Array.from(document.getElementsByClassName('logo-form')).forEach(element => element.style.filter = 'brightness(20)');
 }
 
 function turnoffdark() {
-    document.getElementById('toggle').checked = false;
+    if (toggle = document.getElementById('toggle')) {
+        toggle.checked = false;
+    }
     localStorage.setItem('dark', 0);
     var all = document.getElementsByClassName('dark');
     for (var i = 0; i < all.length; i++) {
@@ -41,10 +45,9 @@ function turnoffdark() {
     for (var i = 0; i < all.length; i++) {
         all[i].classList.remove('darkborder-toggled');
     }
-    document.getElementsByClassName('background')[0].style.backgroundColor = 'white';
-    document.getElementsByClassName('logo-upper-left')[0].style.filter = 'invert(1)';
-    document.getElementsByClassName('logo-form')[0].style.filter = 'none';
-
+    Array.from(document.getElementsByClassName('background')).forEach(element => element.style.backgroundColor = 'white');
+    Array.from(document.getElementsByClassName('logo-upper-left')).forEach(element => element.style.filter = 'invert(1)');
+    Array.from(document.getElementsByClassName('logo-form')).forEach(element => element.style.filter = 'none');
 }
 
 window.addEventListener('load', function() {
@@ -62,11 +65,12 @@ window.addEventListener('load', function() {
 })
 
 const checkbox = document.getElementById('toggle')
-
-checkbox.addEventListener('change', (event) => {
-    if (event.currentTarget.checked) {
-        turnondark();
-    } else {
-        turnoffdark();
-    }
-})
+if (checkbox) {
+    checkbox.addEventListener('change', (event) => {
+        if (event.currentTarget.checked) {
+            turnondark();
+        } else {
+            turnoffdark();
+        }
+    })
+}

@@ -18,10 +18,17 @@
 <body class="text-center dark text">
 <div class=background></div>
 
+<a class=logo-link href=https://djoamersfoort.nl><img class="logo-upper-left" src="{% static 'img/logo-base.png' %}"></a>
+
+<div class="container">
 {% block content %}
 {% endblock %}
+</div>
 
 <script src="{% static 'js/registration.js' %}"></script>
+<script src="{% static 'js/jquery.slim.min.js' %}"></script>
+<script src="{% static 'js/popper.min.js' %}"></script>
+<script src="{% static 'js/bootstrap.min.js' %}"></script>
 {% block customscript %}
 {% endblock %}
 

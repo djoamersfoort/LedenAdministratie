@@ -3,6 +3,12 @@
 #
 #  DJANGO_SETTINGS_MODULE=LedenAdministratie.LedenAdministratie.settings ./import_data.py
 #
+# Needs:
+# PASSWORD_HASHERS = [
+#     'django.contrib.auth.hashers.PBKDF2PasswordHasher',
+#     'django.contrib.auth.hashers.BCryptPasswordHasher',
+# ]
+
 
 import MySQLdb
 import django

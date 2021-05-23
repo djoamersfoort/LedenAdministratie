@@ -4,31 +4,33 @@
 
 {% block content %}
 
-<a class=logo-link href=https://djoamersfoort.nl><img class="logo-upper-left" src="{% static 'img/logo-base.png' %}"></a>
-<form method="post" enctype="multipart/form-data" class="dark form-signin">
+<div class="row align-items-center">
+    <div class="col col-12 col-md-8 offset-md-2 col-lg-6 offset-lg-3">
+        <form method="post" enctype="multipart/form-data" class="dark form-signin">
+            {% if form.errors %}
+                <p>Je e-mail adres of wachtwoord zijn niet correct, probeer het nog eens.</p>
+            {% endif %}
 
-    {% if form.errors %}
-        <p>Je e-mail adres of wachtwoord zijn niet correct, probeer het nog eens.</p>
-    {% endif %}
+            {% csrf_token %}
 
-    {% csrf_token %}
+            <input type=checkbox class="toggle toggle-right" id=toggle>
+            <img class="mb-4 logo-form" src="{% static 'img/djolink_VAG-transp.png' %}" width=80%>
+            <h1 class="h3 mb-3 font-weight-normal">Inloggen bij DJO</h1>
+            <div class="form-group">
+                <label for="username">E-mail adres</label>
+                {% render_field form.username|attr:"autofocus" class+='semidark darkborder text form-control' placeholder="E-mail adres" %}
+            </div>
+            <div class="form-group">
+                <label for="password">Wachtwoord</label>
+                {% render_field form.password class+='semidark darkborder text form-control' placeholder="Wachtwoord" %}
+            </div>
+            <button class="semidark darkborder text btn btn-md btn-primary btn-block" type="submit">Inloggen</button>
+            <br>
+            <p>Wachtwoord vergeten of geen account? <a href="{% url 'password_reset' %}">Klik hier</a></p>
 
-    <input type=checkbox class="toggle toggle-right" id=toggle>
-    <img class="mb-4 logo-form" src="{% static 'img/djolink_VAG-transp.png' %}" width=80%>
-    <h1 class="h3 mb-3 font-weight-normal">Log In</h1>
-    <div class="form-group">
-        <label for="username">E-mail adres</label>
-        {% render_field form.username|attr:"autofocus" class+='semidark darkborder text form-control' placeholder="E-mail adres" %}
+            <input type="hidden" name="next" value="{{ next }}">
+        </form>
     </div>
-    <div class="form-group">
-        <label for="password">Wachtwoord</label>
-        {% render_field form.password class+='semidark darkborder text form-control' placeholder="Wachtwoord" %}
-    </div>
-    <button class="semidark darkborder text btn btn-lg btn-primary btn-block" type="submit">Log In</button>
-    <br>
-    <p>Wachtwoord vergeten? <a href="{% url 'password_reset' %}">Klik hier</a></p>
-
-    <input type="hidden" name="next" value="{{ next }}">
-</form>
+</div>
 
 {% endblock %}
