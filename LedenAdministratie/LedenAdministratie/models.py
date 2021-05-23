@@ -22,9 +22,7 @@ class Member(models.Model):
         ordering = ["first_name", "last_name"]
         verbose_name_plural = "Leden"
 
-    def save(self, force_insert=False, force_update=False, using=None,
-             update_fields=None):
-
+    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         if self.user is None:
             # Create new linked User
             self.user = User()

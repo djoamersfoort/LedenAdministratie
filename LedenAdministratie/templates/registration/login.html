@@ -17,11 +17,11 @@
             <img class="mb-4 logo-form" src="{% static 'img/djolink_VAG-transp.png' %}" width=80%>
             <h1 class="h3 mb-3 font-weight-normal">Inloggen bij DJO</h1>
             <div class="form-group">
-                <label for="username">E-mail adres</label>
+                <label for="id_username">E-mail adres</label>
                 {% render_field form.username|attr:"autofocus" class+='semidark darkborder text form-control' placeholder="E-mail adres" %}
             </div>
             <div class="form-group">
-                <label for="password">Wachtwoord</label>
+                <label for="id_password">Wachtwoord</label>
                 {% render_field form.password class+='semidark darkborder text form-control' placeholder="Wachtwoord" %}
             </div>
             <button class="semidark darkborder text btn btn-md btn-primary btn-block" type="submit">Inloggen</button>
