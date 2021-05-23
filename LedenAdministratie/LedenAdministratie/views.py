@@ -2,12 +2,12 @@ from django.views.generic.edit import CreateView, UpdateView, DeleteView, FormVi
 from django.views.generic.list import ListView
 from django.urls import reverse_lazy, reverse
 from django.forms import formset_factory
-from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden
+from django.http import HttpResponse, HttpResponseRedirect
 from django.db.models import F, Q
 from django.conf import settings
-from django.utils import timezone
 from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
+from django.contrib.auth.mixins import LoginRequiredMixin
 import csv
 import requests
 from .models import *
@@ -15,6 +15,16 @@ from . import forms
 from .invoice import InvoiceTool
 from .mixins import PermissionRequiredMixin
 from .utils import Utils
+
+
+class LoggedInView(LoginRequiredMixin, View):
+
+    def get(self, request, *args, **kwargs):
+        if request.user.member.is_bestuur():
+            return HttpResponseRedirect(reverse('members'))
+        else:
+            # TODO: Create a profile page with pw management links, etc.
+            return HttpResponseRedirect('https://www.djoamersfoort.nl/')
 
 
 class MemberListView(PermissionRequiredMixin, ListView):

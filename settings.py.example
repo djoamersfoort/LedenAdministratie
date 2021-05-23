@@ -71,7 +71,7 @@ AUTHENTICATION_BACKENDS = (
 
 
 LOGIN_URL = '/'
-LOGIN_REDIRECT_URL = '/members/'
+LOGIN_REDIRECT_URL = '/logged_in/'
 
 EMAIL_HOST="smtp.provider.com"
 EMAIL_PORT=587

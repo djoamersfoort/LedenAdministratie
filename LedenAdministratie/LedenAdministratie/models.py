@@ -77,6 +77,10 @@ class Member(models.Model):
             result.append(name)
         return ','.join(result)
 
+    def is_bestuur(self):
+        slugs = [membertype.slug for membertype in self.types.all()]
+        return 'bestuur' in slugs
+
     def is_begeleider(self):
         slugs = [membertype.slug for membertype in self.types.all()]
         return 'begeleider' in slugs

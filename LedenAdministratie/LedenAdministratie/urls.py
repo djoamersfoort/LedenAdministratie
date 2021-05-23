@@ -51,5 +51,6 @@ urlpatterns = [
     path('api/v1/idp/verify/<str:fields>', api.ApiV1IDPVerify.as_view()),
     path('api/v1/idp/avatar', api.ApiV1IDPAvatar.as_view()),
     path('o/', include('oauth2_provider.urls', namespace='oauth2_provider')),
+    path('logged_in/', views.LoggedInView.as_view(), name='logged_in'),
     path('', auth_views.LoginView.as_view(), name='login'),
 ]
