@@ -4,7 +4,7 @@ from django.http import HttpResponse, JsonResponse
 from django.views.generic.edit import View
 from django.db.models import Q
 from django.utils import timezone
-from oauth2_provider.views.mixins import ProtectedResourceMixin
+from oauth2_provider.views import ProtectedResourceView
 from datetime import date
 from .models import Member
 from .templatetags.photo_filter import img2base64
@@ -12,7 +12,7 @@ from .mixins import APITokenMixin
 
 
 @method_decorator(csrf_exempt, name='dispatch')
-class ApiV1Smoelenboek(ProtectedResourceMixin, View):
+class ApiV1Smoelenboek(ProtectedResourceView):
     def get(self, request, *args, **kwargs):
         large = request.GET.get('large', '0') == '1'
         members = Member.objects.filter(Q(afmeld_datum__gt=timezone.now()) | Q(afmeld_datum=None))
@@ -51,7 +51,7 @@ class ApiV1Smoelenboek(ProtectedResourceMixin, View):
 
 
 @method_decorator(csrf_exempt, name='dispatch')
-class ApiV1SmoelenboekUser(ProtectedResourceMixin, View):
+class ApiV1SmoelenboekUser(ProtectedResourceView):
     def get(self, request, *args, **kwargs):
         large = request.GET.get('large', '0') == '1'
         userid = self.kwargs['pk']
@@ -75,6 +75,30 @@ class ApiV1SmoelenboekUser(ProtectedResourceMixin, View):
             "photo": img2base64(photo)
         }
         return JsonResponse(data=memberdict)
+
+
+class ApiV1UserDetails(ProtectedResourceView):
+    def get(self, request, *args, **kwargs):
+        member = request.resource_owner.member
+        user_data = {
+            "id": str(request.resource_owner.id),
+            "firstName": member.first_name,
+            "middleName": "",
+            "lastName": member.last_name,
+            "fullName": member.full_name,
+            "username": request.resource_owner.username,
+            "email": member.email_address,
+            "emailParents": member.email_ouders,
+            "dateOfBirth": member.gebdat,
+            "address": member.straat,
+            "zip": member.postcode,
+            "city": member.woonplaats,
+            "phone": member.telnr,
+            "memberStatus": member.is_active(),
+            "accountType": member.idp_types(),
+            "backendID": str(member.id)
+        }
+        return JsonResponse(data=user_data)
 
 
 @method_decorator(csrf_exempt, name='dispatch')

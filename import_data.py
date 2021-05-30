@@ -41,7 +41,7 @@ def main():
             user = User()
             print("Creating new user...")
         user.pk = idp_user['userID']
-        user.username = idp_user['mail'].strip()
+        user.username = idp_user['mail'].strip().lower()
         user.email = idp_user['mail'].strip()
         user.password = convert_pw_hash(idp_user['password'])
         user.save()
