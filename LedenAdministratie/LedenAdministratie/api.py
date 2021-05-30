@@ -11,7 +11,6 @@ from .templatetags.photo_filter import img2base64
 from .mixins import APITokenMixin
 
 
-@method_decorator(csrf_exempt, name='dispatch')
 class ApiV1Smoelenboek(ProtectedResourceView):
     def get(self, request, *args, **kwargs):
         large = request.GET.get('large', '0') == '1'
@@ -50,7 +49,6 @@ class ApiV1Smoelenboek(ProtectedResourceView):
         return JsonResponse(data=response)
 
 
-@method_decorator(csrf_exempt, name='dispatch')
 class ApiV1SmoelenboekUser(ProtectedResourceView):
     def get(self, request, *args, **kwargs):
         large = request.GET.get('large', '0') == '1'
