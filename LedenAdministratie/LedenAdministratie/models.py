@@ -24,20 +24,6 @@ class Member(models.Model):
         verbose_name_plural = "Leden"
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
-        if self.user is None:
-            # Create new linked User
-            self.user = User()
-            # Can't set an 'unusable_password' here, because it disables password resets
-            self.user.password = make_password(uuid.uuid4())
-
-        # Update user fields
-        self.user.first_name = self.first_name
-        self.user.last_name = self.last_name
-        self.user.username = self.email_address.lower()
-        self.user.email = self.email_address
-        self.user.is_active = self.is_active()
-        self.user.save()
-
         if self.thumbnail is None and self.foto is not None:
             try:
                 with BytesIO(self.foto) as f:
@@ -53,6 +39,21 @@ class Member(models.Model):
                 print("Warning: thumbnail creation failed: {0}".format(str(e)))
 
         super().save(force_insert, force_update, using=using, update_fields=update_fields)
+
+        if self.user is None:
+            # Create new linked User
+            self.user = User()
+            # Can't set an 'unusable_password' here, because it disables password resets
+            self.user.password = make_password(uuid.uuid4())
+
+        # Update user fields
+        self.user.first_name = self.first_name
+        self.user.last_name = self.last_name
+        self.user.username = self.email_address.lower()
+        self.user.email = self.email_address
+        self.user.is_active = self.is_active()
+        self.user.is_superuser = self.is_bestuur()
+        self.user.save()
 
     def _calculate_age(self, ondate=date.today()):
         today = ondate

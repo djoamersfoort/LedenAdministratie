@@ -24,7 +24,7 @@ class LoggedInView(LoginRequiredMixin, View):
             return HttpResponseRedirect(reverse('members'))
         else:
             # TODO: Create a profile page with pw management links, etc.
-            return HttpResponseRedirect('https://www.djoamersfoort.nl/')
+            return HttpResponseRedirect('https://www.djoamersfoort.nl/startpagina/')
 
 
 class MemberListView(PermissionRequiredMixin, ListView):
