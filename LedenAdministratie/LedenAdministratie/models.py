@@ -18,7 +18,6 @@ class MemberType(models.Model):
 
 
 class Member(models.Model):
-
     class Meta:
         ordering = ["first_name", "last_name"]
         verbose_name_plural = "Leden"
@@ -114,7 +113,7 @@ class Member(models.Model):
     email_address = models.EmailField(max_length=200, validators=[EmailValidator(message='E-mail adres is ongeldig')])
     straat = models.CharField(max_length=255)
     postcode = models.CharField(max_length=7, validators=[
-        RegexValidator(regex='\d\d\d\d\s?[A-Za-z]{2}', message='De postcode is ongeldig')])
+        RegexValidator(regex=r'\d\d\d\d\s?[A-Za-z]{2}', message='De postcode is ongeldig')])
     woonplaats = models.CharField(max_length=100)
     telnr = models.CharField(max_length=30, blank=True)
     telnr_ouders = models.CharField(max_length=30, blank=False)
