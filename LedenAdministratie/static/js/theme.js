@@ -17,7 +17,7 @@ function updateUI() {
 }
 
 // on document load
-$(document).ready(function() {
+$(function() {
     // get user preference from colorscheme if applicable
     const preference = window.matchMedia("(prefers-color-scheme: dark)").matches;
 
@@ -32,7 +32,7 @@ $(document).ready(function() {
     updateUI();
 
     // add event listener to switch
-    $(".theme-toggle").click(function() {
+    $(".theme-toggle").on("click", function() {
         $(this).blur();
         
         // animation class

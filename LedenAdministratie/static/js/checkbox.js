@@ -1,5 +1,4 @@
-
-$(document).ready(function() {
+$(function() {
     var $selectAll = $('#selectAll'); // main checkbox inside table thead
     var $table = $('.table'); // table selector
     var $tdCheckbox = $table.find('tbody input:checkbox'); // checboxes inside table body
@@ -21,6 +20,6 @@ $(document).ready(function() {
     })
 });
 
-$('#id_invoice_types').change(function() {
+$('#id_invoice_types').on("change", function() {
     $('#mainform').submit();
 });

@@ -10,11 +10,17 @@
 
     <title>Ledenadministratie DJO</title>
 
-    <!-- Bootstrap core CSS -->
-    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet" crossorigin="anonymous">
-
-    <!-- Custom styles for this template -->
+    <!-- styles -->
+    <link href="{% static 'css/src/bootstrap.min.css' %}" rel="stylesheet" crossorigin="anonymous">
     <link href="{% static 'css/dashboard.css' %}" rel="stylesheet" crossorigin="anonymous">
+
+    <!-- scripts -->
+    <script src="{% static 'js/src/jquery.slim.min.js' %}"></script>
+    <script src="{% static 'js/src/popper.min.js' %}"></script>
+    <script src="{% static 'js/src/bootstrap.min.js' %}"></script>
+    <script src="{% static 'js/src/feather.min.js' %}"></script>
+    <script>$(feather.replace)</script>
+    {% block customscript %}{% endblock %}
 </head>
 
 <body>
@@ -149,18 +155,6 @@
         </main>
     </div>
 </div>
-
-<!-- Bootstrap core JavaScript
-================================================== -->
-<!-- Placed at the end of the document so the pages load faster -->
-<script src="{% static 'js/jquery.slim.min.js' %}"></script>
-<script src="{% static 'js/popper.min.js' %}"></script>
-<script src="{% static 'js/bootstrap.min.js' %}"></script>
-<script src="{% static 'js/feather.min.js' %}"></script>
-<script>feather.replace()</script>
-
-{% block customscript %}
-{% endblock %}
 
 </body>
 </html>
