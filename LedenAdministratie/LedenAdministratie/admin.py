@@ -1,9 +1,18 @@
 from django.contrib import admin
 from. import models
 
-admin.site.register(models.Member)
+
+class MemberAdmin(admin.ModelAdmin):
+    exclude = ['foto', 'thumbnail']
+
+
+class InvoiceAdmin(admin.ModelAdmin):
+    exclude = ['pdf']
+
+
+admin.site.register(models.Member, MemberAdmin)
 admin.site.register(models.MemberType)
-admin.site.register(models.Invoice)
+admin.site.register(models.Invoice, InvoiceAdmin)
 admin.site.register(models.Note)
 admin.site.register(models.APIToken)
 admin.site.register(models.Email)
