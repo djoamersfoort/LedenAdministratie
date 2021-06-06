@@ -19,8 +19,6 @@
     <script src="{% static 'js/src/popper.min.js' %}"></script>
     <script src="{% static 'js/src/bootstrap.min.js' %}"></script>
     <script src="{% static 'js/src/feather.min.js' %}"></script>
-    <script>$(feather.replace)</script>
-    {% block customscript %}{% endblock %}
 </head>
 
 <body>
@@ -155,6 +153,10 @@
         </main>
     </div>
 </div>
+
+<!-- scripts used for UI -->
+<script>feather.replace()</script>
+{% block customscript %}{% endblock %}
 
 </body>
 </html>
