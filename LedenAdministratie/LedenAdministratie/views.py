@@ -2,7 +2,7 @@ from django.views.generic.edit import CreateView, UpdateView, DeleteView, FormVi
 from django.views.generic.list import ListView
 from django.urls import reverse_lazy, reverse
 from django.forms import formset_factory
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden
 from django.db.models import F, Q
 from django.conf import settings
 from django.core.mail import EmailMessage
@@ -23,8 +23,24 @@ class LoggedInView(LoginRequiredMixin, View):
         if request.user.member.is_bestuur():
             return HttpResponseRedirect(reverse('members'))
         else:
-            # TODO: Create a profile page with pw management links, etc.
-            return HttpResponseRedirect('https://www.djoamersfoort.nl/startpagina/')
+            return HttpResponseRedirect(reverse('profile'))
+
+
+class Profile(LoginRequiredMixin, FormView):
+    template_name = 'profile.html'
+    form_class = forms.MemberForm
+
+    def post(self, request, *args, **kwargs):
+        return HttpResponseForbidden()
+
+    def get_form(self, form_class=None):
+        form = forms.MemberForm(instance=self.request.user.member)
+
+        # Make the form read-only
+        for name, field in form.fields.items():
+            field.widget.attrs['disabled'] = True
+
+        return form
 
 
 class MemberListView(PermissionRequiredMixin, ListView):
@@ -56,7 +72,7 @@ class MemberUpdateView(PermissionRequiredMixin, UpdateView):
         form = super().get_form(form_class)
 
         # Make the form read-only when user has no change permissions
-        if not self.request.user.has_perm('LedenAdministratie.change_lid'):
+        if not self.request.user.has_perm('LedenAdministratie.change_member'):
             for name, field in form.fields.items():
                 field.widget.attrs['disabled'] = True
         return form

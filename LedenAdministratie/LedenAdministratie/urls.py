@@ -53,5 +53,6 @@ urlpatterns = [
     path('api/v1/member/details', api.ApiV1UserDetails.as_view()),
     path('o/', include('oauth2_provider.urls', namespace='oauth2_provider')),
     path('logged_in/', views.LoggedInView.as_view(), name='logged_in'),
+    path('profile/', views.Profile.as_view(), name='profile'),
     path('', auth_views.LoginView.as_view(), name='login'),
 ]

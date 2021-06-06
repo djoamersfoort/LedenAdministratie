@@ -40,7 +40,7 @@
                     <td>{{ lid.aanmeld_datum|date:"d-m-Y" }}</td>
                     <td>{{ lid.age }}</td>
                     <td>{{ lid.get_types_display }}</td>
-                    {% if perms.LedenAdministratie.change_lid %}
+                    {% if perms.LedenAdministratie.change_member %}
                         <td>
                             <a href="{% url 'lid_edit' lid.pk %}" class="btn-sm btn-success">
                                 <span data-feather="edit"></span>

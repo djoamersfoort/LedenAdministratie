@@ -20,7 +20,11 @@
 <body>
 
 <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
-    <a class="navbar-brand col-2 mr-0" href="{% url 'members' %}">Leden DJO</a>
+    {% if perms.LedenAdministratie.change_member %}
+        <a class="navbar-brand col-2 mr-0" href="{% url 'members' %}">Leden DJO</a>
+    {% else %}
+        <a class="navbar-brand col-2 mr-0" href="#">Leden DJO</a>
+    {% endif %}
     {% block searchbar %}
     {% endblock %}
 </nav>
@@ -56,7 +60,7 @@
                             </a>
                         </li>
 
-                        {% if perms.LedenAdministratie.change_lid %}
+                        {% if perms.LedenAdministratie.change_member %}
                             <li class="nav-item">
                                 <a class="nav-link" href="{% url 'lid_create' %}">
                                     <span data-feather="user-plus"></span>Nieuw Lid
@@ -66,6 +70,7 @@
                     </ul>
                 {% endblock %}
 
+                {% block navbarinvoices %}
                 <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
                     <span>Facturen</span>
                 </h6>
@@ -87,7 +92,9 @@
                         </a>
                     </li>
                 </ul>
+                {% endblock %}
 
+                {% block navbaremails %}
                 <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
                    <span>E-Mail</span>
                 </h6>
@@ -104,7 +111,9 @@
                         </a>
                     </li>
                 </ul>
+                {% endblock %}
 
+                {% block navbarmisc %}
                 <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
                    <span>Overig</span>
                 </h6>
@@ -125,6 +134,7 @@
                        <a class="nav-link" href="{% url 'settings' %}">
                            <span data-feather="settings"></span>Instellingen</a>
                    </li>
+                {% endblock %}
 
                  </ul>
                  <ul class="nav flex-column mt-4 mb-1">
