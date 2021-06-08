@@ -6,9 +6,10 @@ MAINTAINER Ronald Moesbergen
 COPY requirements.txt /srv/LedenAdministratie/requirements.txt
 
 RUN apk update && \
-    apk add nginx mariadb-dev zlib-dev gcc musl-dev jpeg-dev freetype-dev libffi-dev cairo-dev pango-dev ttf-dejavu && \
+    apk add nginx mariadb-dev zlib-dev gcc musl-dev jpeg-dev freetype-dev libffi-dev cairo-dev pango-dev ttf-dejavu cargo && \
+    pip3 install --upgrade pip && \
     pip3 install --no-cache-dir -r /srv/LedenAdministratie/requirements.txt && \
-    apk del gcc musl-dev
+    apk del gcc musl-dev rust cargo
 
 WORKDIR /srv
 RUN mkdir static logs /run/nginx
