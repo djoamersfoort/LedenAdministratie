@@ -15,14 +15,15 @@ Including another URLconf
 """
 from django.urls import path, re_path, include
 from django.contrib import admin
+from django.contrib.auth import views as auth_views
 from . import views, api
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('accounts/', include('django.contrib.auth.urls')),
     re_path(r'^tinymce/', include('tinymce.urls')),
     path('members/<filter_slug>/', views.MemberListView.as_view(), name='members'),
     path('members/', views.MemberListView.as_view(), name='members'),
-    path('logoff/', views.LogoffView.as_view(), name='logoff'),
     path('export/', views.ExportView.as_view(), name='export'),
     path('member/edit/<int:pk>/', views.MemberUpdateView.as_view(), name='lid_edit'),
     path('member/delete/<int:pk>/', views.MemberDeleteView.as_view(), name='lid_delete'),
@@ -49,6 +50,9 @@ urlpatterns = [
     path('api/v1/idp/details/<str:fields>', api.ApiV1IDPGetDetails.as_view()),
     path('api/v1/idp/verify/<str:fields>', api.ApiV1IDPVerify.as_view()),
     path('api/v1/idp/avatar', api.ApiV1IDPAvatar.as_view()),
-    re_path(r'oauth/.*', views.LoginResponseView.as_view()),
-    path('', views.LoginView.as_view(), name='login'),
+    path('api/v1/member/details', api.ApiV1UserDetails.as_view()),
+    path('o/', include('oauth2_provider.urls', namespace='oauth2_provider')),
+    path('logged_in/', views.LoggedInView.as_view(), name='logged_in'),
+    path('profile/', views.Profile.as_view(), name='profile'),
+    path('', auth_views.LoginView.as_view(), name='login'),
 ]

@@ -26,12 +26,15 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
+    'oauth2_provider',
+    'corsheaders',
     'widget_tweaks',
     'tinymce',
     'LedenAdministratie'
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -68,7 +71,7 @@ AUTHENTICATION_BACKENDS = (
 
 
 LOGIN_URL = '/'
-LOGIN_REDIRECT_URL = '/members/'
+LOGIN_REDIRECT_URL = '/logged_in/'
 
 EMAIL_HOST="smtp.provider.com"
 EMAIL_PORT=587
@@ -113,6 +116,7 @@ DATETIME_INPUT_FORMATS = [
 DECIMAL_SEPARATOR = ','
 USE_THOUSAND_SEPARATOR = False
 
+DATA_UPLOAD_MAX_MEMORY_SIZE = 16000000
 
 # IDP Settings
 IDP_CLIENT_ID = 'XXXX-XXXX-XXXX-XXXX'
@@ -135,7 +139,16 @@ STATICFILES_DIRS = (
 
 # Session and cookie settings
 SESSION_COOKIE_SECURE = True
-SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False
+CORS_ALLOWED_ORIGIN_REGEXES = [
+    r"^https://\w+\.djoamersfoort\.nl$",
+]
+CORS_URLS_REGEX = r'^/(api|o)/.*$'
+
+PASSWORD_HASHERS = [
+    'django.contrib.auth.hashers.PBKDF2PasswordHasher',
+    'django.contrib.auth.hashers.BCryptPasswordHasher',
+]
 
 
 TINYMCE_INCLUDE_JQUERY=False

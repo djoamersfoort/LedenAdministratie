@@ -1,8 +1,8 @@
 
 
-$(document).ready(function() {
+$(function() {
     $("#searchbar").val("");
-    $("#searchbar").keyup(function() {
+    $("#searchbar").on("keyup", function() {
         var filter, tr, td, i, txtValue;
         filter = $("#searchbar").val().toUpperCase();
         tr = $("table:first").find("tr");
@@ -23,7 +23,7 @@ $(document).ready(function() {
 
     $("table:first > thead > tr").children('th').each(function() {
         if ($(this)[0].innerText != '') {
-            $(this).click(tableSort);
+            $(this).on("click", tableSort);
             $(this).css('cursor', 'ns-resize');
         }
     })

@@ -1,4 +1,8 @@
+import uuid
 from django.db import models
+from django.contrib.auth.models import User
+from django.contrib.auth.hashers import make_password
+from django.utils import timezone
 from datetime import date
 from django.core.validators import RegexValidator, EmailValidator
 from PIL import Image
@@ -14,14 +18,11 @@ class MemberType(models.Model):
 
 
 class Member(models.Model):
-
     class Meta:
         ordering = ["first_name", "last_name"]
         verbose_name_plural = "Leden"
 
-    def save(self, force_insert=False, force_update=False, using=None,
-             update_fields=None):
-
+    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         if self.thumbnail is None and self.foto is not None:
             try:
                 with BytesIO(self.foto) as f:
@@ -37,6 +38,21 @@ class Member(models.Model):
                 print("Warning: thumbnail creation failed: {0}".format(str(e)))
 
         super().save(force_insert, force_update, using=using, update_fields=update_fields)
+
+        if self.user is None:
+            # Create new linked User
+            self.user = User()
+            # Can't set an 'unusable_password' here, because it disables password resets
+            self.user.password = make_password(uuid.uuid4())
+
+        # Update user fields
+        self.user.first_name = self.first_name
+        self.user.last_name = self.last_name
+        self.user.username = self.email_address.lower()
+        self.user.email = self.email_address
+        self.user.is_active = self.is_active()
+        self.user.is_superuser = self.is_bestuur()
+        self.user.save()
 
     def _calculate_age(self, ondate=date.today()):
         today = ondate
@@ -61,6 +77,10 @@ class Member(models.Model):
             result.append(name)
         return ','.join(result)
 
+    def is_bestuur(self):
+        slugs = [membertype.slug for membertype in self.types.all()]
+        return 'bestuur' in slugs
+
     def is_begeleider(self):
         slugs = [membertype.slug for membertype in self.types.all()]
         return 'begeleider' in slugs
@@ -77,9 +97,13 @@ class Member(models.Model):
         slugs = [membertype.slug for membertype in self.types.all()]
         return 'senior' in slugs
 
+    def is_active(self):
+        return self.afmeld_datum is None or self.afmeld_datum > timezone.now().date()
+
     def __str__(self):
         return "%s %s" % (self.first_name, self.last_name)
 
+    user = models.OneToOneField(User, on_delete=models.CASCADE, null=True)
     first_name = models.CharField(max_length=40)
     last_name = models.CharField(max_length=200)
     gebdat = models.DateField(verbose_name='Geboorte Datum')
@@ -89,7 +113,7 @@ class Member(models.Model):
     email_address = models.EmailField(max_length=200, validators=[EmailValidator(message='E-mail adres is ongeldig')])
     straat = models.CharField(max_length=255)
     postcode = models.CharField(max_length=7, validators=[
-        RegexValidator(regex='\d\d\d\d\s?[A-Za-z]{2}', message='De postcode is ongeldig')])
+        RegexValidator(regex=r'\d\d\d\d\s?[A-Za-z]{2}', message='De postcode is ongeldig')])
     woonplaats = models.CharField(max_length=100)
     telnr = models.CharField(max_length=30, blank=True)
     telnr_ouders = models.CharField(max_length=30, blank=False)

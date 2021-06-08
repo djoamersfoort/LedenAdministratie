@@ -1,0 +1,42 @@
+{% extends 'registration/base.html' %}
+
+{% load static %}
+{% load widget_tweaks %}
+
+{% block alerts %}
+{% if form.errors %}
+<div class="alert">
+    Er is een verkeerde email of wachtwoord ingevuld, probeer het nog eens.
+</div>
+{% endif %}
+{% endblock %}
+
+{% block content %}
+
+<h1 class="h3 mb-4 font-weight-normal text-center">Inloggen bij DJO</h1>
+
+<form method="post" enctype="multipart/form-data" class="dark form-signin">
+    {% csrf_token %}
+
+    <div class="form-group">
+        <label for="id_username">E-mailadres</label>
+        {% render_field form.username|attr:"autofocus" class+='semidark darkborder text form-control' placeholder="E-mailadres" autocomplete="off" %}
+    </div>
+
+    <div class="form-group mt-3">
+        <label for="id_password">Wachtwoord</label>
+        {% render_field form.password class+='semidark darkborder text form-control' placeholder="Wachtwoord" autocomplete="off" %}
+    </div>
+    
+    <div class="d-grid gap-2 mt-4">
+        <button class="btn btn-md btn-primary" type="submit">Inloggen</button>
+    </div>
+
+    <input type="hidden" name="next" value="{{ next }}">
+</form>
+
+<div class="mt-4 text-center">
+    Wachtwoord vergeten of geen account? <a href="{% url 'password_reset' %}">Klik hier</a>
+</div>
+
+{% endblock %}

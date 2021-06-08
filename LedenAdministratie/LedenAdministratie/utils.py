@@ -1,4 +1,3 @@
-from django.core.mail import EmailMessage
 from django.utils import timezone
 from .models import Email, Setting
 

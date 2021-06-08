@@ -23,4 +23,5 @@ COPY LedenAdministratie /srv/LedenAdministratie
 # Copy entrypoint script into the image
 WORKDIR /srv/LedenAdministratie
 COPY ./docker-entrypoint.sh /
+COPY ./jobs.sh /
 ENTRYPOINT ["/docker-entrypoint.sh"]

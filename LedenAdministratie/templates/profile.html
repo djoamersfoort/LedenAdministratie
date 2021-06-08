@@ -2,13 +2,57 @@
 {% load widget_tweaks %}
 {% load photo_filter %}
 
+{% block navbar %}
+
+    <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+        <span>Mijn Account</span>
+    </h6>
+
+    <ul class="nav flex-column">
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'password_change' %}">
+                <span data-feather="lock"></span>Password wijzigen
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'oauth2_provider:list' %}">
+                <span data-feather="settings"></span>OAuth2 applicaties
+            </a>
+        </li>
+    </ul>
+
+    <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+        <span>Handige links</span>
+    </h6>
+
+    <ul class="nav flex-column">
+        <li class="nav-item">
+            <a class="nav-link" href="https://aanmelden.djoamersfoort.nl/">
+                <span data-feather="user-plus"></span>Aanmelden voor DJO
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="https://www.djoamersfoort.nl/ledenportaal/">
+                <span data-feather="globe"></span>Website Ledenportaal
+            </a>
+        </li>
+    </ul>
+
+
+{% endblock %}
+
+{% block navbarinvoices %}
+{% endblock %}
+{% block navbaremails %}
+{% endblock %}
+{% block navbarmisc %}
+{% endblock %}
+
 {% block content %}
 
 {% include 'alerts.html' %}
 
 <form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-
     <div class="col-lg-10 col-md-12 col-12">
         <div class="card">
             <div class="card-body">
@@ -90,44 +134,11 @@
                         <div class="d-flex justify-content-center mb-3">
                             <img src="{{ form.foto|img2base64 }}" class="border img-fluid rounded shadow mt-3">
                         </div>
-                        <div class="custom-file" id="customFile" lang="es">
-                            <input type="file" class="custom-file-input" id="id_foto" name="foto"
-                                   onchange="$(this).next('.custom-file-label').html($(this).val().split('\\').pop());">
-                            <label class="custom-file-label" for="id_foto">
-                               Foto uploaden...
-                            </label>
-                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
-
-    {% if object %}
-    <div class="col-lg-10 col-md-12">
-        <div class="card">
-            <div class="card-body">
-                <div class="card-header text-white bg-secondary">Notities en Facturen</div>
-
-                <div class="form-row">
-                    <div class="col-6">
-                        {% include 'notes_table.html' %}
-                    </div>
-                    <div class="col-6">
-                        {% include 'invoices_table.html' %}
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    {% endif %}
-
-    {% if perms.LedenAdministratie.change_member %}
-    <button type="submit" class="btn btn-success my-5">Opslaan</button>
-    {% endif %}
-    <button onclick="javascript:history.go(-1)" type="button" class="btn btn-secondary my-5">Annuleren</button>
-
 </form>
 
 

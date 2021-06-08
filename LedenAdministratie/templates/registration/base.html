@@ -1,0 +1,47 @@
+{% load l10n %}
+{% load static %}
+
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <title>DJO Login</title>
+
+    <!-- stylesheets -->
+    <link href="{% static 'css/src/bootstrap.min.css' %}" rel="stylesheet" crossorigin="anonymous">
+    <link href="{% static 'css/registration.css' %}" rel="stylesheet" crossorigin="anonymous">
+
+    <!-- scripts -->
+    <script src="{% static 'js/src/jquery.slim.min.js' %}"></script>
+    <script src="{% static 'js/src/popper.min.js' %}"></script>
+    <script src="{% static 'js/src/bootstrap.min.js' %}"></script>
+    <script src="{% static 'js/theme.js' %}"></script>
+    {% block customscript %}{% endblock %}
+</head>
+
+<body>
+    <nav class="navbar fixed-top">
+        <div class="container-fluid">
+            <a class="nav-brand" href="{% url 'login' %}">
+                <img height="48px" src="{% static 'img/logo-base.png' %}">
+            </a>
+            <button class="btn theme-toggle"></button>
+        </div>
+    </nav>
+
+    <div class="content">
+        {% block alerts %}
+        {% endblock %}
+
+        <div class="card content-card">
+            <div class="card-body">
+                {% block content %}
+                {% endblock %}
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

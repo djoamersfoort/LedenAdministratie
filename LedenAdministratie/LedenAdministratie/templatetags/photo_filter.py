@@ -1,5 +1,6 @@
 from django import template
 from django.forms import BoundField
+from django.core.files.uploadedfile import UploadedFile
 import base64
 import imghdr
 
@@ -87,6 +88,9 @@ def img2base64(field):
 
     if foto is None or foto == '':
         return 'data:image/png;base64,{0}'.format(onbekend_persoon)
+
+    if isinstance(foto, UploadedFile):
+        foto = foto.file.read()
 
     image_type = imghdr.what(None, foto)
     base64img = base64.encodebytes(foto).decode('ascii')

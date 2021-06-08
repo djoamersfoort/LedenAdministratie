@@ -9,3 +9,6 @@ django-tinymce==2.9.0
 django-dkim
 gunicorn
 requests
+django-cors-headers
+django-oauth-toolkit
+bcrypt
