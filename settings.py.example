@@ -82,6 +82,7 @@ EMAIL_SENDER_INVOICE = '"Invoice Sender" <invoice@example.nl>'
 EMAIL_USE_TLS = True
 EMAIL_BCC = ['bcc@example.nl']
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+DEFAULT_FROM_EMAIL = '"Mail Sender" <sender@example.nl>'
 
 
 WSGI_APPLICATION = 'LedenAdministratie.wsgi.application'

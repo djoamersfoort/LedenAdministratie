@@ -1,10 +1,10 @@
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse, JsonResponse, HttpResponseForbidden
 from django.views.generic.edit import View
 from django.db.models import Q
 from django.utils import timezone
-from oauth2_provider.views import ProtectedResourceView
+from oauth2_provider.views import ProtectedResourceView, ScopedProtectedResourceView
 from datetime import date
 from .models import Member
 from .templatetags.photo_filter import img2base64
@@ -75,27 +75,51 @@ class ApiV1SmoelenboekUser(ProtectedResourceView):
         return JsonResponse(data=memberdict)
 
 
-class ApiV1UserDetails(ProtectedResourceView):
+class ApiV1UserDetails(ScopedProtectedResourceView):
+
+    def get_scopes(self):
+        return ['user/basic']
+
     def get(self, request, *args, **kwargs):
+        try:
+            owner = self.request.resource_owner
+            app = owner.oauth2_provider_application.get()
+            token = owner.oauth2_provider_accesstoken.filter(application=app).order_by('-expires')[0]
+        except Exception as e:
+            print(str(e))
+            return HttpResponseForbidden
+        scopes = token.scope.split()
         member = request.resource_owner.member
-        user_data = {
-            "id": str(request.resource_owner.id),
-            "firstName": member.first_name,
-            "middleName": "",
-            "lastName": member.last_name,
-            "fullName": member.full_name,
-            "username": request.resource_owner.username,
-            "email": member.email_address,
-            "emailParents": member.email_ouders,
-            "dateOfBirth": member.gebdat,
-            "address": member.straat,
-            "zip": member.postcode,
-            "city": member.woonplaats,
-            "phone": member.telnr,
-            "memberStatus": member.is_active(),
-            "accountType": member.idp_types(),
-            "backendID": str(member.id)
-        }
+        user_data = {}
+        if 'user/basic' in scopes:
+            user_data.update({
+                "id": str(request.resource_owner.id),
+                "username": request.resource_owner.username,
+                "memberStatus": member.is_active(),
+                "accountType": member.idp_types(),
+                "backendID": str(member.id)
+            })
+        if 'user/email' in scopes:
+            user_data.update({"email": member.email_address})
+        if 'user/email-parents' in scopes:
+            user_data.update({"emailParents": member.email_ouders})
+        if 'user/names' in scopes:
+            user_data.update({
+                "fullName": member.full_name,
+                "firstName": member.first_name,
+                "middleName": "",
+                "lastName": member.last_name,
+            })
+        if 'user/date-of-birth' in scopes:
+            user_data.update({"dateOfBirth": member.gebdat})
+        if 'user/address' in scopes:
+            user_data.update({
+                "address": member.straat,
+                "zip": member.postcode,
+                "city": member.woonplaats,
+            })
+        if 'user/telephone' in scopes:
+            user_data.update({"phone": member.telnr})
         return JsonResponse(data=user_data)
 
 
@@ -105,7 +129,7 @@ class ApiV1IDPGetDetails(APITokenMixin, View):
     def post(self, request, *args, **kwargs):
 
         if not self.check_api_token():
-            return HttpResponse(status=403)
+            return HttpResponseForbidden
 
         userid = request.POST.get('user-id', '0').strip('u-')
         if not userid:
@@ -154,7 +178,7 @@ class ApiV1IDPVerify(APITokenMixin, View):
 
     def post(self, request, *args, **kwargs):
         if not self.check_api_token():
-            return HttpResponse(status=403)
+            return HttpResponseForbidden
 
         result = Member.objects.filter(Q(afmeld_datum__gt=date.today()) | Q(afmeld_datum=None))
 
@@ -182,6 +206,6 @@ class ApiV1IDPAvatar(APITokenMixin, View):
     def post(self, request, *args, **kwargs):
 
         if not self.check_api_token():
-            return HttpResponse(status=403)
+            return HttpResponseForbidden
 
         return JsonResponse(data={'ok': False, 'error': 'Not implemented'}, status=200)
