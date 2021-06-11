@@ -18,7 +18,7 @@ Dit is de source voor de DJO Ledenadminstratie. Geschreven in Python/Django. Fea
 Via de smoelenboek API kun je een lijst opvragen met de volgende gegevens:
 - Voornaam + Achternaam
 - Dag aanwezig
-- Thumbmail in embedded JPG of PNG formaat
+- Thumbnail in embedded JPG of PNG formaat
 
 Om te authenticeren moet je een geldig DJO IDP Access Token in een 'Authorization' header meesturen. Zie verderop voor hoe je an zo'n token komt. Een aantal voorbeelden:
 
@@ -94,6 +94,7 @@ De ledenadministratie bevat een ingebouwde OAuth2 server, voor het centraal auth
 - Token endpoint: https://leden.djoamersfoort.nl/o/token/
 
 Met een access_token kun je vervolgens de user information API aanroepen:
+
 User info Endpoint: https://leden.djoamersfoort.nl/api/v1/member/details
 
 Deze laatste geeft, afhankelijk van de scopes waarvoor je geautoriseerd bent, de informatie van de ingelogde gebruiker terug in JSON formaat.
