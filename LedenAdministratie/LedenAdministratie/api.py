@@ -83,7 +83,9 @@ class ApiV1UserDetails(ScopedProtectedResourceView):
 
     def get(self, request, *args, **kwargs):
         try:
-            token_string = self.request.headers.get('authorization').split()[1]
+            token_string = self.request.GET.get('access_token', '').strip()
+            if token_string == "":
+                token_string = self.request.headers.get('authorization').split()[1]
             token = AccessToken.objects.get(token=token_string)
         except Exception as e:
             print(str(e))
