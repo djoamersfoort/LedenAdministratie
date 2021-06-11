@@ -5,6 +5,7 @@ from django.views.generic.edit import View
 from django.db.models import Q
 from django.utils import timezone
 from oauth2_provider.views import ProtectedResourceView, ScopedProtectedResourceView
+from oauth2_provider.models import AccessToken
 from datetime import date
 from .models import Member
 from .templatetags.photo_filter import img2base64
@@ -82,16 +83,14 @@ class ApiV1UserDetails(ScopedProtectedResourceView):
 
     def get(self, request, *args, **kwargs):
         try:
-            owner = self.request.resource_owner
-            app = owner.oauth2_provider_application.get()
-            token = owner.oauth2_provider_accesstoken.filter(application=app).order_by('-expires')[0]
+            token_string = self.request.headers.get('authorization').split()[1]
+            token = AccessToken.objects.get(token=token_string)
         except Exception as e:
             print(str(e))
             return HttpResponseForbidden
-        scopes = token.scope.split()
         member = request.resource_owner.member
         user_data = {}
-        if 'user/basic' in scopes:
+        if token.allow_scopes(['user/basic']):
             user_data.update({
                 "id": str(request.resource_owner.id),
                 "username": request.resource_owner.username,
@@ -99,26 +98,26 @@ class ApiV1UserDetails(ScopedProtectedResourceView):
                 "accountType": member.idp_types(),
                 "backendID": str(member.id)
             })
-        if 'user/email' in scopes:
+        if token.allow_scopes(['user/email']):
             user_data.update({"email": member.email_address})
-        if 'user/email-parents' in scopes:
+        if token.allow_scopes(['user/email-parents']):
             user_data.update({"emailParents": member.email_ouders})
-        if 'user/names' in scopes:
+        if token.allow_scopes(['user/names']):
             user_data.update({
                 "fullName": member.full_name,
                 "firstName": member.first_name,
                 "middleName": "",
                 "lastName": member.last_name,
             })
-        if 'user/date-of-birth' in scopes:
+        if token.allow_scopes(['user/date-of-birth']):
             user_data.update({"dateOfBirth": member.gebdat})
-        if 'user/address' in scopes:
+        if token.allow_scopes(['user/address']):
             user_data.update({
                 "address": member.straat,
                 "zip": member.postcode,
                 "city": member.woonplaats,
             })
-        if 'user/telephone' in scopes:
+        if token.allow_scopes(['user/telephone']):
             user_data.update({"phone": member.telnr})
         return JsonResponse(data=user_data)
 

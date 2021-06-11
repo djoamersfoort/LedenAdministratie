@@ -69,6 +69,18 @@ AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
 )
 
+OAUTH2_PROVIDER = {
+    'SCOPES': {
+        'user/basic': 'Je gebruikersnaam en gebruikers-id',
+        'user/email': 'Je e-mail adres',
+        'user/email-parents': 'Het e-mail adres van je ouders',
+        'user/date-of-birth': 'Je geboortedatum',
+        'user/address': 'Je adresgegevens',
+        'user/telephone': 'Je telefoonnummers',
+        'user/names': 'Je voornaam, achternaam en tussenvoegsels',
+    },
+    'DEFAULT_SCOPES': ['user/basic']
+}
 
 LOGIN_URL = '/'
 LOGIN_REDIRECT_URL = '/logged_in/'
