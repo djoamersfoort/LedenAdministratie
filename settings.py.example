@@ -80,6 +80,7 @@ OAUTH2_PROVIDER = {
         'user/names': 'Je voornaam, achternaam en tussenvoegsels',
     },
     'DEFAULT_SCOPES': ['user/basic']
+    'REFRESH_TOKEN_EXPIRE_SECONDS': 86400,
 }
 
 LOGIN_URL = '/'
