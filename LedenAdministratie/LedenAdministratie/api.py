@@ -1,15 +1,10 @@
-from django.utils.decorators import method_decorator
-from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse, JsonResponse, HttpResponseForbidden
-from django.views.generic.edit import View
 from django.db.models import Q
 from django.utils import timezone
 from oauth2_provider.views import ProtectedResourceView, ScopedProtectedResourceView
 from oauth2_provider.models import AccessToken
-from datetime import date
 from .models import Member
 from .templatetags.photo_filter import img2base64
-from .mixins import APITokenMixin
 
 
 class ApiV1Smoelenboek(ProtectedResourceView):
@@ -122,91 +117,3 @@ class ApiV1UserDetails(ScopedProtectedResourceView):
         if token.allow_scopes(['user/telephone']):
             user_data.update({"phone": member.telnr})
         return JsonResponse(data=user_data)
-
-
-@method_decorator(csrf_exempt, name='dispatch')
-class ApiV1IDPGetDetails(APITokenMixin, View):
-
-    def post(self, request, *args, **kwargs):
-
-        if not self.check_api_token():
-            return HttpResponseForbidden
-
-        userid = request.POST.get('user-id', '0').strip('u-')
-        if not userid:
-            return JsonResponse(data={'ok': False, 'error': 'User-id required'}, status=412)
-        try:
-            member = Member.objects.get(id=userid)
-        except Member.DoesNotExist:
-            return JsonResponse(data={'ok': False, 'error': 'User not found'}, status=404)
-
-        response = {'user-id': member.id}
-        fields = self.kwargs['fields'].split(',')
-        for field in fields:
-            if field == 'is-member':
-                response['is-member'] = member.is_active()
-            elif field == 'mail':
-                response['mail'] = member.email_address
-            elif field == 'mail-parents':
-                response['mail-parents'] = member.email_ouders
-            elif field == 'city':
-                response['city'] = member.woonplaats
-            elif field == 'zip':
-                response['zip'] = member.postcode
-            elif field == 'address':
-                response['address'] = member.straat
-            elif field == 'phone':
-                response['phone'] = member.telnr_ouders
-            elif field == 'mobile':
-                response['mobile'] = member.telnr
-            elif field == 'firstname':
-                response['firstname'] = member.first_name
-            elif field == 'lastname':
-                response['lastname'] = member.last_name
-            elif field == 'middlename':
-                response['middelname'] = ''
-            elif field == 'dob':
-                response['dob'] = member.gebdat
-            elif field == 'type':
-                response['type'] = member.idp_types()
-
-        result = {'ok': True, 'result': response}
-        return JsonResponse(data=result)
-
-
-@method_decorator(csrf_exempt, name='dispatch')
-class ApiV1IDPVerify(APITokenMixin, View):
-
-    def post(self, request, *args, **kwargs):
-        if not self.check_api_token():
-            return HttpResponseForbidden
-
-        result = Member.objects.filter(Q(afmeld_datum__gt=date.today()) | Q(afmeld_datum=None))
-
-        fields = self.kwargs['fields'].split(',')
-        for field in fields:
-            value = request.POST.get('email', 'xxxxx').lower()
-            if field == 'email':
-                result = result.filter(Q(email_address=value) | Q(email_ouders=value))
-            elif field == 'zip':
-                zipcode = request.POST.get('zip', 'xxxxxx').lower()
-                zip_spaced = zipcode[0:4] + ' ' + zipcode[-2:]
-                zip_stripped = zipcode.replace(' ', '')
-                result = result.filter(Q(postcode=zip_spaced) | Q(postcode=zip_stripped))
-
-        try:
-            member = result.get()
-        except (Member.DoesNotExist, Member.MultipleObjectsReturned):
-            return JsonResponse(data={'ok': True, 'result': None})
-
-        return JsonResponse(data={'ok': True, 'result': 'u-{0}'.format(member.id)})
-
-
-@method_decorator(csrf_exempt, name='dispatch')
-class ApiV1IDPAvatar(APITokenMixin, View):
-    def post(self, request, *args, **kwargs):
-
-        if not self.check_api_token():
-            return HttpResponseForbidden
-
-        return JsonResponse(data={'ok': False, 'error': 'Not implemented'}, status=200)
