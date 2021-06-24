@@ -165,15 +165,6 @@ class Invoice(models.Model):
     pdf = models.BinaryField(blank=True, null=True, editable=True)
 
 
-class APIToken(models.Model):
-    token_type = models.CharField(max_length=12)
-    token = models.CharField(max_length=64)
-    expires = models.DateTimeField(null=True, blank=True)
-
-    def __str__(self):
-        return "{0} - {1}".format(self.token_type, self.token)
-
-
 class Email(models.Model):
     sent = models.DateTimeField(blank=True, null=True)
     member = models.ForeignKey(Member, on_delete=models.CASCADE, related_name='emails', null=True)
