@@ -43,7 +43,7 @@ class Member(models.Model):
             # Create new linked User
             self.user = User()
             # Can't set an 'unusable_password' here, because it disables password resets
-            self.user.password = make_password(uuid.uuid4())
+            self.user.password = make_password(str(uuid.uuid4()))
 
         # Update user fields
         self.user.first_name = self.first_name
