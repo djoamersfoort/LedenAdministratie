@@ -12,7 +12,7 @@ RUN apk update && \
     apk del gcc musl-dev rust cargo
 
 WORKDIR /srv
-RUN mkdir static logs /run/nginx
+RUN mkdir static logs
 
 COPY nginx.conf /etc/nginx/nginx.conf
 
