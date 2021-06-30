@@ -66,6 +66,10 @@ class Member(models.Model):
     def get_types_display(self):
         return ','.join([tmptype.display_name for tmptype in self.types.all()])
 
+    @property
+    def days(self):
+        return ','.join(('friday' if self.dag_vrijdag else '', 'saturday' if self.dag_zaterdag else '')).rstrip(',')
+
     def idp_types(self):
         result = []
         for membertype in self.types.all():

@@ -93,7 +93,8 @@ class ApiV1UserDetails(ScopedProtectedResourceView):
                 "username": request.resource_owner.username,
                 "memberStatus": member.is_active(),
                 "accountType": member.idp_types(),
-                "backendID": str(member.id)
+                "backendID": str(member.id),
+                "days": member.days
             })
         if token.allow_scopes(['user/email']):
             user_data.update({"email": member.email_address})
