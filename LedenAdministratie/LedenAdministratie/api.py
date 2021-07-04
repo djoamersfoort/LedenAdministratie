@@ -2,9 +2,9 @@ from django.http import HttpResponse, JsonResponse, HttpResponseForbidden
 from django.db.models import Q
 from django.utils import timezone
 from oauth2_provider.views import ProtectedResourceView, ScopedProtectedResourceView
-from oauth2_provider.models import AccessToken
 from .models import Member
 from .templatetags.photo_filter import img2base64
+from .utils import Utils
 
 
 class ApiV1Smoelenboek(ProtectedResourceView):
@@ -77,14 +77,13 @@ class ApiV1UserDetails(ScopedProtectedResourceView):
         return ['user/basic']
 
     def get(self, request, *args, **kwargs):
-        try:
-            token_string = self.request.GET.get('access_token', '').strip()
-            if token_string == "":
-                token_string = self.request.headers.get('authorization').split()[1]
-            token = AccessToken.objects.get(token=token_string)
-        except Exception as e:
-            print(str(e))
-            return HttpResponseForbidden
+        token = Utils.get_access_token(request)
+        if token is None:
+            return HttpResponseForbidden()
+
+        if not request.resource_owner or not request.resource_owner.member:
+            return HttpResponseForbidden()
+
         member = request.resource_owner.member
         user_data = {}
         if token.allow_scopes(['user/basic']):

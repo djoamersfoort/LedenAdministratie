@@ -78,6 +78,7 @@ OAUTH2_PROVIDER = {
         'user/address': 'Je adresgegevens',
         'user/telephone': 'Je telefoonnummers',
         'user/names': 'Je voornaam, achternaam en tussenvoegsels',
+        'introspection': 'Allow introspection of OAuth tokens',
     },
     'DEFAULT_SCOPES': ['user/basic']
     'REFRESH_TOKEN_EXPIRE_SECONDS': 86400,

@@ -68,7 +68,7 @@ class Member(models.Model):
 
     @property
     def days(self):
-        return ','.join(('friday' if self.dag_vrijdag else '', 'saturday' if self.dag_zaterdag else '')).rstrip(',')
+        return ','.join(('friday' if self.dag_vrijdag else '', 'saturday' if self.dag_zaterdag else '')).strip(',')
 
     def idp_types(self):
         result = []
