@@ -37,8 +37,6 @@ class Member(models.Model):
             except Exception as e:
                 print("Warning: thumbnail creation failed: {0}".format(str(e)))
 
-        super().save(force_insert, force_update, using=using, update_fields=update_fields)
-
         if self.user is None:
             # Create new linked User
             self.user = User()
@@ -53,6 +51,8 @@ class Member(models.Model):
         self.user.is_active = self.is_active()
         self.user.is_superuser = self.is_bestuur()
         self.user.save()
+
+        super().save(force_insert, force_update, using=using, update_fields=update_fields)
 
     def _calculate_age(self, ondate=date.today()):
         today = ondate
