@@ -42,6 +42,8 @@ class Member(models.Model):
             self.user = User()
             # Can't set an 'unusable_password' here, because it disables password resets
             self.user.password = make_password(str(uuid.uuid4()))
+            self.user.username = self.email_address.lower()
+            self.user.save()
 
         super().save(force_insert, force_update, using=using, update_fields=update_fields)
 
