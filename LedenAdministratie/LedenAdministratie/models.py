@@ -50,9 +50,8 @@ class Member(models.Model):
         self.user.email = self.email_address
         self.user.is_active = self.is_active()
         self.user.is_superuser = self.is_bestuur()
-        self.user.save()
-
         super().save(force_insert, force_update, using=using, update_fields=update_fields)
+        self.user.save()
 
     def _calculate_age(self, ondate=date.today()):
         today = ondate
