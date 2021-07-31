@@ -43,6 +43,8 @@ class Member(models.Model):
             # Can't set an 'unusable_password' here, because it disables password resets
             self.user.password = make_password(str(uuid.uuid4()))
 
+        super().save(force_insert, force_update, using=using, update_fields=update_fields)
+
         # Update user fields
         self.user.first_name = self.first_name
         self.user.last_name = self.last_name
@@ -50,7 +52,6 @@ class Member(models.Model):
         self.user.email = self.email_address
         self.user.is_active = self.is_active()
         self.user.is_superuser = self.is_bestuur()
-        super().save(force_insert, force_update, using=using, update_fields=update_fields)
         self.user.save()
 
     def _calculate_age(self, ondate=date.today()):
