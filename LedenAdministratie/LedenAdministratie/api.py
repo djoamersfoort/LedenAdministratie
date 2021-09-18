@@ -31,6 +31,7 @@ class ApiV1Smoelenboek(ProtectedResourceView):
 
             memberdict = {
                 "id": member.id,
+                "user_id": f'idp-{member.user.pk}',
                 "first_name": member.first_name,
                 "last_name": member.last_name,
                 "types": ','.join([tmptype.slug for tmptype in member.types.all()]),
