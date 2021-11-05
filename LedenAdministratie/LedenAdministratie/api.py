@@ -109,6 +109,7 @@ class ApiV1UserDetails(ScopedProtectedResourceView):
             })
         if token.allow_scopes(['user/date-of-birth']):
             user_data.update({"dateOfBirth": member.gebdat})
+            user_data.update({"age": member.age})
         if token.allow_scopes(['user/address']):
             user_data.update({
                 "address": member.straat,
