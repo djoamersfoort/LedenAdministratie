@@ -21,7 +21,7 @@ from . import views, api
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('django.contrib.auth.urls')),
-    re_path(r'^tinymce/', include('tinymce.urls')),
+    path('tinymce/', include('tinymce.urls')),
     path('members/<filter_slug>/', views.MemberListView.as_view(), name='members'),
     path('members/', views.MemberListView.as_view(), name='members'),
     path('export/', views.ExportView.as_view(), name='export'),

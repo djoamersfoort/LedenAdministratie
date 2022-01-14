@@ -7,7 +7,7 @@
 {% include 'alerts.html' %}
 
 
-<form method="post" id="mainform" enctype="multipart/form-data">
+<form method="post" id="mainform" enctype="multipart/form-data" xmlns="http://www.w3.org/1999/html">
     {% csrf_token %}
 
     <div class="col-12">
@@ -34,10 +34,14 @@
 
                         <label for="id_subject">Onderwerp</label>
                         {{ form.subject|add_class:'form-control' }}
+                    </div>
 
-                        <label for="id_body">E-mail</label>
-                        {{ form.body|add_class:'form-control' }}
+                    <div class="form-row col-10">
+                        <!-- TinyMCE widget -->
+                        {{ form.body }}
+                    </div>
 
+                    <div class="form-row col-10 my-3">
                         <label for="id_attachment">Attachment</label>
                         {{ form.attachment|add_class:'form-control' }}
                     </div>
