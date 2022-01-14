@@ -8,7 +8,7 @@ cryptography==3.4.7
 cssselect2==0.4.1
 defusedxml==0.7.1
 Deprecated==1.2.12
-Django==3.2.6
+Django==3.2.11
 django-cors-headers==3.7.0
 django-dkim==0.1.2
 django-oauth-toolkit==1.5.0
