@@ -1,0 +1,42 @@
+{% extends "registration/base.html" %}
+
+{% block alerts %}
+{% if form.errors %}
+<div class="alert">
+    {{ form.errors }}
+</div>
+{% endif %}
+{% endblock %}
+
+{% block content %}
+
+    <div class="text-center">
+        <h1>Applicatie autoriseren: {{ application.name }}</h1>
+
+        <form id="authorizationForm" method="post">
+        {% csrf_token %}
+
+        {% for field in form %}
+            {% if field.is_hidden %}
+                {{ field }}
+            {% endif %}
+        {% endfor %}
+
+        <div class="lead mt-1">
+            <p>{{ application.name }} heeft de volgende gegevens nodig:</p>
+            <ul class="list-group">
+                {% for scope in scopes_descriptions %}
+                    <li class="list-group-item">{{ scope }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div class="small mt-4">
+            <button class="btn btn-md btn-danger" type="submit">Weigeren</button>
+            <button class="btn btn-md btn-primary" name="allow" type="submit">Toestaan</button>
+        </div>
+
+        </form>
+    </div>
+
+{% endblock %}
