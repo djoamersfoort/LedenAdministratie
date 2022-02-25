@@ -4,6 +4,7 @@
 {% if form.errors %}
 <div class="alert">
     {{ form.errors }}
+    {{ form.non_field_errors }}
 </div>
 {% endif %}
 {% endblock %}
@@ -11,32 +12,38 @@
 {% block content %}
 
     <div class="text-center">
-        <h1>Applicatie autoriseren: {{ application.name }}</h1>
 
-        <form id="authorizationForm" method="post">
-        {% csrf_token %}
+        {% if not error %}
+            <h1>Applicatie autoriseren: {{ application.name }}</h1>
 
-        {% for field in form %}
-            {% if field.is_hidden %}
-                {{ field }}
-            {% endif %}
-        {% endfor %}
+            <form id="authorizationForm" method="post">
+            {% csrf_token %}
 
-        <div class="lead mt-1">
-            <p>{{ application.name }} heeft de volgende gegevens nodig:</p>
-            <ul class="list-group">
-                {% for scope in scopes_descriptions %}
-                    <li class="list-group-item">{{ scope }}</li>
-                {% endfor %}
-            </ul>
-        </div>
+            {% for field in form %}
+                {% if field.is_hidden %}
+                    {{ field }}
+                {% endif %}
+            {% endfor %}
 
-        <div class="small mt-4">
-            <button class="btn btn-md btn-danger" type="submit">Weigeren</button>
-            <button class="btn btn-md btn-primary" name="allow" type="submit">Toestaan</button>
-        </div>
+            <div class="lead mt-1">
+                <p>{{ application.name }} heeft de volgende gegevens nodig:</p>
+                <ul class="list-group">
+                    {% for scope in scopes_descriptions %}
+                        <li class="list-group-item">{{ scope }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
 
-        </form>
+            <div class="small mt-4">
+                <input type="submit" class="btn btn-md btn-danger" value="Weigeren"/>
+                <input type="submit" class="btn btn-md btn-primary" name="allow" value="Toestaan"/>
+            </div>
+
+            </form>
+    {% else %}
+            <h2>Error: {{ error.error }}</h2>
+            <p>{{ error.description }}</p>
+    {% endif %}
     </div>
 
 {% endblock %}
