@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+{% load photo_filter %}
+
+{% block content %}
+
+{% include 'alerts.html' %}
+
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <div class="col-lg-10 col-md-12 col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="card-header text-white bg-secondary">Basisgegevens</div>
+                <div class="form-row">
+                    <div class="col-lg-5 col-md-6">
+                        <label for="id_first_name">Voornaam *</label>
+                        {{ form.first_name|add_class:'form-control' }}
+
+                        <label for="id_straat">Straat *</label>
+                        {{ form.straat|add_class:'form-control' }}
+
+                        <label for="id_woonplaats">Woonplaats *</label>
+                        {{ form.woonplaats|add_class:'form-control' }}
+
+                        <label for="id_gebdat">Geboorte datum *</label>
+                        {{ form.gebdat|add_class:'form-control' }}
+
+                        <label for="id_aanmeld_datum">Datum aanmelding *</label>
+                        {{ form.aanmeld_datum|add_class:'form-control' }}
+
+                        <label for="id_aanmeld_datum">Datum einde lidmaatschap</label>
+                        {{ form.afmeld_datum|add_class:'form-control' }}
+
+                        <label for="id_hoe_gevonden">Hoe gevonden?</label>
+                        {{ form.hoe_gevonden|add_class:'form-control' }}
+                    </div>
+                    <div class="col-lg-5 col-md-6">
+                        <label for="id_last_name">Achternaam *</label>
+                        {{ form.last_name|add_class:'form-control' }}
+
+                        <label for="id_postcode">Postcode *</label>
+                        {{ form.postcode|add_class:'form-control' }}
+
+                        <label for="id_geslacht">Geslacht *</label>
+                        {{ form.geslacht|add_class:'form-control' }}
+
+                        <label for="id_types">Type</label>
+                        {{ form.types|add_class:'form-control' }}
+
+                        <label for="id_days">Aantal dagdelen aanwezig</label>
+                        {{ form.days|add_class:'form-control' }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-10 col-md-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="card-header text-white bg-secondary">Contactgegevens en Foto</div>
+
+                <div class="form-row">
+                    <div class="col-5">
+                        <label for="id_email_address">E-mail adres *</label>
+                        {{ form.email_address|add_class:'form-control' }}
+
+                        <label for="id_telnr">Tel. Nummer</label>
+                        {{ form.telnr|add_class:'form-control' }}
+
+                        <label for="id_email_ouders">E-mail Ouders *</label>
+                        {{ form.email_ouders|add_class:'form-control' }}
+
+                        <label for="id_telnr_ouders">Tel. Nummer Ouders *</label>
+                        {{ form.telnr_ouders|add_class:'form-control' }}
+                    </div>
+                    <div class="col-2">
+                    </div>
+                    <div class="col-2">
+                        <div class="d-flex justify-content-center mb-3">
+                            <img src="{{ form.foto|img2base64 }}" class="border img-fluid rounded shadow mt-3">
+                        </div>
+                        <div class="custom-file" id="customFile" lang="es">
+                            <input type="file" class="custom-file-input" id="id_foto" name="foto"
+                                   onchange="$(this).next('.custom-file-label').html($(this).val().split('\\').pop());">
+                            <label class="custom-file-label" for="id_foto">
+                               Foto uploaden...
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    {% if object %}
+    <div class="col-lg-10 col-md-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="card-header text-white bg-secondary">Notities en Facturen</div>
+
+                <div class="form-row">
+                    <div class="col-6">
+                        {% include 'notes_table.html' %}
+                    </div>
+                    <div class="col-6">
+                        {% include 'invoices_table.html' %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if perms.LedenAdministratie.change_member %}
+    <button type="submit" class="btn btn-success my-5">Opslaan</button>
+    {% endif %}
+    <button onclick="javascript:history.go(-1)" type="button" class="btn btn-secondary my-5">Annuleren</button>
+
+</form>
+
+
+{% endblock %}
