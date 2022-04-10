@@ -20,6 +20,7 @@ COPY deploy/nginx.conf /etc/nginx/nginx.conf
 EXPOSE 80
 
 COPY static /srv/static
+COPY templates /srv/templates
 COPY LedenAdministratie /srv/LedenAdministratie
 COPY manage.py /srv
 
