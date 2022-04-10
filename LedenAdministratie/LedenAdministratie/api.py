@@ -32,7 +32,7 @@ class ApiV1Smoelenboek(ProtectedResourceView):
             }
             response.append(memberdict)
 
-        return JsonResponse(data=response)
+        return JsonResponse(data=response, safe=False)
 
 
 class ApiV1SmoelenboekUser(ProtectedResourceView):
