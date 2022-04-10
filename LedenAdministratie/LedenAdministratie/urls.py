@@ -46,7 +46,6 @@ urlpatterns = [
     path('settings/', views.SettingsView.as_view(), name='settings'),
     path('api/v1/smoelenboek/', api.ApiV1Smoelenboek.as_view()),
     path('api/v1/smoelenboek/<int:pk>/', api.ApiV1SmoelenboekUser.as_view()),
-    path('api/v1/smoelenboek/<str:day>/', api.ApiV1Smoelenboek.as_view()),
     path('api/v1/member/details', api.ApiV1UserDetails.as_view()),
     path('o/', include('oauth2_provider.urls', namespace='oauth2_provider')),
     path('logged_in/', views.LoggedInView.as_view(), name='logged_in'),

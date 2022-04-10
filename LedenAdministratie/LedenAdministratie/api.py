@@ -10,17 +10,10 @@ from .utils import Utils
 class ApiV1Smoelenboek(ProtectedResourceView):
     def get(self, request, *args, **kwargs):
         large = request.GET.get('large', '0') == '1'
-        members = Member.objects.filter(Q(afmeld_datum__gt=timezone.now()) | Q(afmeld_datum=None))
-        day = self.kwargs.get('day', None)
-        if day:
-            if day == 'vrijdag':
-                members = members.filter(dag_vrijdag=True)
-            else:
-                members = members.filter(dag_zaterdag=True)
+        members = Member.objects.filter(Q(afmeld_datum__gt=timezone.now()) | Q(afmeld_datum=None)).order_by(
+            'first_name')
 
-        members = members.order_by('first_name')
-
-        response = {'vrijdag': [], 'zaterdag': []}
+        response = []
         for member in members:
             if large:
                 photo = member.foto
@@ -37,11 +30,7 @@ class ApiV1Smoelenboek(ProtectedResourceView):
                 "types": ','.join([tmptype.slug for tmptype in member.types.all()]),
                 "photo": img2base64(photo)
             }
-
-            if member.dag_vrijdag:
-                response['vrijdag'].append(memberdict)
-            if member.dag_zaterdag:
-                response['zaterdag'].append(memberdict)
+            response.append(memberdict)
 
         return JsonResponse(data=response)
 
