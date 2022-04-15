@@ -1,6 +1,10 @@
 #!/bin/sh
-python3 manage.py migrate                  # Apply database migrations
-python3 manage.py collectstatic --noinput  # Collect static files
+
+# Activate python3 venv
+source /srv/venv/bin/activate
+
+python manage.py migrate                  # Apply database migrations
+python manage.py collectstatic --noinput  # Collect static files
 
 # Prepare log files and start outputting logs to stdout
 touch /srv/logs/gunicorn.log
