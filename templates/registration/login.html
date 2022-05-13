@@ -1,3 +1,5 @@
+<div id="loading"></div>
+
 {% extends 'registration/base.html' %}
 
 {% load static %}
@@ -9,6 +11,10 @@
     Er is een verkeerd e-mail adres of wachtwoord ingevuld, probeer het nog eens.
 </div>
 {% endif %}
+{% endblock %}
+
+{% block customscript %}
+    <script src="{% static 'js/loading.js' %}"></script>
 {% endblock %}
 
 {% block content %}
@@ -29,7 +35,7 @@
     </div>
     
     <div class="d-grid gap-2 mt-4">
-        <button class="btn btn-md btn-primary" type="submit">Inloggen</button>
+        <button id="submit" class="btn btn-md btn-primary" type="submit">Inloggen</button>
     </div>
 
     <input type="hidden" name="next" value="{{ next }}">
