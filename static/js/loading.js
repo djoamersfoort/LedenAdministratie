@@ -1,6 +1,5 @@
-
-$(function() {
+$(() => {
     $("form").submit(() => {
-        $("#loading")[0].style.visibility = "visible";
+        $(".loader")[0].style.visibility = "visible";
     })
 });
