@@ -25,6 +25,7 @@ echo Starting Gunicorn.
 exec gunicorn LedenAdministratie.wsgi:application \
     --name LedenAdministratie \
     --bind 0.0.0.0:8000 \
+    --timeout 300 \
     --workers 3 \
     --log-level=info \
     --log-file=/srv/logs/gunicorn.log \
