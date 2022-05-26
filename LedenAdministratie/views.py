@@ -17,6 +17,7 @@ from django.conf import settings
 from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
 from django.contrib.auth.mixins import LoginRequiredMixin
+from mailer.models import MessageLog
 from LedenAdministratie.models import *
 from LedenAdministratie import forms
 from LedenAdministratie.invoice import InvoiceTool
@@ -117,7 +118,7 @@ class MemberCreateView(PermissionRequiredMixin, CreateView):
         response = requests.get(Utils.get_setting("welcome_pdf_location"))
         if response.ok:
             message.attach("Welkom bij DJO Amersfoort.pdf", response.content)
-            Utils.send_email(message, self.request.user.first_name, form.instance)
+            Utils.send_email(message)
 
         return redirect
 
@@ -403,7 +404,7 @@ class EmailSendView(PermissionRequiredMixin, FormView):
     required_permission = "LedenAdministratie.add_member"
     extra_context = {"types": MemberType.objects.all()}
 
-    def send_email(self, form, recipients, member=None):
+    def send_email(self, form, recipients):
         if len(recipients) == 0:
             return None
 
@@ -425,8 +426,7 @@ class EmailSendView(PermissionRequiredMixin, FormView):
                 content += chunk
             message.attach(attachment.name, content)
 
-        Utils.send_email(message, self.request.user.first_name, member)
-        return message
+        return Utils.send_email(message)
 
     def form_valid(self, form):
         if "self" in form.cleaned_data["recipients"]:
@@ -448,15 +448,15 @@ class EmailSendView(PermissionRequiredMixin, FormView):
                 if "members" in form.cleaned_data["recipients"]:
                     to_list.append(recipient.email_address)
 
-            self.send_email(form, to_list, recipient)
+            self.send_email(form, to_list)
 
         return HttpResponseRedirect(reverse_lazy("email_log"))
 
 
 class EmailLogView(PermissionRequiredMixin, ListView):
     paginate_by = 100
-    model = Email
-    queryset = Email.objects.all().order_by("-sent")
+    model = MessageLog
+    queryset = MessageLog.objects.all().order_by("-when_added")
     template_name = "email_list.html"
     extra_context = {"types": MemberType.objects.all()}
 

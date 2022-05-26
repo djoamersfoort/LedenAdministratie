@@ -30,6 +30,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'widget_tweaks',
     'tinymce',
+    'mailer',
     'LedenAdministratie'
 ]
 
@@ -96,7 +97,8 @@ EMAIL_LANPARTY = '"Lanparty" <lanparty@example.nl>'
 EMAIL_SENDER_INVOICE = '"Invoice Sender" <invoice@example.nl>'
 EMAIL_USE_TLS = True
 EMAIL_BCC = ['bcc@example.nl']
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_BACKEND = "mailer.backend.DbBackend"
+MAILER_EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 DEFAULT_FROM_EMAIL = '"Mail Sender" <sender@example.nl>'
 
 

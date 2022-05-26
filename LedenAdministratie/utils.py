@@ -1,33 +1,23 @@
-from django.utils import timezone
-from LedenAdministratie.models import Email, Setting
+from typing import Optional
+from django.core.mail import EmailMessage
+from django.http.request import HttpRequest
+from LedenAdministratie.models import Setting
 from oauth2_provider.models import AccessToken
 
 
 class Utils:
     # Send and e-mail, and log it in the email history table
     @staticmethod
-    def send_email(message, username, member):
-        log = Email()
-        log.member = member
-        log.subject = message.subject
-        log.recipients = ",".join(message.recipients())
-        log.sent_by = username
-        log.sent = timezone.now()
-        count = 0
+    def send_email(message: EmailMessage) -> bool:
         try:
             count = message.send(fail_silently=False)
-            if count == 1:
-                log.status = "OK"
-            else:
-                log.status = "Fout bij versturen!"
-        except Exception as e:
-            log.status = "Fout bij versturen: {0}".format(str(e))
-
-        log.save_base()
+        except Exception as ex:
+            print("Fout bij versturen van e-mail: {0}".format(str(ex)))
+            return False
         return count == 1
 
     @staticmethod
-    def get_setting(name):
+    def get_setting(name: str) -> str:
         try:
             setting = Setting.objects.get(name=name)
         except Setting.DoesNotExist:
@@ -35,7 +25,7 @@ class Utils:
         return setting.value
 
     @staticmethod
-    def get_access_token(request) -> (AccessToken, None):
+    def get_access_token(request: HttpRequest) -> Optional[AccessToken]:
         token = request.GET.get("access_token", "").strip()
         if token == "":
             parts = request.headers.get("authorization", "").split()

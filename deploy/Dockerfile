@@ -21,7 +21,7 @@ RUN pip3 install --upgrade pip virtualenv && \
 FROM python:3.8-alpine
 
 RUN apk update && \
-    apk add nginx mariadb-connector-c zlib jpeg freetype libffi pango ttf-dejavu
+    apk add nginx mariadb-connector-c zlib jpeg freetype libffi pango ttf-dejavu dumb-init
 
 WORKDIR /srv
 RUN mkdir public logs venv

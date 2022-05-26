@@ -1,7 +1,7 @@
-#!/bin/sh
+#!/usr/bin/dumb-init /bin/sh
 
 # Activate python3 venv
-source /srv/venv/bin/activate
+. /srv/venv/bin/activate
 
 python manage.py migrate                  # Apply database migrations
 python manage.py collectstatic --noinput  # Collect static files
@@ -17,12 +17,15 @@ tail -n 0 -f /srv/logs/*.log &
 # Start nginx
 nginx
 
-# Start jobs in a loop
+# Start cleanup jobs in a loop
 sh /jobs.sh &
 
+# Start django-mailer queue processor
+python manage.py runmailer &
+
 # Start Gunicorn processes
-echo Starting Gunicorn.
-exec gunicorn LedenAdministratie.wsgi:application \
+echo "Starting Gunicorn."
+gunicorn LedenAdministratie.wsgi:application \
     --name LedenAdministratie \
     --bind 0.0.0.0:8000 \
     --timeout 300 \

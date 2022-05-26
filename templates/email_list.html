@@ -1,6 +1,10 @@
 {% extends 'base.html' %}
 {% load static %}
 
+{% block header %}
+    <meta http-equiv="refresh" content="5">
+{% endblock %}
+
 {% block content %}
 
     <div class="alert alert-info bg-secondary text-white">
@@ -13,9 +17,9 @@
             <thead class="thead-light">
                 <tr>
                     <th>Datum</th>
+                    <th>Prio</th>
+                    <th>Bericht ID</th>
                     <th>Onderwerp</th>
-                    <th>E-mail voor</th>
-                    <th>Aangemaakt door</th>
                     <th>Ontvangers</th>
                     <th>Status</th>
                 </tr>
@@ -23,16 +27,12 @@
             <tbody>
                 {% for email in page_obj %}
                 <tr>
-                    <td>{{ email.sent }}</td>
+                    <td>{{ email.when_added }}</td>
+                    <td>{{ email.get_priority_display }}</td>
+                    <td>{{ email.message_id }}</td>
                     <td>{{ email.subject|truncatechars:100 }}</td>
-                    {% if email.member %}
-                        <td><a href="{% url 'lid_edit' email.member.pk %}" class="text-dark">{{ email.member }}</a></td>
-                    {% else %}
-                        <td>{{ email.sent_by|capfirst }}</td>
-                    {% endif %}
-                    <td>{{ email.sent_by|capfirst }}</td>
-                    <td>{{ email.recipients }}</td>
-                    <td>{{ email.status }}</td>
+                    <td>{{ email.to_addresses|join:", " }}</td>
+                    <td>{{ email.get_result_display }}</td>
                 </tr>
                 {% endfor %}
             </tbody>

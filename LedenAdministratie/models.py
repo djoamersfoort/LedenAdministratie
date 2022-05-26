@@ -181,15 +181,6 @@ class Invoice(models.Model):
     pdf = models.BinaryField(blank=True, null=True, editable=True)
 
 
-class Email(models.Model):
-    sent = models.DateTimeField(blank=True, null=True)
-    member = models.ForeignKey(Member, on_delete=models.CASCADE, related_name="emails", null=True)
-    recipients = models.CharField(max_length=4096)
-    subject = models.CharField(max_length=255)
-    status = models.CharField(max_length=4096)
-    sent_by = models.CharField(max_length=255, null=False, default="")
-
-
 class Setting(models.Model):
     name = models.CharField(blank=False, null=False, max_length=50)
     value = models.CharField(blank=True, null=True, max_length=1024)

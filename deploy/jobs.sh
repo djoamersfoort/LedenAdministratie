@@ -1,11 +1,13 @@
 #!/usr/bin/env sh
 
-source /srv/venv/bin/activate
+. /srv/venv/bin/activate
 
 while true; do
   echo "[$(date)] Cleaning old sessions."
   python manage.py clearsessions
   echo "[$(date)] Cleaning old oauth tokens."
   python manage.py cleartokens
+  echo "[$(date)] Cleaning old email logs"
+  python manage.py purge_mail_log -r all 90
   sleep 3600
 done
