@@ -4,7 +4,7 @@ from django.db.models import Q
 from django.conf import settings
 from datetime import date, timedelta
 from weasyprint import HTML, CSS, default_url_fetcher
-from weasyprint.fonts import FontConfiguration
+from weasyprint.text.fonts import FontConfiguration
 from .models import Member
 from .utils import Utils
 
