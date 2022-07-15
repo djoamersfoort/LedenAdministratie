@@ -21,7 +21,7 @@ nginx
 sh /jobs.sh &
 
 # Start django-mailer queue processor
-python manage.py runmailer &
+(while true; do python manage.py runmailer; done) &
 
 # Start Gunicorn processes
 echo "Starting Gunicorn."
