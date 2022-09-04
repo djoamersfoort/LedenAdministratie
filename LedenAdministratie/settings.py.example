@@ -83,6 +83,7 @@ OAUTH2_PROVIDER = {
     },
     'DEFAULT_SCOPES': ['user/basic'],
     'REFRESH_TOKEN_EXPIRE_SECONDS': 86400,
+    'PKCE_REQUIRED': False,
 }
 
 LOGIN_URL = '/'
@@ -180,5 +181,5 @@ TINYMCE_DEFAULT_CONFIG = {
     "toolbar": "undo redo | formatselect | "
     "bold italic backcolor | alignleft aligncenter "
     "alignright alignjustify | bullist numlist outdent indent | code table "
-    "removeformat | help",
+    "removeformat link | help",
 }

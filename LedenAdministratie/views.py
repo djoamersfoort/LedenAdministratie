@@ -459,6 +459,7 @@ class EmailLogView(PermissionRequiredMixin, ListView):
     queryset = MessageLog.objects.all().order_by("-when_added")
     template_name = "email_list.html"
     extra_context = {"types": MemberType.objects.all()}
+    required_permission = "mailer.view_messagelog"
 
 
 class SettingsView(PermissionRequiredMixin, FormView):
@@ -469,6 +470,7 @@ class SettingsView(PermissionRequiredMixin, FormView):
         "types": MemberType.objects.all(),
     }
     success_url = reverse_lazy("members")
+    required_permission = "LedenAdministratie.view_setting"
 
     def get_initial(self):
         initial = super().get_initial()
