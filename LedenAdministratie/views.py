@@ -27,7 +27,7 @@ from LedenAdministratie.utils import Utils
 
 class LoggedInView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
-        if request.user.member.is_bestuur():
+        if request.user.has_perm("LedenAdministratie.view_member"):
             return HttpResponseRedirect(reverse("members"))
         else:
             return HttpResponseRedirect(reverse("profile"))
