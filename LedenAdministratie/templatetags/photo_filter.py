@@ -1,8 +1,9 @@
-from django import template
-from django.forms import BoundField
-from django.core.files.uploadedfile import UploadedFile
 import base64
 import imghdr
+
+from django import template
+from django.core.files.uploadedfile import UploadedFile
+from django.forms import BoundField
 
 register = template.Library()
 

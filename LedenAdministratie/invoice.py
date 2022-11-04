@@ -1,14 +1,15 @@
-from django.template.loader import render_to_string
+import os
+from datetime import date, timedelta
+
+from django.conf import settings
 from django.core.mail import EmailMessage
 from django.db.models import Q
-from django.conf import settings
-from datetime import date, timedelta
+from django.template.loader import render_to_string
 from weasyprint import HTML, CSS, default_url_fetcher
 from weasyprint.text.fonts import FontConfiguration
-from .models import Member
-from .utils import Utils
 
-import os
+from LedenAdministratie.models import Member
+from LedenAdministratie.utils import Utils
 
 
 class InvoiceTool:

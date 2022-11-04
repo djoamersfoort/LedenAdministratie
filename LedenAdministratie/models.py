@@ -1,12 +1,13 @@
 import uuid
-from django.db import models
-from django.contrib.auth.models import User
-from django.contrib.auth.hashers import make_password
-from django.utils import timezone
 from datetime import date
-from django.core.validators import RegexValidator, EmailValidator
-from PIL import Image
 from io import BytesIO
+
+from PIL import Image
+from django.contrib.auth.hashers import make_password
+from django.contrib.auth.models import User
+from django.core.validators import RegexValidator, EmailValidator
+from django.db import models
+from django.utils import timezone
 
 
 class MemberType(models.Model):

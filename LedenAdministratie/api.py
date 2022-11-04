@@ -1,7 +1,8 @@
-from django.http import HttpResponse, JsonResponse, HttpResponseForbidden
 from django.db.models import Q
+from django.http import HttpResponse, JsonResponse, HttpResponseForbidden
 from django.utils import timezone
 from oauth2_provider.views import ProtectedResourceView, ScopedProtectedResourceView
+
 from LedenAdministratie.models import Member
 from LedenAdministratie.templatetags.photo_filter import img2base64
 from LedenAdministratie.utils import Utils

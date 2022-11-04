@@ -1,8 +1,10 @@
 from typing import Optional
+
 from django.core.mail import EmailMessage
 from django.http.request import HttpRequest
-from LedenAdministratie.models import Setting
 from oauth2_provider.models import AccessToken
+
+from LedenAdministratie.models import Setting
 
 
 class Utils:

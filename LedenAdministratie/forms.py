@@ -1,9 +1,11 @@
-from django import forms
-from django.core.files.uploadedfile import UploadedFile
-from django.conf import settings
-from tinymce.widgets import TinyMCE
-from LedenAdministratie.models import Member, MemberType, Note, Invoice
 from datetime import date
+
+from django import forms
+from django.conf import settings
+from django.core.files.uploadedfile import UploadedFile
+from tinymce.widgets import TinyMCE
+
+from LedenAdministratie.models import Member, MemberType, Note, Invoice
 
 
 class MemberForm(forms.ModelForm):
