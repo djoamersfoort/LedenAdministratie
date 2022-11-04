@@ -181,6 +181,9 @@ class Invoice(models.Model):
     )
     pdf = models.BinaryField(blank=True, null=True, editable=True)
 
+    def __str__(self):
+        return f"Factuur: {self.invoice_number}, {self.username}, {self.amount}, {self.amount_payed}"
+
 
 class Setting(models.Model):
     name = models.CharField(blank=False, null=False, max_length=50)
