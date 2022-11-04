@@ -182,7 +182,8 @@ class Invoice(models.Model):
     pdf = models.BinaryField(blank=True, null=True, editable=True)
 
     def __str__(self):
-        return f"Factuur: {self.invoice_number}, {self.username}, {self.amount}, {self.amount_payed}"
+        member_name = f"{self.member.first_name} {self.member.last_name}" if self.member else ""
+        return f"Factuur: Door {self.username} voor {member_name}, bedrag {self.amount}, betaald {self.amount_payed}"
 
 
 class Setting(models.Model):
