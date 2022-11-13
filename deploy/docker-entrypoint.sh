@@ -29,7 +29,6 @@ gunicorn LedenAdministratie.wsgi:application \
     --name LedenAdministratie \
     --bind 0.0.0.0:8000 \
     --timeout 300 \
-    --worker_class gthread \
     --workers 1 \
     --threads 4 \
     --log-level=info \
