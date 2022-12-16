@@ -138,6 +138,7 @@ class Member(models.Model):
     foto = models.BinaryField(blank=True, null=True, verbose_name="Foto", editable=True)
     thumbnail = models.BinaryField(blank=True, null=True, verbose_name="Thumbnail", editable=True)
     hoe_gevonden = models.CharField(max_length=255, blank=True, null=False, default="")
+    revbank_account = models.CharField(max_length=255, blank=True, null=False, default="")
     age = property(_calculate_age)
 
 
