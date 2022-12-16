@@ -58,12 +58,12 @@ function tableSort(column) {
         text2 = fixForSorting(text2);
 
         if (column.target.order) {
-            return text1 > text2;
+            return ((text2 > text1) ? -1 : ((text2 < text1) ? 1 : 0));
         } else {
-            return text2 > text1;
+            return ((text1 > text2) ? -1 : ((text1 < text2) ? 1 : 0));
         }
     });
-    for (var i = 0; i < rows.length; i++) {
+    for (let i = 0; i < rows.length; i++) {
         $('table:first > tbody').append(rows[i]);
     }
 }
