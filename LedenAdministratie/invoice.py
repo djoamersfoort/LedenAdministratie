@@ -143,7 +143,7 @@ class InvoiceTool:
                     "amount": Utils.get_setting("invoice_amount_year"),
                 },
                 {
-                    "description": "Toeslag voor deelname op beide dagen".format(date.today().year),
+                    "description": "Toeslag voor deelname op beide dagen",
                     "count": 1,
                     "amount": float(Utils.get_setting("invoice_amount_year")) / 2,
                 },
