@@ -85,7 +85,7 @@ class InvoiceTool:
     def get_extra_text_for_invoice_type(invoice_type):
         extra_text = ""
         if invoice_type in ["standaard", "2dagen", "senior"] and date.today() < date(date.today().year, 5, 1):
-            extra_text = "Het is mogelijk om in 2 termijnen te betalen\n" "De eerste helft zal binnen 14 dagen overgemaakt moeten worden.\n" "Het tweede deel zal uiterlijk 31 mei overgemaakt moeten worden."
+            extra_text = "Het is mogelijk om in 2 termijnen te betalen\n" "De eerste helft van het bedrag graag binnen 14 dagen betalen.\n" "Het tweede deel graag uiterlijk 30 april voldoen."
         return extra_text
 
     @staticmethod
