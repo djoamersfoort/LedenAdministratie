@@ -100,6 +100,10 @@ class Member(models.Model):
         slugs = [membertype.slug for membertype in self.types.all()]
         return "senior" in slugs
 
+    def is_stripcard(self):
+        slugs = [membertype.slug for membertype in self.types.all()]
+        return "strippenkaart" in slugs
+
     def is_active(self):
         return self.afmeld_datum is None or self.afmeld_datum > timezone.now().date()
 
@@ -193,3 +197,14 @@ class Setting(models.Model):
 
     def __str__(self):
         return "{0} = {1}".format(self.name, self.value)
+
+
+class Stripcard(models.Model):
+    member = models.ForeignKey(Member, on_delete=models.CASCADE, related_name="stripcards")
+    issue_date = models.DateField(verbose_name="Datum van uitgifte", auto_created=True)
+    issued_by = models.CharField(verbose_name="Uitgegeven door", max_length=255, null=False, default="")
+    count = models.IntegerField(verbose_name="Aantal", default=10)
+
+    def __str__(self):
+        member_name = f"{self.member.first_name} {self.member.last_name}" if self.member else ""
+        return f"Strippenkaart: Door {self.issued_by}, voor {member_name}, voor {self.count} keer"

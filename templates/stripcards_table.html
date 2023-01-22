@@ -1,0 +1,53 @@
+    <h6 class="mt-2">Strippenkaarten</h6>
+    <div class="table-responsive">
+        <table class="table table-hover table-sm">
+            <thead class="thead-light">
+                <tr>
+                    <th>Datum uitgifte</th>
+                    <th>Door</th>
+                    <th>Aantal slots</th>
+                    <th>Gebruikt</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for stripcard in object.stripcards.all %}
+                <tr>
+                    <td>{{ stripcard.issue_date|date:"d-m-Y" }}</td>
+                    <td>{{ stripcard.issued_by|capfirst }}</td>
+                    <td>{{ stripcard.count }}</td>
+                    <td></td>
+                    <td>
+                        <a href="#" data-toggle="modal" data-target="#showStripcardDeleteModal{{ stripcard.pk }}">
+                            <span data-feather="trash-2"></span>
+                        </a>
+                        <!-- Stripcard Delete confirm Modal -->
+                        <div class="modal fade" id="showStripcardDeleteModal{{ stripcard.id }}" tabindex="-1" role="dialog">
+                          <div class="modal-dialog modal-dialog-centered" role="document">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <h5 class="modal-title">Strippenkaart verwijderen?</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                  <span aria-hidden="true">&times;</span>
+                                </button>
+                              </div>
+                              <div class="modal-body">
+                                <p>Weet u zeker dat u de strippenkaart van {{ stripcard.issue_date }} wilt verwijderen?</p>
+                              </div>
+                              <div class="modal-footer">
+                                  <a class="btn btn-primary" href="{% url 'stripcard_delete' stripcard.pk %}">Verwijderen</a>
+                                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuleren</button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <a class="btn btn-primary btn-sm" role="button" href="{% url 'stripcard_create_for' object.id %}">
+            Aanmaken
+        </a>
+    </div>

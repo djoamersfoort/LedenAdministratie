@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+
+{% block content %}
+
+<form method="post">
+    {% csrf_token %}
+
+    <div class="card">
+        <div class="card-header">
+            Strippenkaart aanmaken
+        </div>
+        <div class="card-body">
+            <div class="form-row">
+                <div class="col-4">
+                    <h5 class="card-title">Strippenkaart voor {{ member.full_name }} </h5>
+
+                    <label for="id_issue_date">Datum van uitgifte *</label>
+                    {{ form.issue_date|add_class:'form-control' }}
+                    <br/>
+
+                    <label for="id_count">Aantal slots *</label>
+                    {{ form.count|add_class:'form-control' }}
+                    <br/>
+
+                    <button type="submit" class="btn btn-success">Aanmaken</button>
+                    <button onclick="javascript:history.go(-1)" type="button" class="btn btn-secondary">Annuleren</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+
+{% endblock %}

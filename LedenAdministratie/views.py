@@ -490,3 +490,37 @@ class SettingsView(PermissionRequiredMixin, FormView):
             setting.value = form.cleaned_data[field]
             setting.save()
         return super().form_valid(form)
+
+
+class StripcardCreateView(PermissionRequiredMixin, CreateView):
+    model = Stripcard
+    template_name = "stripcard_create.html"
+    form_class = forms.StripcardForm
+    required_permission = "LedenAdministratie.add_stripcard"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data()
+        context["member"] = Member.objects.get(pk=self.kwargs["member_id"])
+        return context
+
+    def get_success_url(self):
+        return reverse("lid_edit", kwargs={"pk": self.kwargs["member_id"]})
+
+    def form_valid(self, form):
+        member_id = self.kwargs["member_id"]
+        form.instance.member = Member.objects.get(pk=member_id)
+        form.instance.issued_by = self.request.user.first_name
+        return super().form_valid(form)
+
+
+class StripcardDeleteView(PermissionRequiredMixin, View):
+    required_permission = "LedenAdministratie.delete_stripcard"
+
+    def get(self, request, *args, **kwargs):
+        stripcard = Stripcard.objects.get(pk=kwargs["pk"])
+        stripcard.delete()
+        if "HTTP_REFERER" in request.META:
+            url = request.META["HTTP_REFERER"]
+        else:
+            url = reverse("members")
+        return HttpResponseRedirect(url)

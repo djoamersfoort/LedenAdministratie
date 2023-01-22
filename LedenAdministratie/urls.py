@@ -78,6 +78,8 @@ urlpatterns = [
         name="invoice_pay_part",
     ),
     path("invoice/send/", views.InvoiceSendView.as_view(), name="invoice_send"),
+    path("stripcard/create/<int:member_id>/", views.StripcardCreateView.as_view(), name="stripcard_create_for"),
+    path("stripcard/delete/<int:pk>", views.StripcardDeleteView.as_view(), name="stripcard_delete"),
     path("email/send/", views.EmailSendView.as_view(), name="email_send"),
     path("email/log/", views.EmailLogView.as_view(), name="email_log"),
     path("settings/", views.SettingsView.as_view(), name="settings"),

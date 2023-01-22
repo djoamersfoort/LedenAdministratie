@@ -3,9 +3,10 @@ from datetime import date
 from django import forms
 from django.conf import settings
 from django.core.files.uploadedfile import UploadedFile
+from django.utils import timezone
 from tinymce.widgets import TinyMCE
 
-from LedenAdministratie.models import Member, MemberType, Note, Invoice
+from LedenAdministratie.models import Member, MemberType, Note, Invoice, Stripcard
 
 
 class MemberForm(forms.ModelForm):
@@ -148,3 +149,14 @@ class SettingsForm(forms.Form):
         label="Locatie van DJO Welkom PDF",
         initial="https://",
     )
+
+
+class StripcardForm(forms.ModelForm):
+    class Meta:
+        model = Stripcard
+        fields = ["issue_date", "count"]
+
+    def get_initial_for_field(self, field, field_name):
+        if field_name == 'issue_date':
+            return timezone.now()
+        return super().get_initial_for_field(field, field_name)
