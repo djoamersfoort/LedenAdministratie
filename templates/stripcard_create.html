@@ -23,6 +23,13 @@
                     {{ form.count|add_class:'form-control' }}
                     <br/>
 
+                    <div class="form-check">
+                       {{ form.create_invoice|add_class:'form-check-input' }}
+                       <label for="id_create_invoice">Factuur aanmaken</label>
+                    </div>
+
+                    <br/>
+
                     <button type="submit" class="btn btn-success">Aanmaken</button>
                     <button onclick="javascript:history.go(-1)" type="button" class="btn btn-secondary">Annuleren</button>
                 </div>

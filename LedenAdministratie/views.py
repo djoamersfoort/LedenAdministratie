@@ -21,7 +21,7 @@ from django.views.generic.list import ListView
 from mailer.models import MessageLog
 
 from LedenAdministratie import forms
-from LedenAdministratie.invoice import InvoiceTool
+from LedenAdministratie.invoice import InvoiceTool, InvoiceType, InvoiceLine
 from LedenAdministratie.mixins import PermissionRequiredMixin
 from LedenAdministratie.models import *
 from LedenAdministratie.utils import Utils
@@ -198,8 +198,8 @@ class InvoiceCreateView(PermissionRequiredMixin, FormView):
     template_name = "invoice_create.html"
     form_class = forms.InvoiceCreateForm
     LinesFormSet = formset_factory(forms.InvoiceLineForm, extra=5)
-    lines = None
-    invoice_type = None
+    lines: LinesFormSet = None
+    invoice_type: InvoiceType = None
     refresh_only = False
     required_permission = "LedenAdministratie.add_invoice"
 
@@ -230,28 +230,19 @@ class InvoiceCreateView(PermissionRequiredMixin, FormView):
             return super().post(request, *args, *kwargs)
         else:
             # Invoice type dropdown changed
-            self.invoice_type = request.POST["invoice_types"]
+            self.invoice_type = InvoiceType(request.POST["invoice_types"])
             form = self.get_form()
             form.errors.clear()
             return self.render_to_response(self.get_context_data(form=form))
 
-    def form_valid(self, form):
+    def form_valid(self, form: forms.InvoiceCreateForm):
         self.lines.is_valid()
+        invoice_lines = [InvoiceLine(**line.cleaned_data) for line in self.lines]
+        invoice_type = InvoiceType(form.cleaned_data["invoice_types"])
         for member in form.cleaned_data["members"]:
-            invoice = Invoice()
-            invoice.member = member
-            invoice.amount = InvoiceTool.calculate_grand_total(self.lines)
-            invoice.amount_payed = 0.00
-            invoice.created = timezone.now()
-            invoice.username = self.request.user.first_name
-            invoice.save()
-            invoice.pdf = InvoiceTool.render_invoice(
-                member,
-                self.lines,
-                invoice.invoice_number,
-                form.cleaned_data["invoice_types"],
+            InvoiceTool.create_invoice(
+               invoice_type, member, invoice_lines, self.request.user.first_name
             )
-            invoice.save()
         return super().form_valid(form)
 
 
@@ -506,10 +497,17 @@ class StripcardCreateView(PermissionRequiredMixin, CreateView):
     def get_success_url(self):
         return reverse("lid_edit", kwargs={"pk": self.kwargs["member_id"]})
 
-    def form_valid(self, form):
+    def form_valid(self, form: forms.StripcardForm):
         member_id = self.kwargs["member_id"]
         form.instance.member = Member.objects.get(pk=member_id)
         form.instance.issued_by = self.request.user.first_name
+
+        if form.cleaned_data["create_invoice"]:
+            defaults = InvoiceTool.get_defaults_for_invoice_type(InvoiceType.STRIPCARD)[0]
+            defaults["count"] = form.cleaned_data["count"]
+            line = InvoiceLine(**defaults)
+            InvoiceTool.create_invoice(InvoiceType.STRIPCARD, form.instance.member, [line], self.request.user.first_name)
+
         return super().form_valid(form)
 
 
