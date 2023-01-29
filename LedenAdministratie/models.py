@@ -104,6 +104,10 @@ class Member(models.Model):
         slugs = [membertype.slug for membertype in self.types.all()]
         return "strippenkaart" in slugs
 
+    def is_standard(self):
+        slugs = [membertype.slug for membertype in self.types.all()]
+        return "member" in slugs
+
     def is_active(self):
         return self.afmeld_datum is None or self.afmeld_datum > timezone.now().date()
 

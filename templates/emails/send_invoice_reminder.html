@@ -1,6 +1,6 @@
 <html>
 
-{% if 'member' in member_types %}
+{% if send_to_parents %}
 Beste ouders/verzorgers van {{ invoice.member.full_name }},<br>
 {% else %}
 Beste {{ invoice.member.full_name }},<br>
@@ -8,7 +8,6 @@ Beste {{ invoice.member.full_name }},<br>
 <br>
 Volgens onze administratie is de bijgevoegde factuur nog niet betaald.<br>
 Graag zien wij de betaling van deze factuur alsnog tegemoet.<br>
-<br>
 <br>
 Met vriendelijke groet,<br>
 <br>

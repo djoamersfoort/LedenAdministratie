@@ -103,9 +103,9 @@ class InvoiceTool:
 
     @staticmethod
     def get_title_for_invoice_type(invoice_type: InvoiceType):
-        title = "Aan de ouders/verzorgers van:"
-        if invoice_type in [InvoiceType.SPONSOR, InvoiceType.CUSTOM, InvoiceType.SENIOR]:
-            title = "Aan:"
+        title = "Aan:"
+        if invoice_type in [InvoiceType.STANDARD, InvoiceType.STRIPCARD]:
+            title = "Aan de ouders/verzorgers van:"
         return title
 
     @staticmethod
@@ -205,11 +205,9 @@ class InvoiceTool:
 
     @staticmethod
     def create_email(invoice, template="emails/send_invoice_email.html", reminder=False):
-        member_types = [member_type.slug for member_type in invoice.member.types.all()]
         subject = "Factuur contributie {0} De Jonge Onderzoekers".format(date.today().year)
         if reminder:
             subject = "Herinnering: {0}".format(subject)
-        body = render_to_string(template, context={"invoice": invoice, "member_types": member_types})
 
         # Send to own address by default
         if invoice.member.email_ouders == "":
@@ -219,6 +217,9 @@ class InvoiceTool:
             # Also send to senior member's own address
             if invoice.member.is_senior():
                 recipients.append(invoice.member.email_address)
+
+        send_to_parents = invoice.member.is_stripcard() or invoice.member.is_standard()
+        body = render_to_string(template, context={"invoice": invoice, "send_to_parents": send_to_parents})
 
         message = EmailMessage()
         message.from_email = settings.EMAIL_SENDER_INVOICE

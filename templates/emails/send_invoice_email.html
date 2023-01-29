@@ -1,13 +1,12 @@
 <html>
 
-{% if 'member' in member_types %}
+{% if send_to_parents %}
 Beste ouders/verzorgers van {{ invoice.member.full_name }},<br>
 {% else %}
 Beste {{ invoice.member.full_name }},<br>
 {% endif %}
 <br>
 Hierbij sturen wij u de factuur voor de contributie van {{ invoice.created.year }}.<br>
-<br>
 <br>
 Met vriendelijke groet,<br>
 <br>
