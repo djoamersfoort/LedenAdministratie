@@ -3,9 +3,11 @@ from datetime import date
 from django import forms
 from django.conf import settings
 from django.core.files.uploadedfile import UploadedFile
+from django.utils import timezone
 from tinymce.widgets import TinyMCE
 
-from LedenAdministratie.models import Member, MemberType, Note, Invoice
+from LedenAdministratie.models import Member, MemberType, Note, Invoice, Stripcard
+from LedenAdministratie.invoice import INVOICE_TYPES
 
 
 class MemberForm(forms.ModelForm):
@@ -56,17 +58,7 @@ class LidNoteForm(forms.ModelForm):
 
 
 class InvoiceCreateForm(forms.Form):
-    TYPES = (
-        ("standaard", "Standaard factuur voor 1 jaar"),
-        ("senior", "Senior Lid factuur voor 1 jaar"),
-        ("maart", "Factuur voor lid ingeschreven na 1 Maart"),
-        ("2dagen", "Factuur voor lid dat beide dagen komt"),
-        ("sponsor", "Sponsor factuur"),
-        ("strippenkaart", "Factuur voor lid met strippenkaart"),
-        ("custom", "Aangepaste factuur"),
-    )
-
-    invoice_types = forms.ChoiceField(choices=TYPES)
+    invoice_types = forms.ChoiceField(choices=INVOICE_TYPES)
     members = forms.ModelMultipleChoiceField(queryset=Member.objects.all(), widget=forms.CheckboxSelectMultiple)
 
 
@@ -148,3 +140,15 @@ class SettingsForm(forms.Form):
         label="Locatie van DJO Welkom PDF",
         initial="https://",
     )
+
+
+class StripcardForm(forms.ModelForm):
+    class Meta:
+        model = Stripcard
+        fields = ["issue_date", "count", "create_invoice"]
+    create_invoice = forms.BooleanField(required=False, initial=True)
+
+    def get_initial_for_field(self, field, field_name):
+        if field_name == 'issue_date':
+            return timezone.now()
+        return super().get_initial_for_field(field, field_name)

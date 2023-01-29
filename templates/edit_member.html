@@ -103,7 +103,7 @@
     <div class="col-lg-10 col-md-12">
         <div class="card">
             <div class="card-body">
-                <div class="card-header text-white bg-secondary">Notities en Facturen</div>
+                <div class="card-header text-white bg-secondary">Notities, Facturen en Strippenkaarten</div>
 
                 <div class="form-row">
                     <div class="col-6">
@@ -113,6 +113,16 @@
                         {% include 'invoices_table.html' %}
                     </div>
                 </div>
+                {% if object.is_stripcard %}
+                <br/>
+                <div class="form-row">
+                    <div class="col-6">
+                        {% include 'stripcards_table.html' %}
+                    </div>
+                    <div class="col-6">
+                    </div>
+                </div>
+                {% endif %}
             </div>
         </div>
     </div>
