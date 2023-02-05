@@ -208,6 +208,7 @@ class Stripcard(models.Model):
     issue_date = models.DateField(verbose_name="Datum van uitgifte", auto_created=True)
     issued_by = models.CharField(verbose_name="Uitgegeven door", max_length=255, null=False, default="")
     count = models.IntegerField(verbose_name="Aantal", default=10)
+    used = models.IntegerField(verbose_name="Gebruikt", default=0)
 
     def __str__(self):
         member_name = f"{self.member.first_name} {self.member.last_name}" if self.member else ""

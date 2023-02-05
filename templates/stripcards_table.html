@@ -16,7 +16,7 @@
                     <td>{{ stripcard.issue_date|date:"d-m-Y" }}</td>
                     <td>{{ stripcard.issued_by|capfirst }}</td>
                     <td>{{ stripcard.count }}</td>
-                    <td></td>
+                    <td>{{ stripcard.used }}</td>
                     <td>
                         <a href="#" data-toggle="modal" data-target="#showStripcardDeleteModal{{ stripcard.pk }}">
                             <span data-feather="trash-2"></span>
