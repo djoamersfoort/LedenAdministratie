@@ -137,16 +137,6 @@ USE_THOUSAND_SEPARATOR = False
 
 DATA_UPLOAD_MAX_MEMORY_SIZE = 16000000
 
-# IDP Settings
-IDP_CLIENT_ID = 'XXXX-XXXX-XXXX-XXXX'
-IDP_CLIENT_SECRET = '3u4jgisjgslkjrgirjgirjigr'
-IDP_REDIRECT_URL = 'https://leden.djoamersfoort.nl/oauth/'
-IDP_AUTHORIZE_URL = 'https://idp.djoamersfoort.nl/oauth/authorize'
-IDP_TOKEN_URL = 'https://idp.djoamersfoort.nl/oauth/token'
-IDP_API_URL = 'https://idp.djoamersfoort.nl/api/primus/user/all'
-IDP_REQUIRED_ROLE = 'bestuur'
-
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 
