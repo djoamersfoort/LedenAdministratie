@@ -8,7 +8,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         # Sync stripcard 'used' column with aanmelden app
         for stripcard in Stripcard.objects.all():
-            userid = f"idp-{stripcard.member.pk}"
+            userid = f"idp-{stripcard.member.user.pk}"
             issue_date = stripcard.issue_date
             url = (
                 f"https://aanmelden.djoamersfoort.nl/api/v1/present_since_date/"
