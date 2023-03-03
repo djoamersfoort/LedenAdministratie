@@ -18,6 +18,7 @@
                     <td>{{ stripcard.count }}</td>
                     <td>{{ stripcard.used }}</td>
                     <td>
+                        {% if perms.LedenAdministratie.delete_stripcard %}
                         <a href="#" data-toggle="modal" data-target="#showStripcardDeleteModal{{ stripcard.pk }}">
                             <span data-feather="trash-2"></span>
                         </a>
@@ -41,13 +42,16 @@
                             </div>
                           </div>
                         </div>
+                        {% endif %}
                     </td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
 
+        {% if perms.LedenAdministratie.add_stripcard %}
         <a class="btn btn-primary btn-sm" role="button" href="{% url 'stripcard_create_for' object.id %}">
             Aanmaken
         </a>
+        {% endif %}
     </div>

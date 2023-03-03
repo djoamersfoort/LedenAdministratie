@@ -35,15 +35,19 @@ class LoggedInView(LoginRequiredMixin, View):
             return HttpResponseRedirect(reverse("profile"))
 
 
-class Profile(LoginRequiredMixin, FormView):
+class Profile(LoginRequiredMixin, UpdateView):
     template_name = "profile.html"
     form_class = forms.MemberForm
+    model = Member
 
     def post(self, request, *args, **kwargs):
         return HttpResponseForbidden()
 
+    def get_object(self, queryset=None):
+        return self.request.user.member
+
     def get_form(self, form_class=None):
-        form = forms.MemberForm(instance=self.request.user.member)
+        form = super().get_form()
 
         # Make the form read-only
         for name, field in form.fields.items():
