@@ -8,6 +8,10 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         # Sync stripcard 'used' column with aanmelden app
         for stripcard in Stripcard.objects.all():
+            if stripcard.count == stripcard.used:
+                # This card is full -> skip
+                continue
+
             userid = f"idp-{stripcard.member.user.pk}"
             issue_date = stripcard.issue_date
             url = (
