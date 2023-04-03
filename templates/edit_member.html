@@ -16,44 +16,44 @@
                 <div class="form-row">
                     <div class="col-lg-5 col-md-6">
                         <label for="id_first_name">Voornaam *</label>
-                        {{ form.first_name|add_class:'form-control' }}
+                        {{ form.first_name|add_class:'form-control'|attr:'tabindex:1' }}
 
                         <label for="id_straat">Straat *</label>
-                        {{ form.straat|add_class:'form-control' }}
+                        {{ form.straat|add_class:'form-control'|attr:'tabindex:3' }}
 
                         <label for="id_woonplaats">Woonplaats *</label>
-                        {{ form.woonplaats|add_class:'form-control' }}
+                        {{ form.woonplaats|add_class:'form-control'|attr:'tabindex:5' }}
 
                         <label for="id_gebdat">Geboorte datum *</label>
-                        {{ form.gebdat|add_class:'form-control' }}
+                        {{ form.gebdat|add_class:'form-control'|attr:'tabindex:7' }}
 
                         <label for="id_aanmeld_datum">Datum aanmelding *</label>
-                        {{ form.aanmeld_datum|add_class:'form-control' }}
+                        {{ form.aanmeld_datum|add_class:'form-control'|attr:'tabindex:9' }}
 
                         <label for="id_aanmeld_datum">Datum einde lidmaatschap</label>
-                        {{ form.afmeld_datum|add_class:'form-control' }}
+                        {{ form.afmeld_datum|add_class:'form-control'|attr:'tabindex:11' }}
 
                         <label for="id_hoe_gevonden">Hoe gevonden?</label>
-                        {{ form.hoe_gevonden|add_class:'form-control' }}
+                        {{ form.hoe_gevonden|add_class:'form-control'|attr:'tabindex:13' }}
                     </div>
                     <div class="col-lg-5 col-md-6">
                         <label for="id_last_name">Achternaam *</label>
-                        {{ form.last_name|add_class:'form-control' }}
+                        {{ form.last_name|add_class:'form-control'|attr:'tabindex:2' }}
 
                         <label for="id_postcode">Postcode *</label>
-                        {{ form.postcode|add_class:'form-control' }}
+                        {{ form.postcode|add_class:'form-control'|attr:'tabindex:4' }}
 
                         <label for="id_geslacht">Geslacht *</label>
-                        {{ form.geslacht|add_class:'form-control' }}
+                        {{ form.geslacht|add_class:'form-control'|attr:'tabindex:6' }}
 
                         <label for="id_days">Aantal dagdelen aanwezig</label>
-                        {{ form.days|add_class:'form-control' }}
+                        {{ form.days|add_class:'form-control'|attr:'tabindex:8' }}
 
                         <label for="id_revbank_account">Revbank account</label>
-                        {{ form.revbank_account|add_class:'form-control' }}
+                        {{ form.revbank_account|add_class:'form-control'|attr:'tabindex:10' }}
 
                         <label for="id_types">Rollen</label>
-                        {{ form.types|add_class:'form-control' }}
+                        {{ form.types|add_class:'form-control'|attr:'tabindex:12' }}
                     </div>
                 </div>
             </div>
@@ -68,16 +68,16 @@
                 <div class="form-row">
                     <div class="col-5">
                         <label for="id_email_address">E-mail adres *</label>
-                        {{ form.email_address|add_class:'form-control' }}
+                        {{ form.email_address|add_class:'form-control'|attr:'tabindex:13' }}
 
                         <label for="id_telnr">Tel. Nummer</label>
-                        {{ form.telnr|add_class:'form-control' }}
+                        {{ form.telnr|add_class:'form-control'|attr:'tabindex:14' }}
 
                         <label for="id_email_ouders">E-mail Ouders *</label>
-                        {{ form.email_ouders|add_class:'form-control' }}
+                        {{ form.email_ouders|add_class:'form-control'|attr:'tabindex:15' }}
 
                         <label for="id_telnr_ouders">Tel. Nummer Ouders *</label>
-                        {{ form.telnr_ouders|add_class:'form-control' }}
+                        {{ form.telnr_ouders|add_class:'form-control'|attr:'tabindex:16' }}
                     </div>
                     <div class="col-2">
                     </div>
