@@ -7,6 +7,7 @@ from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import User
 from django.core.validators import RegexValidator, EmailValidator
 from django.db import models
+from django.db.models import F
 from django.utils import timezone
 
 
@@ -61,6 +62,10 @@ class Member(models.Model):
         today = ondate
         born = self.gebdat
         return today.year - born.year - ((today.month, today.day) < (born.month, born.day))
+
+    @property
+    def active_stripcard(self) -> "Stripcard":
+        return self.stripcards.filter(used__lt=F("count")).first()
 
     @property
     def full_name(self):

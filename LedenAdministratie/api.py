@@ -86,6 +86,11 @@ class ApiV1UserDetails(ScopedProtectedResourceView):
                     "days": member.days,
                 }
             )
+            if stripcard := member.active_stripcard:
+                user_data.update({
+                    "stripcard_count": stripcard.count,
+                    "stripcard_used": stripcard.used
+                })
         if token.allow_scopes(["user/email"]):
             user_data.update({"email": member.email_address})
         if token.allow_scopes(["user/email-parents"]):
