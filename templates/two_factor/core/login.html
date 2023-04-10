@@ -54,8 +54,6 @@
     {% csrf_token %}
     {{ wizard.management_form }}
 
-    <input type="hidden" name="next" value="{{ next }}">
-
     {% if wizard.steps.current == 'auth' %}
     <div class="form-group">
         <label for="id_auth-username">E-mailadres</label>
