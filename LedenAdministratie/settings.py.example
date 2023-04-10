@@ -31,6 +31,10 @@ INSTALLED_APPS = [
     'widget_tweaks',
     'tinymce',
     'mailer',
+    'django_otp',
+    'django_otp.plugins.otp_static',
+    'django_otp.plugins.otp_totp',
+    'two_factor',
     'LedenAdministratie'
 ]
 
@@ -40,6 +44,7 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django_otp.middleware.OTPMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
@@ -86,8 +91,10 @@ OAUTH2_PROVIDER = {
     'PKCE_REQUIRED': False,
 }
 
-LOGIN_URL = '/'
+LOGIN_URL = 'two_factor:login'
 LOGIN_REDIRECT_URL = '/logged_in/'
+
+TWO_FACTOR_REMEMBER_COOKIE_AGE = 30 * 24 * 3600
 
 EMAIL_HOST="smtp.provider.com"
 EMAIL_PORT=587

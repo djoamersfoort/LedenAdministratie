@@ -1,0 +1,121 @@
+{% extends 'registration/base.html' %}
+
+{% load static %}
+{% load widget_tweaks %}
+{% load two_factor_tags %}
+
+{% block head %}
+<div class="loader">
+    <div class="spinner-border" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+</div>
+{% endblock %}
+
+{% block alerts %}
+{% if form.errors %}
+<div class="alert">
+    {% if wizard.steps.current == 'auth' %}
+    Er is een onjuist e-mail adres of wachtwoord ingevuld, probeer het nog eens.
+    {% elif wizard.steps.current == 'token' %}
+    Er is een onjuist token ingevuld, probeer het nog eens.
+    {% endif %}
+</div>
+{% endif %}
+{% endblock %}
+
+{% block customscript %}
+    <script src="{% static 'js/loading.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+
+{% if wizard.steps.current == 'auth' %}
+<h1 class="h3 mb-4 font-weight-normal text-center">Inloggen bij DJO</h1>
+{% elif wizard.steps.current == 'token' %}
+<h1 class="h3 mb-4 font-weight-normal text-center">Voer een OTP token in</h1>
+{% elif wizard.steps.current == 'backup' %}
+<h1 class="h3 mb-4 font-weight-normal text-center">Voer een backup token in</h1>
+{% endif %}
+
+    {% if other_devices %}
+      <p>Or, alternatively, use one of your other authentication methods:</p>
+      <p>
+        {% for other in other_devices %}
+        <button name="challenge_device" value="{{ other.persistent_id }}"
+                class="btn btn-secondary btn-block" type="submit">
+          {{ other|as_action }}
+        </button>
+      {% endfor %}</p>
+    {% endif %}
+
+
+<form method="post" enctype="multipart/form-data" class="dark form-signin">
+    {% csrf_token %}
+    {{ wizard.management_form }}
+
+    <input type="hidden" name="next" value="{{ next }}">
+
+    {% if wizard.steps.current == 'auth' %}
+    <div class="form-group">
+        <label for="id_auth-username">E-mailadres</label>
+        {% render_field wizard.form.username|attr:"autofocus" class+='semidark darkborder text form-control' placeholder="E-mailadres" autocomplete="off" %}
+    </div>
+    <div class="form-group mt-3">
+        <label for="id_auth-password">Wachtwoord</label>
+        {% render_field wizard.form.password class+='semidark darkborder text form-control' placeholder="Wachtwoord" autocomplete="off" %}
+    </div>
+
+    <div class="d-grid gap-2 mt-4">
+        <button id="submit" class="btn btn-md btn-primary" type="submit">Inloggen</button>
+    </div>
+
+    {% elif wizard.steps.current == 'token' %}
+
+    <div class="form-group">
+        <label for="id_token-otp_token">OTP Token</label>
+        {% render_field wizard.form.otp_token|attr:"autofocus" class+='semidark darkborder text form-control' placeholder="Token" autocomplete="off" %}
+    </div>
+
+    {% if 'remember' in wizard.form %}
+    <div class="form-check mt-3">
+        {% render_field wizard.form.remember class="form-check-input" %}
+        <label class="form-check-label mr-5" for="id_token-remember">Dit apparaat 30 dagen vertrouwen</label>
+    </div>
+    {% endif %}
+
+    <div class="d-grid gap-2 mt-4">
+        <button id="submit" class="btn btn-md btn-primary" type="submit">Valideren</button>
+    </div>
+
+    {% elif wizard.steps.current == 'backup' %}
+
+    <div class="form-group">
+        <label for="id_backup-otp_token">Token</label>
+        {% render_field wizard.form.otp_token|attr:"autofocus" class+='semidark darkborder text form-control' placeholder="Token" autocomplete="off" %}
+    </div>
+
+    <div class="d-grid gap-2 mt-4">
+        <button id="submit" class="btn btn-md btn-primary" type="submit">Valideren</button>
+    </div>
+
+    {% endif %}
+</form>
+
+{% if wizard.steps.current == 'auth' %}
+<div class="mt-4 text-center">
+    Wachtwoord vergeten of geen account? <a href="{% url 'password_reset' %}">Klik hier</a>
+</div>
+{% elif wizard.steps.current == 'token' %}
+    {% if backup_tokens %}
+    <div class="mt-4 text-center">
+        <form action="" method="post">
+        {% csrf_token %}
+        Telefoon vergeten? Klik hier om een <button name="wizard_goto_step" type="submit" value="backup"
+                        class="btn btn-sm btn-secondary">Backup Token</button> te gebruiken.
+        </form>
+    </div>
+    {% endif %}
+{% endif %}
+
+{% endblock %}
