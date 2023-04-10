@@ -75,7 +75,7 @@
         {% render_field wizard.form.otp_token|attr:"autofocus" class+='semidark darkborder text form-control' placeholder="Token" autocomplete="off" %}
     </div>
 
-    {% if 'remember' in wizard.form %}
+    {% if wizard.form.remember %}
     <div class="form-check mt-3">
         {% render_field wizard.form.remember class="form-check-input" %}
         <label class="form-check-label mr-5" for="id_token-remember">Dit apparaat 30 dagen vertrouwen</label>
