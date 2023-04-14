@@ -223,7 +223,8 @@ class InvoiceCreateView(PermissionRequiredMixin, FormView):
         else:
             context["form"].fields["members"].queryset = InvoiceTool.get_members_invoice_type(self.invoice_type)
 
-        self.lines = self.LinesFormSet(initial=InvoiceTool.get_defaults_for_invoice_type(self.invoice_type))
+        self.lines = self.LinesFormSet(
+            initial=InvoiceTool.get_defaults_for_invoice_type(self.invoice_type, context.get("member", None)))
         context["invoice_lines"] = self.lines
 
         return context
@@ -245,7 +246,7 @@ class InvoiceCreateView(PermissionRequiredMixin, FormView):
         invoice_type = InvoiceType(form.cleaned_data["invoice_types"])
         for member in form.cleaned_data["members"]:
             InvoiceTool.create_invoice(
-               invoice_type, member, invoice_lines, self.request.user.first_name
+                invoice_type, member, invoice_lines, self.request.user.first_name
             )
         return super().form_valid(form)
 
@@ -510,7 +511,8 @@ class StripcardCreateView(PermissionRequiredMixin, CreateView):
             defaults = InvoiceTool.get_defaults_for_invoice_type(InvoiceType.STRIPCARD)[0]
             defaults["count"] = form.cleaned_data["count"]
             line = InvoiceLine(**defaults)
-            InvoiceTool.create_invoice(InvoiceType.STRIPCARD, form.instance.member, [line], self.request.user.first_name)
+            InvoiceTool.create_invoice(InvoiceType.STRIPCARD, form.instance.member, [line],
+                                       self.request.user.first_name)
 
         return super().form_valid(form)
 

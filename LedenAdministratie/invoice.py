@@ -3,6 +3,7 @@ import os
 from datetime import date, timedelta
 from decimal import Decimal
 from enum import Enum
+from typing import Optional
 
 from django.conf import settings
 from django.core.mail import EmailMessage
@@ -104,7 +105,7 @@ class InvoiceTool:
     @staticmethod
     def get_title_for_invoice_type(invoice_type: InvoiceType):
         title = "Aan:"
-        if invoice_type in [InvoiceType.STANDARD, InvoiceType.STRIPCARD]:
+        if invoice_type in [InvoiceType.STANDARD, InvoiceType.STRIPCARD, InvoiceType.TWO_DAYS, InvoiceType.MARCH]:
             title = "Aan de ouders/verzorgers van:"
         return title
 
@@ -116,7 +117,7 @@ class InvoiceTool:
         return extra_text
 
     @staticmethod
-    def get_defaults_for_invoice_type(invoice_type: InvoiceType):
+    def get_defaults_for_invoice_type(invoice_type: InvoiceType, member: Optional[Member] = None):
         defaults = [
             {
                 "description": "Contributie {0} DJO Amersfoort".format(date.today().year),
@@ -134,6 +135,7 @@ class InvoiceTool:
                 }
             ]
         elif invoice_type == InvoiceType.MARCH:
+            aanmeld_datum = member.aanmeld_datum if member else date.today()
             defaults = [
                 {
                     "description": "Contributie {0} DJO Amersfoort".format(date.today().year),
@@ -141,8 +143,8 @@ class InvoiceTool:
                     "amount": Decimal(Utils.get_setting("invoice_amount_year"))
                 },
                 {
-                    "description": "Correctie vanwege ingangsdatum - -{0}".format(date.today().year),
-                    "count": -1,
+                    "description": f"Correctie vanwege inschrijfdatum {aanmeld_datum.strftime('%d-%m-%Y')}",
+                    "count": -(aanmeld_datum.month - 1),
                     "amount": Decimal(Utils.get_setting("invoice_amount_month")),
                 },
             ]
