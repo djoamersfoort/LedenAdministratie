@@ -55,7 +55,6 @@ class Member(models.Model):
         self.user.username = self.email_address.lower()
         self.user.email = self.email_address
         self.user.is_active = self.is_active()
-        self.user.is_superuser = self.is_bestuur()
         self.user.save()
 
     def _calculate_age(self, ondate=date.today()):

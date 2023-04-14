@@ -4,7 +4,7 @@ import requests
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.mail import EmailMessage
-from django.db.models import F, Q
+from django.db.models import Q
 from django.forms import formset_factory
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden
 from django.template.loader import render_to_string
@@ -19,6 +19,7 @@ from django.views.generic.edit import (
 )
 from django.views.generic.list import ListView
 from mailer.models import MessageLog
+from two_factor.views.mixins import OTPRequiredMixin
 
 from LedenAdministratie import forms
 from LedenAdministratie.invoice import InvoiceTool, InvoiceType, InvoiceLine
@@ -29,7 +30,7 @@ from LedenAdministratie.utils import Utils
 
 class LoggedInView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
-        if request.user.has_perm("LedenAdministratie.view_member"):
+        if request.user.has_perm("LedenAdministratie.view_member") and request.user.is_verified():
             return HttpResponseRedirect(reverse("members"))
         else:
             return HttpResponseRedirect(reverse("profile"))
@@ -56,7 +57,7 @@ class Profile(LoginRequiredMixin, UpdateView):
         return form
 
 
-class MemberListView(PermissionRequiredMixin, ListView):
+class MemberListView(OTPRequiredMixin, PermissionRequiredMixin, ListView):
     template_name = "memberlist.html"
     required_permission = "LedenAdministratie.view_member"
 
@@ -78,7 +79,7 @@ class MemberListView(PermissionRequiredMixin, ListView):
         return queryset
 
 
-class MemberUpdateView(PermissionRequiredMixin, UpdateView):
+class MemberUpdateView(OTPRequiredMixin, PermissionRequiredMixin, UpdateView):
     model = Member
     template_name = "edit_member.html"
     form_class = forms.MemberForm
@@ -98,7 +99,7 @@ class MemberUpdateView(PermissionRequiredMixin, UpdateView):
         return reverse("members")
 
 
-class MemberCreateView(PermissionRequiredMixin, CreateView):
+class MemberCreateView(OTPRequiredMixin, PermissionRequiredMixin, CreateView):
     model = Member
     template_name = "edit_member.html"
     success_url = reverse_lazy("members")
@@ -129,7 +130,7 @@ class MemberCreateView(PermissionRequiredMixin, CreateView):
         return redirect
 
 
-class MemberDeleteView(PermissionRequiredMixin, DeleteView):
+class MemberDeleteView(OTPRequiredMixin, PermissionRequiredMixin, DeleteView):
     model = Member
     success_url = reverse_lazy("members")
     template_name = "delete_member.html"
@@ -138,7 +139,7 @@ class MemberDeleteView(PermissionRequiredMixin, DeleteView):
     required_permission = "LedenAdministratie.delete_member"
 
 
-class MemberAddNoteView(PermissionRequiredMixin, CreateView):
+class MemberAddNoteView(OTPRequiredMixin, PermissionRequiredMixin, CreateView):
     model = Note
     form_class = forms.LidNoteForm
     template_name = "member_note.html"
@@ -159,7 +160,7 @@ class MemberAddNoteView(PermissionRequiredMixin, CreateView):
         return super().form_valid(form)
 
 
-class MemberDeleteNoteView(PermissionRequiredMixin, View):
+class MemberDeleteNoteView(OTPRequiredMixin, PermissionRequiredMixin, View):
     required_permission = "LedenAdministratie.delete_note"
 
     def get(self, request, *args, **kwargs):
@@ -172,7 +173,7 @@ class MemberDeleteNoteView(PermissionRequiredMixin, View):
         return HttpResponseRedirect(url)
 
 
-class MemberEditNoteView(PermissionRequiredMixin, UpdateView):
+class MemberEditNoteView(OTPRequiredMixin, PermissionRequiredMixin, UpdateView):
     model = Note
     form_class = forms.LidNoteForm
     template_name = "member_note.html"
@@ -187,7 +188,7 @@ class MemberEditNoteView(PermissionRequiredMixin, UpdateView):
         return reverse("lid_edit", kwargs={"pk": self.object.member.id})
 
 
-class TodoListView(PermissionRequiredMixin, ListView):
+class TodoListView(OTPRequiredMixin, PermissionRequiredMixin, ListView):
     model = Note
     template_name = "todo_list.html"
     required_permission = "LedenAdministratie.view_note"
@@ -198,7 +199,7 @@ class TodoListView(PermissionRequiredMixin, ListView):
         return todos
 
 
-class InvoiceCreateView(PermissionRequiredMixin, FormView):
+class InvoiceCreateView(OTPRequiredMixin, PermissionRequiredMixin, FormView):
     template_name = "invoice_create.html"
     form_class = forms.InvoiceCreateForm
     LinesFormSet = formset_factory(forms.InvoiceLineForm, extra=5)
@@ -251,7 +252,7 @@ class InvoiceCreateView(PermissionRequiredMixin, FormView):
         return super().form_valid(form)
 
 
-class InvoiceDisplayView(PermissionRequiredMixin, BaseDetailView):
+class InvoiceDisplayView(OTPRequiredMixin, PermissionRequiredMixin, BaseDetailView):
     model = Invoice
     required_permission = "LedenAdministratie.view_invoice"
 
@@ -260,7 +261,7 @@ class InvoiceDisplayView(PermissionRequiredMixin, BaseDetailView):
         return HttpResponse(invoice.pdf, content_type="application/pdf")
 
 
-class InvoiceDeleteView(PermissionRequiredMixin, View):
+class InvoiceDeleteView(OTPRequiredMixin, PermissionRequiredMixin, View):
     required_permission = "LedenAdministratie.delete_invoice"
 
     def get(self, request, *args, **kwargs):
@@ -273,7 +274,7 @@ class InvoiceDeleteView(PermissionRequiredMixin, View):
         return HttpResponseRedirect(url)
 
 
-class InvoicePaymentView(PermissionRequiredMixin, ListView):
+class InvoicePaymentView(OTPRequiredMixin, PermissionRequiredMixin, ListView):
     model = Invoice
     queryset = Invoice.objects.filter(amount_payed__lt=F("amount")).filter(member__isnull=False)
     template_name = "invoice_payment.html"
@@ -281,7 +282,7 @@ class InvoicePaymentView(PermissionRequiredMixin, ListView):
     required_permission = "LedenAdministratie.view_invoice"
 
 
-class InvoicePayFullView(PermissionRequiredMixin, View):
+class InvoicePayFullView(OTPRequiredMixin, PermissionRequiredMixin, View):
     required_permission = "LedenAdministratie.view_invoice"
 
     def get(self, request, *args, **kwargs):
@@ -291,7 +292,7 @@ class InvoicePayFullView(PermissionRequiredMixin, View):
         return HttpResponseRedirect(reverse("invoice_payment"))
 
 
-class InvoicePayPartView(PermissionRequiredMixin, UpdateView):
+class InvoicePayPartView(OTPRequiredMixin, PermissionRequiredMixin, UpdateView):
     model = Invoice
     template_name = "invoice_partial_payment.html"
     form_class = forms.InvoicePartialPaymentForm
@@ -304,7 +305,7 @@ class InvoicePayPartView(PermissionRequiredMixin, UpdateView):
             return reverse("invoice_payment")
 
 
-class InvoiceSendView(PermissionRequiredMixin, FormView):
+class InvoiceSendView(OTPRequiredMixin, PermissionRequiredMixin, FormView):
     template_name = "invoice_send.html"
     required_permission = "LedenAdministratie.view_invoice"
     form_class = forms.InvoiceSelectionForm
@@ -334,7 +335,7 @@ class InvoiceSendView(PermissionRequiredMixin, FormView):
         return super().form_valid(form)
 
 
-class ExportView(PermissionRequiredMixin, FormView):
+class ExportView(OTPRequiredMixin, PermissionRequiredMixin, FormView):
     form_class = forms.ExportForm
     template_name = "export.html"
     required_permission = "LedenAdministratie.view_member"
@@ -396,7 +397,7 @@ class ExportView(PermissionRequiredMixin, FormView):
         return response
 
 
-class EmailSendView(PermissionRequiredMixin, FormView):
+class EmailSendView(OTPRequiredMixin, PermissionRequiredMixin, FormView):
     form_class = forms.EmailSendForm
     template_name = "email_send.html"
     required_permission = "LedenAdministratie.add_member"
@@ -451,7 +452,7 @@ class EmailSendView(PermissionRequiredMixin, FormView):
         return HttpResponseRedirect(reverse_lazy("email_log"))
 
 
-class EmailLogView(PermissionRequiredMixin, ListView):
+class EmailLogView(OTPRequiredMixin, PermissionRequiredMixin, ListView):
     paginate_by = 100
     model = MessageLog
     queryset = MessageLog.objects.all().order_by("-when_added")
@@ -460,7 +461,7 @@ class EmailLogView(PermissionRequiredMixin, ListView):
     required_permission = "mailer.view_messagelog"
 
 
-class SettingsView(PermissionRequiredMixin, FormView):
+class SettingsView(OTPRequiredMixin, PermissionRequiredMixin, FormView):
     form_class = forms.SettingsForm
     template_name = "settings.html"
     extra_context = {
@@ -488,7 +489,7 @@ class SettingsView(PermissionRequiredMixin, FormView):
         return super().form_valid(form)
 
 
-class StripcardCreateView(PermissionRequiredMixin, CreateView):
+class StripcardCreateView(OTPRequiredMixin, PermissionRequiredMixin, CreateView):
     model = Stripcard
     template_name = "stripcard_create.html"
     form_class = forms.StripcardForm
@@ -517,7 +518,7 @@ class StripcardCreateView(PermissionRequiredMixin, CreateView):
         return super().form_valid(form)
 
 
-class StripcardDeleteView(PermissionRequiredMixin, View):
+class StripcardDeleteView(OTPRequiredMixin, PermissionRequiredMixin, View):
     required_permission = "LedenAdministratie.delete_stripcard"
 
     def get(self, request, *args, **kwargs):
