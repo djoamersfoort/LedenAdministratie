@@ -9,9 +9,6 @@ on:
     - cron:  '0 22 1 * *'
   workflow_dispatch: {}
 
-ENV:
-  IMAGE="ghcr.io/djoamersfoort/ledenadministratie/ledenadministratie:latest"
-
 jobs:
   # Push image to GitHub Packages.
   # See also https://docs.docker.com/docker-hub/builds/
@@ -21,12 +18,17 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Build image
-        run: docker build . --file deploy/Dockerfile --tag "${IMAGE}"
+      - name: Docker Login
+        uses: docker/login-action@v2.1.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Log into registry
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
-
-      - name: Push image
-        run: |
-          docker push "${IMAGE}"
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v4.0.0
+        with:
+          file: deploy/Dockerfile
+          context: .
+          push: true
+          tags: ghcr.io/djoamersfoort/ledenadministratie/ledenadministratie:latest
