@@ -12,7 +12,7 @@ Dit is de source voor de DJO Ledenadminstratie. Geschreven in Python/Django. Fea
 - Todo lijst (notitie kan als TODO worden aangemerkt)
 - API voor DJO IDP en het Smoelenboek
 - Versturen van e-mail met HTML opmaak vanuit de leden-administratie
-- Ingebouwde OAuth2 server en user/password management
+- Ingebouwde OAuth2 server en user/password management met ondersteuning voor 2FA via OTP
 
 ## Smoelenboek API
 Via de smoelenboek API kun je een lijst opvragen met de volgende gegevens:
