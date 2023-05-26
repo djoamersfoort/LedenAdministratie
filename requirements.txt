@@ -8,7 +8,7 @@ gunicorn==20.1.0
 mysqlclient==2.1.1
 Pillow==9.5.0
 python-dateutil==2.8.2
-requests==2.29.0
+requests==2.31.0
 requests-oauthlib==1.3.1
 weasyprint==58.1
 django-two-factor-auth[phonenumberslite]==1.15.1
