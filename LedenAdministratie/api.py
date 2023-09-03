@@ -70,7 +70,8 @@ class ApiV1UserDetails(ScopedProtectedResourceView):
         if token is None:
             return HttpResponseForbidden()
 
-        if not request.resource_owner or not request.resource_owner.member:
+        if not request.resource_owner or not hasattr(request.resource_owner, "member"):
+            # Access token User does not have a linked Member record -> deny access
             return HttpResponseForbidden()
 
         member = request.resource_owner.member
