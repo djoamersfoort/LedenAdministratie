@@ -6,7 +6,7 @@ django-widget-tweaks==1.4.12
 django-mailer==2.2
 gunicorn==20.1.0
 mysqlclient==2.1.1
-Pillow==9.5.0
+Pillow==10.0.1
 python-dateutil==2.8.2
 requests==2.31.0
 requests-oauthlib==1.3.1
