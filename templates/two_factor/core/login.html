@@ -4,6 +4,10 @@
 {% load widget_tweaks %}
 {% load two_factor_tags %}
 
+{% block extra_media %}
+  {{ form.media }}
+{% endblock %}
+
 {% block head %}
 <div class="loader">
     <div class="spinner-border" role="status">

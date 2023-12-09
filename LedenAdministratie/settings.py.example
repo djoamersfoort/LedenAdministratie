@@ -15,6 +15,9 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+# Required in production for WebAuthn
+# SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
 
 # Application definition
 
@@ -35,6 +38,7 @@ INSTALLED_APPS = [
     'django_otp.plugins.otp_static',
     'django_otp.plugins.otp_totp',
     'two_factor',
+    'two_factor.plugins.webauthn',
     'LedenAdministratie'
 ]
 
@@ -99,6 +103,7 @@ LOGIN_URL = 'two_factor:login'
 LOGIN_REDIRECT_URL = '/logged_in/'
 
 TWO_FACTOR_REMEMBER_COOKIE_AGE = 30 * 24 * 3600
+TWO_FACTOR_WEBAUTHN_RP_NAME = 'DJO Amersfoort'
 
 EMAIL_HOST="smtp.provider.com"
 EMAIL_PORT=587
