@@ -9,6 +9,8 @@ class DJOOAuth2Validator(OAuth2Validator):
         "given_name": "user/names",
         "family_name": "user/names",
         "email": "user/email",
+        "aanmelden": "aanmelden",
+        "media": "media",
     }
 
     # This needs to be without the 'request' parameter + lambda's to support claim discovery
@@ -17,4 +19,6 @@ class DJOOAuth2Validator(OAuth2Validator):
             "given_name": lambda request: request.user.first_name,
             "family_name": lambda request: request.user.last_name,
             "email": lambda request: request.user.email,
+            "aanmelden": lambda request: True,
+            "media": lambda request: True,
         }
