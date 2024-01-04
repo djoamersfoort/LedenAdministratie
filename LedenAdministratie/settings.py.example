@@ -90,6 +90,8 @@ OAUTH2_PROVIDER = {
         'user/names': 'Je voornaam, achternaam en tussenvoegsels',
         'introspection': 'Allow introspection of OAuth tokens',
         'openid': 'Genereer een OpenID Connect JWT token',
+        'aanmelden': 'De app kan namens jou aanmelden bij DJO',
+        'media': "De app heeft toegang to DJO foto's en video's",
     },
     'DEFAULT_SCOPES': ['user/basic'],
     'PKCE_REQUIRED': False,
