@@ -87,7 +87,7 @@
                         </div>
                         <div class="custom-file" id="customFile" lang="es">
                             <input type="file" class="custom-file-input" id="id_foto" name="foto"
-                                   onchange="$(this).next('.custom-file-label').html($(this).val().split('\\').pop());">
+                                   onchange="$(this).next('.custom-file-label').text($(this).val().split('\\').pop());">
                             <label class="custom-file-label" for="id_foto">
                                Foto uploaden...
                             </label>
