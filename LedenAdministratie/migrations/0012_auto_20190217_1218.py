@@ -4,7 +4,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("LedenAdministratie", "0011_auto_20190217_1216"),
     ]
@@ -13,6 +12,8 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name="member",
             name="foto",
-            field=models.BinaryField(blank=True, editable=True, null=True, verbose_name="Foto"),
+            field=models.BinaryField(
+                blank=True, editable=True, null=True, verbose_name="Foto"
+            ),
         ),
     ]

@@ -5,7 +5,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = []
@@ -28,13 +27,19 @@ class Migration(migrations.Migration):
                 ("gebdat", models.DateField(verbose_name="Geboorte Datum")),
                 (
                     "geslacht",
-                    models.CharField(choices=[("m", "M"), ("v", "V")], default="m", max_length=1),
+                    models.CharField(
+                        choices=[("m", "M"), ("v", "V")], default="m", max_length=1
+                    ),
                 ),
                 (
                     "email_address",
                     models.EmailField(
                         max_length=200,
-                        validators=[django.core.validators.EmailValidator(message="E-mail adres is ongeldig")],
+                        validators=[
+                            django.core.validators.EmailValidator(
+                                message="E-mail adres is ongeldig"
+                            )
+                        ],
                     ),
                 ),
                 ("straat", models.CharField(max_length=255)),
@@ -57,7 +62,11 @@ class Migration(migrations.Migration):
                     models.CharField(
                         blank=True,
                         max_length=20,
-                        validators=[django.core.validators.RegexValidator(message="Mobiel nummer is ongeldig", regex="06.*")],
+                        validators=[
+                            django.core.validators.RegexValidator(
+                                message="Mobiel nummer is ongeldig", regex="06.*"
+                            )
+                        ],
                     ),
                 ),
                 (
@@ -65,7 +74,11 @@ class Migration(migrations.Migration):
                     models.CharField(
                         blank=True,
                         max_length=20,
-                        validators=[django.core.validators.RegexValidator(message="Mobiel nummer is ongeldig", regex="06.*")],
+                        validators=[
+                            django.core.validators.RegexValidator(
+                                message="Mobiel nummer is ongeldig", regex="06.*"
+                            )
+                        ],
                     ),
                 ),
                 (
@@ -73,7 +86,11 @@ class Migration(migrations.Migration):
                     models.CharField(
                         blank=True,
                         max_length=20,
-                        validators=[django.core.validators.RegexValidator(message="Mobiel nummer is ongeldig", regex="06.*")],
+                        validators=[
+                            django.core.validators.RegexValidator(
+                                message="Mobiel nummer is ongeldig", regex="06.*"
+                            )
+                        ],
                     ),
                 ),
                 ("email_ouder1", models.EmailField(blank=True, max_length=150)),

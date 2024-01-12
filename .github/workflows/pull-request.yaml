@@ -1,0 +1,29 @@
+name: Run PR Tests
+
+on:
+  pull_request:
+    branches:
+      - djo
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v3
+        with:
+          python-version: "3.10"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pylint==3.0.3 pylint-django==2.5.5 black==23.1.0
+
+      - name: Run pylint and black
+        run: |
+          black --check LedenAdministratie
+          cp LedenAdministratie/settings.py.example LedenAdministratie/settings.py
+          DJANGO_SETTINGS_MODULE="LedenAdministratie.settings" pylint --load-plugins=pylint_django LedenAdministratie

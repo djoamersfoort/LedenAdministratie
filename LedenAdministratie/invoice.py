@@ -58,19 +58,23 @@ class InvoiceTool:
         return grand_total
 
     @staticmethod
-    def invoice_url_fetcher(url, timeout=10):
+    def invoice_url_fetcher(url: str, timeout: int = 10) -> dict:
         if url.startswith("local:"):
             parts = url.split(":")
             path = parts[1]
             mime_type = parts[2]
             path = os.path.join(settings.BASE_DIR, path)
-            file_obj = open(path, "rb")
-            return dict(file_obj=file_obj, mime_type=mime_type)
-        else:
-            return default_url_fetcher(url, timeout)
+            file_obj = open(path, "rb")  # pylint: disable=consider-using-with
+            return {"file_obj": file_obj, "mime_type": mime_type}
+        return default_url_fetcher(url, timeout)
 
     @staticmethod
-    def render_invoice(member: Member, lines: list[InvoiceLine], invoice_number: str, invoice_type: InvoiceType):
+    def render_invoice(
+        member: Member,
+        lines: list[InvoiceLine],
+        invoice_number: str,
+        invoice_type: InvoiceType,
+    ) -> bytes:
         invoice_date = date.today().strftime("%d-%m-%Y")
         due_date = (date.today() + timedelta(days=14)).strftime("%d-%m-%Y")
         extra_text = InvoiceTool.get_extra_text_for_invoice_type(invoice_type)
@@ -84,8 +88,9 @@ class InvoiceTool:
                 valid_lines.append(line)
 
         font_config = FontConfiguration()
-        strcss = render_to_string("invoice/invoice.css")
-        css = CSS(string=strcss, font_config=font_config)
+        css = CSS(
+            string=render_to_string("invoice/invoice.css"), font_config=font_config
+        )
         html = render_to_string(
             "invoice/invoice.html",
             context={
@@ -105,22 +110,37 @@ class InvoiceTool:
     @staticmethod
     def get_title_for_invoice_type(invoice_type: InvoiceType):
         title = "Aan:"
-        if invoice_type in [InvoiceType.STANDARD, InvoiceType.STRIPCARD, InvoiceType.TWO_DAYS, InvoiceType.MARCH]:
+        if invoice_type in [
+            InvoiceType.STANDARD,
+            InvoiceType.STRIPCARD,
+            InvoiceType.TWO_DAYS,
+            InvoiceType.MARCH,
+        ]:
             title = "Aan de ouders/verzorgers van:"
         return title
 
     @staticmethod
-    def get_extra_text_for_invoice_type(invoice_type: InvoiceType):
+    def get_extra_text_for_invoice_type(invoice_type: InvoiceType) -> str:
         extra_text = ""
-        if invoice_type in [InvoiceType.STANDARD, InvoiceType.TWO_DAYS, InvoiceType.SENIOR] and date.today() < date(date.today().year, 5, 1):
-            extra_text = "Het is mogelijk om in 2 termijnen te betalen\n" "De eerste helft van het bedrag graag binnen 14 dagen betalen.\n" "Het tweede deel graag uiterlijk 30 april voldoen."
+        if invoice_type in [
+            InvoiceType.STANDARD,
+            InvoiceType.TWO_DAYS,
+            InvoiceType.SENIOR,
+        ] and date.today() < date(date.today().year, 5, 1):
+            extra_text = (
+                "Het is mogelijk om in 2 termijnen te betalen\n"
+                "De eerste helft van het bedrag graag binnen 14 dagen betalen.\n"
+                "Het tweede deel graag uiterlijk 30 april voldoen."
+            )
         return extra_text
 
     @staticmethod
-    def get_defaults_for_invoice_type(invoice_type: InvoiceType, member: Optional[Member] = None):
+    def get_defaults_for_invoice_type(
+        invoice_type: InvoiceType, member: Optional[Member] = None
+    ):
         defaults = [
             {
-                "description": "Contributie {0} DJO Amersfoort".format(date.today().year),
+                "description": f"Contributie {date.today().year} DJO Amersfoort",
                 "count": 1,
                 "amount": Decimal(Utils.get_setting("invoice_amount_year")),
             }
@@ -129,7 +149,7 @@ class InvoiceTool:
         if invoice_type == InvoiceType.SENIOR:
             defaults = [
                 {
-                    "description": "Contributie senior lid {0} DJO Amersfoort".format(date.today().year),
+                    "description": f"Contributie senior lid {date.today().year} DJO Amersfoort",
                     "count": 1,
                     "amount": Decimal(Utils.get_setting("invoice_amount_year_senior")),
                 }
@@ -138,9 +158,9 @@ class InvoiceTool:
             aanmeld_datum = member.aanmeld_datum if member else date.today()
             defaults = [
                 {
-                    "description": "Contributie {0} DJO Amersfoort".format(date.today().year),
+                    "description": f"Contributie {date.today().year} DJO Amersfoort",
                     "count": 1,
-                    "amount": Decimal(Utils.get_setting("invoice_amount_year"))
+                    "amount": Decimal(Utils.get_setting("invoice_amount_year")),
                 },
                 {
                     "description": f"Correctie vanwege inschrijfdatum {aanmeld_datum.strftime('%d-%m-%Y')}",
@@ -151,7 +171,7 @@ class InvoiceTool:
         elif invoice_type == InvoiceType.STRIPCARD:
             defaults = [
                 {
-                    "description": "Strippenkaart {0} DJO Amersfoort".format(date.today().year),
+                    "description": f"Strippenkaart {date.today().year} DJO Amersfoort",
                     "count": 10,
                     "amount": Decimal(Utils.get_setting("invoice_amount_day")),
                 }
@@ -159,7 +179,7 @@ class InvoiceTool:
         elif invoice_type == InvoiceType.SPONSOR:
             defaults = [
                 {
-                    "description": "Sponsor {0} DJO Amersfoort".format(date.today().year),
+                    "description": f"Sponsor {date.today().year} DJO Amersfoort",
                     "count": 1,
                     "amount": Decimal(Utils.get_setting("invoice_amount_sponsor")),
                 }
@@ -167,7 +187,7 @@ class InvoiceTool:
         elif invoice_type == InvoiceType.TWO_DAYS:
             defaults = [
                 {
-                    "description": "Contributie {0} DJO Amersfoort".format(date.today().year),
+                    "description": f"Contributie {date.today().year} DJO Amersfoort",
                     "count": 1,
                     "amount": Decimal(Utils.get_setting("invoice_amount_year")),
                 },
@@ -184,13 +204,17 @@ class InvoiceTool:
 
     @staticmethod
     def get_members_invoice_type(invoice_type: InvoiceType):
-        members = Member.objects.filter(types__slug="member", aanmeld_datum__lt=date(date.today().year, 3, 1))
+        members = Member.objects.filter(
+            types__slug="member", aanmeld_datum__lt=date(date.today().year, 3, 1)
+        )
         if invoice_type == InvoiceType.SENIOR:
             members = Member.objects.filter(types__slug="senior")
         elif invoice_type == InvoiceType.SPONSOR:
             members = Member.objects.filter(types__slug="sponsor")
         elif invoice_type == InvoiceType.MARCH:
-            members = Member.objects.filter(types__slug="member", aanmeld_datum__gt=date(date.today().year, 2, 28))
+            members = Member.objects.filter(
+                types__slug="member", aanmeld_datum__gt=date(date.today().year, 2, 28)
+            )
         elif invoice_type == InvoiceType.STRIPCARD:
             members = Member.objects.filter(types__slug="strippenkaart")
         elif invoice_type == InvoiceType.TWO_DAYS:
@@ -199,17 +223,21 @@ class InvoiceTool:
             members = Member.objects.all()
 
         # Only return active members
-        members = members.filter(Q(afmeld_datum__gt=date.today()) | Q(afmeld_datum=None))
+        members = members.filter(
+            Q(afmeld_datum__gt=date.today()) | Q(afmeld_datum=None)
+        )
         if invoice_type != InvoiceType.TWO_DAYS:
             members = members.exclude(days=2)
 
         return members
 
     @staticmethod
-    def create_email(invoice, template="emails/send_invoice_email.html", reminder=False):
-        subject = "Factuur contributie {0} De Jonge Onderzoekers".format(date.today().year)
+    def create_email(
+        invoice, template="emails/send_invoice_email.html", reminder=False
+    ):
+        subject = f"Factuur contributie {date.today().year} De Jonge Onderzoekers"
         if reminder:
-            subject = "Herinnering: {0}".format(subject)
+            subject = f"Herinnering: {subject}"
 
         # Send to own address by default
         if invoice.member.email_ouders == "":
@@ -221,7 +249,9 @@ class InvoiceTool:
                 recipients.append(invoice.member.email_address)
 
         send_to_parents = invoice.member.is_stripcard() or invoice.member.is_standard()
-        body = render_to_string(template, context={"invoice": invoice, "send_to_parents": send_to_parents})
+        body = render_to_string(
+            template, context={"invoice": invoice, "send_to_parents": send_to_parents}
+        )
 
         message = EmailMessage()
         message.from_email = settings.EMAIL_SENDER_INVOICE
@@ -236,13 +266,20 @@ class InvoiceTool:
     @staticmethod
     def send_by_email(invoice, reminder=False):
         if reminder:
-            message = InvoiceTool.create_email(invoice, "emails/send_invoice_reminder.html", reminder=True)
+            message = InvoiceTool.create_email(
+                invoice, "emails/send_invoice_reminder.html", reminder=True
+            )
         else:
             message = InvoiceTool.create_email(invoice)
         return message.send(fail_silently=False)
 
     @staticmethod
-    def create_invoice(invoice_type: InvoiceType, member: Member, lines: list[InvoiceLine], creator: str):
+    def create_invoice(
+        invoice_type: InvoiceType,
+        member: Member,
+        lines: list[InvoiceLine],
+        creator: str,
+    ):
         invoice = Invoice()
         invoice.member = member
         invoice.amount = InvoiceTool.calculate_grand_total(lines)

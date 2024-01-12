@@ -20,9 +20,11 @@ class Command(BaseCommand):
             )
             # Get the number of presences since stripcard issue date
             try:
-                count = requests.get(url).json()["count"]
+                count = requests.get(url, timeout=20).json()["count"]
             except (IOError, ConnectionError) as ex:
-                self.stdout.write(self.style.ERROR(f"Error querying aanmelden service: {ex}"))
+                self.stdout.write(
+                    self.style.ERROR(f"Error querying aanmelden service: {ex}")
+                )
                 continue
             self.stdout.write(self.style.SUCCESS(f"Calling: {url}, Returned {count}"))
             if count > stripcard.count:

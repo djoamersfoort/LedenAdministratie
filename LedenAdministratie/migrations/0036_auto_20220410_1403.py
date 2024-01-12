@@ -4,23 +4,26 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('LedenAdministratie', '0035_delete_apitoken'),
+        ("LedenAdministratie", "0035_delete_apitoken"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='member',
-            name='dag_vrijdag',
+            model_name="member",
+            name="dag_vrijdag",
         ),
         migrations.RemoveField(
-            model_name='member',
-            name='dag_zaterdag',
+            model_name="member",
+            name="dag_zaterdag",
         ),
         migrations.AddField(
-            model_name='member',
-            name='days',
-            field=models.IntegerField(choices=[(1, 'Vrijdag of zaterdag'), (2, 'Beide dagen')], default=1, verbose_name='Aantal dagen aanwezig'),
+            model_name="member",
+            name="days",
+            field=models.IntegerField(
+                choices=[(1, "Vrijdag of zaterdag"), (2, "Beide dagen")],
+                default=1,
+                verbose_name="Aantal dagen aanwezig",
+            ),
         ),
     ]

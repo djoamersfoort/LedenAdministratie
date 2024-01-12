@@ -7,7 +7,7 @@ from django.forms import BoundField
 
 register = template.Library()
 
-onbekend_persoon = """
+UNKOWN_PERSON = """
 iVBORw0KGgoAAAANSUhEUgAAAGQAAACWCAYAAAAouC1GAAAABmJLR0QA/wD/AP+gvaeTAAAACXBI
 WXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH4gkeDxoSYkaeWgAAAB1pVFh0Q29tbWVudAAAAAAAQ3Jl
 YXRlZCB3aXRoIEdJTVBkLmUHAAAOiUlEQVR42u2de1BUV57Hv/f2k26ggQYiYCMiGVDQEAJhVFCj
@@ -88,11 +88,11 @@ def img2base64(field):
         foto = field
 
     if foto is None or foto == "":
-        return "data:image/png;base64,{0}".format(onbekend_persoon)
+        return f"data:image/png;base64,{UNKOWN_PERSON}"
 
     if isinstance(foto, UploadedFile):
         foto = foto.file.read()
 
     image_type = imghdr.what(None, foto)
     base64img = base64.encodebytes(foto).decode("ascii")
-    return "data:image/{0};base64,{1}".format(image_type, base64img)
+    return f"data:image/{image_type};base64,{base64img}"

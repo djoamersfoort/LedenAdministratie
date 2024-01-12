@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('LedenAdministratie', '0041_alter_stripcard_member'),
+        ("LedenAdministratie", "0041_alter_stripcard_member"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='stripcard',
-            name='used',
-            field=models.IntegerField(default=0, verbose_name='Gebruikt'),
+            model_name="stripcard",
+            name="used",
+            field=models.IntegerField(default=0, verbose_name="Gebruikt"),
         ),
     ]

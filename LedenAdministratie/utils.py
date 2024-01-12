@@ -1,10 +1,10 @@
 from typing import Optional
+from urllib.parse import urlparse
 
 from django.core.mail import EmailMessage
 from django.http.request import HttpRequest
 from django.shortcuts import reverse
 from oauth2_provider.models import AccessToken
-from urllib.parse import urlparse
 
 from LedenAdministratie.models import Setting
 
@@ -15,8 +15,8 @@ class Utils:
     def send_email(message: EmailMessage) -> bool:
         try:
             count = message.send(fail_silently=False)
-        except Exception as ex:
-            print("Fout bij versturen van e-mail: {0}".format(str(ex)))
+        except Exception as ex:  # pylint: disable=broad-exception-caught
+            print(f"Fout bij versturen van e-mail: {ex}")
             return False
         return count == 1
 

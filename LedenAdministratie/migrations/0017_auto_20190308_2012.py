@@ -4,7 +4,6 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("LedenAdministratie", "0016_member_afmeld_datum"),
     ]

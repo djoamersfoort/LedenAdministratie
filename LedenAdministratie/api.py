@@ -11,7 +11,9 @@ from LedenAdministratie.utils import Utils
 class ApiV1Smoelenboek(ProtectedResourceView):
     def get(self, request, *args, **kwargs):
         large = request.GET.get("large", "0") == "1"
-        members = Member.objects.filter(Q(afmeld_datum__gt=timezone.now()) | Q(afmeld_datum=None)).order_by("first_name")
+        members = Member.objects.filter(
+            Q(afmeld_datum__gt=timezone.now()) | Q(afmeld_datum=None)
+        ).order_by("first_name")
 
         response = []
         for member in members:
@@ -62,7 +64,7 @@ class ApiV1SmoelenboekUser(ProtectedResourceView):
 
 
 class ApiV1UserDetails(ScopedProtectedResourceView):
-    def get_scopes(self):
+    def get_scopes(self, *args, **kwargs):
         return ["user/basic"]
 
     def get(self, request, *args, **kwargs):
@@ -88,10 +90,12 @@ class ApiV1UserDetails(ScopedProtectedResourceView):
                 }
             )
             if stripcard := member.active_stripcard:
-                user_data.update({
-                    "stripcard_count": stripcard.count,
-                    "stripcard_used": stripcard.used
-                })
+                user_data.update(
+                    {
+                        "stripcard_count": stripcard.count,
+                        "stripcard_used": stripcard.used,
+                    }
+                )
         if token.allow_scopes(["user/email"]):
             user_data.update({"email": member.email_address})
         if token.allow_scopes(["user/email-parents"]):

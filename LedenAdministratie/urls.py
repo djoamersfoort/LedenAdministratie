@@ -28,7 +28,9 @@ urlpatterns = [
     path("members/", views.MemberListView.as_view(), name="members"),
     path("export/", views.ExportView.as_view(), name="export"),
     path("member/edit/<int:pk>/", views.MemberUpdateView.as_view(), name="lid_edit"),
-    path("member/delete/<int:pk>/", views.MemberDeleteView.as_view(), name="lid_delete"),
+    path(
+        "member/delete/<int:pk>/", views.MemberDeleteView.as_view(), name="lid_delete"
+    ),
     path("member/create/", views.MemberCreateView.as_view(), name="lid_create"),
     path(
         "member/addnote/<int:member_id>/",
@@ -62,7 +64,9 @@ urlpatterns = [
         views.InvoiceDeleteView.as_view(),
         name="invoice_delete",
     ),
-    path("invoice/payment/", views.InvoicePaymentView.as_view(), name="invoice_payment"),
+    path(
+        "invoice/payment/", views.InvoicePaymentView.as_view(), name="invoice_payment"
+    ),
     path(
         "invoice/pay_full/<int:pk>",
         views.InvoicePayFullView.as_view(),
@@ -79,8 +83,16 @@ urlpatterns = [
         name="invoice_pay_part",
     ),
     path("invoice/send/", views.InvoiceSendView.as_view(), name="invoice_send"),
-    path("stripcard/create/<int:member_id>/", views.StripcardCreateView.as_view(), name="stripcard_create_for"),
-    path("stripcard/delete/<int:pk>", views.StripcardDeleteView.as_view(), name="stripcard_delete"),
+    path(
+        "stripcard/create/<int:member_id>/",
+        views.StripcardCreateView.as_view(),
+        name="stripcard_create_for",
+    ),
+    path(
+        "stripcard/delete/<int:pk>",
+        views.StripcardDeleteView.as_view(),
+        name="stripcard_delete",
+    ),
     path("email/send/", views.EmailSendView.as_view(), name="email_send"),
     path("email/log/", views.EmailLogView.as_view(), name="email_log"),
     path("settings/", views.SettingsView.as_view(), name="settings"),
@@ -90,6 +102,6 @@ urlpatterns = [
     path("o/", include("oauth2_provider.urls", namespace="oauth2_provider")),
     path("logged_in/", views.LoggedInView.as_view(), name="logged_in"),
     path("profile/", views.Profile.as_view(), name="profile"),
-    path('', include(tf_urls)),
+    path("", include(tf_urls)),
     path("", LoginView.as_view(), name="login"),
 ]
