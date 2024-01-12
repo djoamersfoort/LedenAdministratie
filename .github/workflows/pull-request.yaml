@@ -25,4 +25,5 @@ jobs:
       - name: Run pylint and black
         run: |
           black --check LedenAdministratie
+          export PYTHONPATH="."
           DJANGO_SETTINGS_MODULE="LedenAdministratie.settings" pylint --load-plugins=pylint_django LedenAdministratie
