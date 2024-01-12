@@ -1,0 +1,15 @@
+[tool.pylint.format]
+max-line-length = 120
+
+[tool.pylint.MASTER]
+load-plugins = 'pylint_django'
+disable = [
+    "missing-module-docstring",
+    "missing-class-docstring",
+    "missing-function-docstring",
+    "line-too-long",
+    "too-many-ancestors",
+]
+ignore = [
+    "migrations/*"
+]

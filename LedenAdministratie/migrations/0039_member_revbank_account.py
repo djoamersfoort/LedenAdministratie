@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('LedenAdministratie', '0038_delete_email'),
+        ("LedenAdministratie", "0038_delete_email"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='member',
-            name='revbank_account',
-            field=models.CharField(blank=True, default='', max_length=255),
+            model_name="member",
+            name="revbank_account",
+            field=models.CharField(blank=True, default="", max_length=255),
         ),
     ]

@@ -5,7 +5,11 @@ class PermissionRequiredMixin(UserPassesTestMixin):
     required_permission = "LedenAdministratie.view_member"
 
     def check_user(self, user):
-        if user.is_authenticated and user.has_perm(self.required_permission) and user.is_active:
+        if (
+            user.is_authenticated
+            and user.has_perm(self.required_permission)
+            and user.is_active
+        ):
             return True
         return False
 

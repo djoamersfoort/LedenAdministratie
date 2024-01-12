@@ -29,7 +29,7 @@ class MemberForm(forms.ModelForm):
 
     class Meta:
         model = Member
-        exclude = ["thumbnail", "user"]
+        exclude = ["thumbnail", "user"]  # pylint: disable=modelform-uses-exclude
 
     def save(self, commit=True):
         if "foto" in self.changed_data:
@@ -59,7 +59,9 @@ class LidNoteForm(forms.ModelForm):
 
 class InvoiceCreateForm(forms.Form):
     invoice_types = forms.ChoiceField(choices=INVOICE_TYPES)
-    members = forms.ModelMultipleChoiceField(queryset=Member.objects.all(), widget=forms.CheckboxSelectMultiple)
+    members = forms.ModelMultipleChoiceField(
+        queryset=Member.objects.all(), widget=forms.CheckboxSelectMultiple
+    )
 
 
 class InvoiceLineForm(forms.Form):
@@ -75,7 +77,9 @@ class InvoicePartialPaymentForm(forms.ModelForm):
 
 
 class InvoiceSelectionForm(forms.Form):
-    invoices = forms.ModelMultipleChoiceField(queryset=Invoice.objects.all(), widget=forms.CheckboxSelectMultiple)
+    invoices = forms.ModelMultipleChoiceField(
+        queryset=Invoice.objects.all(), widget=forms.CheckboxSelectMultiple
+    )
 
 
 class EmailSendForm(forms.Form):
@@ -92,7 +96,9 @@ class EmailSendForm(forms.Form):
         ("personal", "Persoonlijke Mail"),
     )
     reply_to = forms.ChoiceField(choices=REPLY_TO)
-    recipients = forms.MultipleChoiceField(choices=VALID_RECIPIENTS, widget=forms.CheckboxSelectMultiple)
+    recipients = forms.MultipleChoiceField(
+        choices=VALID_RECIPIENTS, widget=forms.CheckboxSelectMultiple
+    )
     subject = forms.CharField(max_length=255)
     body = forms.CharField(widget=TinyMCE(mce_attrs={"cols": 80, "height": 500}))
     attachment = forms.FileField(required=False)
@@ -146,9 +152,10 @@ class StripcardForm(forms.ModelForm):
     class Meta:
         model = Stripcard
         fields = ["issue_date", "count", "create_invoice"]
+
     create_invoice = forms.BooleanField(required=False, initial=True)
 
     def get_initial_for_field(self, field, field_name):
-        if field_name == 'issue_date':
+        if field_name == "issue_date":
             return timezone.now()
         return super().get_initial_for_field(field, field_name)

@@ -1,14 +1,16 @@
 import csv
+from datetime import date
 
 import requests
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.mail import EmailMessage
-from django.db.models import Q
+from django.db.models import Q, F
 from django.forms import formset_factory
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden
 from django.template.loader import render_to_string
 from django.urls import reverse_lazy, reverse
+from django.utils import timezone
 from django.views.generic.edit import (
     CreateView,
     UpdateView,
@@ -24,16 +26,25 @@ from two_factor.views.mixins import OTPRequiredMixin
 from LedenAdministratie import forms
 from LedenAdministratie.invoice import InvoiceTool, InvoiceType, InvoiceLine
 from LedenAdministratie.mixins import PermissionRequiredMixin
-from LedenAdministratie.models import *
+from LedenAdministratie.models import (
+    Member,
+    MemberType,
+    Note,
+    Invoice,
+    Setting,
+    Stripcard,
+)
 from LedenAdministratie.utils import Utils
 
 
 class LoggedInView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
-        if request.user.has_perm("LedenAdministratie.view_member") and request.user.is_verified():
+        if (
+            request.user.has_perm("LedenAdministratie.view_member")
+            and request.user.is_verified()
+        ):
             return HttpResponseRedirect(reverse("members"))
-        else:
-            return HttpResponseRedirect(reverse("profile"))
+        return HttpResponseRedirect(reverse("profile"))
 
 
 class Profile(LoginRequiredMixin, UpdateView):
@@ -51,7 +62,7 @@ class Profile(LoginRequiredMixin, UpdateView):
         form = super().get_form()
 
         # Make the form read-only
-        for name, field in form.fields.items():
+        for _, field in form.fields.items():
             field.widget.attrs["disabled"] = True
 
         return form
@@ -62,7 +73,9 @@ class MemberListView(OTPRequiredMixin, PermissionRequiredMixin, ListView):
     required_permission = "LedenAdministratie.view_member"
 
     def get_queryset(self):
-        queryset = Member.objects.filter(Q(afmeld_datum__gt=date.today()) | Q(afmeld_datum=None))
+        queryset = Member.objects.filter(
+            Q(afmeld_datum__gt=date.today()) | Q(afmeld_datum=None)
+        )
         filter_slug = self.kwargs.get("filter_slug", "")
 
         if filter_slug == "inactive":
@@ -91,7 +104,7 @@ class MemberUpdateView(OTPRequiredMixin, PermissionRequiredMixin, UpdateView):
 
         # Make the form read-only when user has no change permissions
         if not self.request.user.has_perm("LedenAdministratie.change_member"):
-            for name, field in form.fields.items():
+            for _, field in form.fields.items():
                 field.widget.attrs["disabled"] = True
         return form
 
@@ -119,10 +132,12 @@ class MemberCreateView(OTPRequiredMixin, PermissionRequiredMixin, CreateView):
         message.to = recipients
         message.subject = "Welkom bij DJO Amersfoort!"
         message.from_email = settings.EMAIL_SENDER
-        message.body = render_to_string("emails/welcome_email.html", context={"member": form.instance})
+        message.body = render_to_string(
+            "emails/welcome_email.html", context={"member": form.instance}
+        )
         message.content_subtype = "html"
 
-        response = requests.get(Utils.get_setting("welcome_pdf_location"))
+        response = requests.get(Utils.get_setting("welcome_pdf_location"), timeout=10)
         if response.ok:
             message.attach("Welkom bij DJO Amersfoort.pdf", response.content)
             Utils.send_email(message)
@@ -218,10 +233,15 @@ class InvoiceCreateView(OTPRequiredMixin, PermissionRequiredMixin, FormView):
         if self.kwargs.get("member_id"):
             context["member"] = Member.objects.get(pk=self.kwargs["member_id"])
         else:
-            context["form"].fields["members"].queryset = InvoiceTool.get_members_invoice_type(self.invoice_type)
+            context["form"].fields[
+                "members"
+            ].queryset = InvoiceTool.get_members_invoice_type(self.invoice_type)
 
         self.lines = self.LinesFormSet(
-            initial=InvoiceTool.get_defaults_for_invoice_type(self.invoice_type, context.get("member", None)))
+            initial=InvoiceTool.get_defaults_for_invoice_type(
+                self.invoice_type, context.get("member", None)
+            )
+        )
         context["invoice_lines"] = self.lines
 
         return context
@@ -230,12 +250,12 @@ class InvoiceCreateView(OTPRequiredMixin, PermissionRequiredMixin, FormView):
         self.lines = self.LinesFormSet(request.POST, request.FILES)
         if "create" in request.POST:
             return super().post(request, *args, *kwargs)
-        else:
-            # Invoice type dropdown changed
-            self.invoice_type = InvoiceType(request.POST["invoice_types"])
-            form = self.get_form()
-            form.errors.clear()
-            return self.render_to_response(self.get_context_data(form=form))
+
+        # Invoice type dropdown changed
+        self.invoice_type = InvoiceType(request.POST["invoice_types"])
+        form = self.get_form()
+        form.errors.clear()
+        return self.render_to_response(self.get_context_data(form=form))
 
     def form_valid(self, form: forms.InvoiceCreateForm):
         self.lines.is_valid()
@@ -268,7 +288,9 @@ class InvoiceDeleteView(OTPRequiredMixin, PermissionRequiredMixin, View):
 
 class InvoicePaymentView(OTPRequiredMixin, PermissionRequiredMixin, ListView):
     model = Invoice
-    queryset = Invoice.objects.filter(amount_payed__lt=F("amount")).filter(member__isnull=False)
+    queryset = Invoice.objects.filter(amount_payed__lt=F("amount")).filter(
+        member__isnull=False
+    )
     template_name = "invoice_payment.html"
     extra_context = {"types": MemberType.objects.all()}
     required_permission = "LedenAdministratie.view_invoice"
@@ -293,8 +315,7 @@ class InvoicePayPartView(OTPRequiredMixin, PermissionRequiredMixin, UpdateView):
     def get_success_url(self):
         if self.kwargs.get("member_id"):
             return reverse("lid_edit", kwargs={"pk": self.kwargs["member_id"]})
-        else:
-            return reverse("invoice_payment")
+        return reverse("invoice_payment")
 
 
 class InvoiceSendView(OTPRequiredMixin, PermissionRequiredMixin, FormView):
@@ -306,7 +327,9 @@ class InvoiceSendView(OTPRequiredMixin, PermissionRequiredMixin, FormView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["types"] = MemberType.objects.all()
-        context["object_list"] = Invoice.objects.filter(amount_payed__lt=F("amount")).filter(member__isnull=False)
+        context["object_list"] = Invoice.objects.filter(
+            amount_payed__lt=F("amount")
+        ).filter(member__isnull=False)
         return context
 
     def form_valid(self, form):
@@ -320,8 +343,8 @@ class InvoiceSendView(OTPRequiredMixin, PermissionRequiredMixin, FormView):
                     invoice.smtp_error = None
                 else:
                     invoice.smtp_error = "Fout bij versturen!"
-            except Exception as e:
-                invoice.smtp_error = "Fout bij versturen: " + str(e)
+            except Exception as e:  # pylint: disable=broad-exception-caught
+                invoice.smtp_error = f"Fout bij versturen: {e}"
 
             invoice.save()
         return super().form_valid(form)
@@ -342,13 +365,15 @@ class ExportView(OTPRequiredMixin, PermissionRequiredMixin, FormView):
         if form.cleaned_data["filter_slug"]:
             filter_slug = form.cleaned_data["filter_slug"].slug
 
-        members = Member.objects.filter(Q(afmeld_datum__gt=timezone.now()) | Q(afmeld_datum=None))
+        members = Member.objects.filter(
+            Q(afmeld_datum__gt=timezone.now()) | Q(afmeld_datum=None)
+        )
         if filter_slug != "all":
             members = members.filter(types__slug=filter_slug)
 
         filename = filter_slug + ".csv"
         response = HttpResponse(content_type="text/csv", charset="utf-8")
-        response["Content-Disposition"] = 'attachment; filename="%s"' % filename
+        response["Content-Disposition"] = f'attachment; filename="{filename}"'
 
         writer = csv.writer(response, dialect=csv.excel, quoting=csv.QUOTE_ALL)
         writer.writerow(
@@ -423,7 +448,9 @@ class EmailSendView(OTPRequiredMixin, PermissionRequiredMixin, FormView):
         if "self" in form.cleaned_data["recipients"]:
             self.send_email(form, [self.request.user.email])
 
-        recipients = Member.objects.filter(Q(afmeld_datum__gt=date.today()) | Q(afmeld_datum=None))
+        recipients = Member.objects.filter(
+            Q(afmeld_datum__gt=date.today()) | Q(afmeld_datum=None)
+        )
         for recipient in recipients:
             to_list = []
             if recipient.is_begeleider() or recipient.is_aspirant():
@@ -501,11 +528,17 @@ class StripcardCreateView(OTPRequiredMixin, PermissionRequiredMixin, CreateView)
         form.instance.issued_by = self.request.user.first_name
 
         if form.cleaned_data["create_invoice"]:
-            defaults = InvoiceTool.get_defaults_for_invoice_type(InvoiceType.STRIPCARD)[0]
+            defaults = InvoiceTool.get_defaults_for_invoice_type(InvoiceType.STRIPCARD)[
+                0
+            ]
             defaults["count"] = form.cleaned_data["count"]
             line = InvoiceLine(**defaults)
-            InvoiceTool.create_invoice(InvoiceType.STRIPCARD, form.instance.member, [line],
-                                       self.request.user.first_name)
+            InvoiceTool.create_invoice(
+                InvoiceType.STRIPCARD,
+                form.instance.member,
+                [line],
+                self.request.user.first_name,
+            )
 
         return super().form_valid(form)
 
