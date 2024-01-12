@@ -18,7 +18,7 @@ class DJOOAuth2Validator(OAuth2Validator):
 
     # This needs to be without the 'request' parameter + lambda's to support claim discovery
     # pylint: disable=arguments-differ
-    def get_additional_claims(self):
+    def get_additional_claims(self) -> dict:
         return {
             "given_name": lambda request: request.user.first_name,
             "family_name": lambda request: request.user.last_name,
@@ -34,3 +34,19 @@ class DJOOAuth2Validator(OAuth2Validator):
             if request.user.member.active_stripcard
             else None,
         }
+
+    def validate_user(
+        self, username, password, client, request, *args, **kwargs
+    ) -> bool:
+        if not super().validate_user(
+            username, password, client, request, *args, **kwargs
+        ):
+            # User doesn't exist or is not active
+            return False
+        # User exists and is active, now check the end date of the linked Member
+        if request.user.member.is_active():
+            return True
+        # User end date has passed -> disable
+        request.user.active = False
+        request.user.save()
+        return False
