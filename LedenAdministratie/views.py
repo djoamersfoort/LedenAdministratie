@@ -166,11 +166,7 @@ class MemberDeleteNoteView(OTPRequiredMixin, PermissionRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         note = Note.objects.get(pk=kwargs["pk"])
         note.delete()
-        if "HTTP_REFERER" in request.META:
-            url = request.META["HTTP_REFERER"]
-        else:
-            url = reverse("members")
-        return HttpResponseRedirect(url)
+        return HttpResponseRedirect(Utils.get_safe_return_url(request))
 
 
 class MemberEditNoteView(OTPRequiredMixin, PermissionRequiredMixin, UpdateView):
@@ -267,11 +263,7 @@ class InvoiceDeleteView(OTPRequiredMixin, PermissionRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         invoice = Invoice.objects.get(pk=kwargs["pk"])
         invoice.delete()
-        if "HTTP_REFERER" in request.META:
-            url = request.META["HTTP_REFERER"]
-        else:
-            url = reverse("members")
-        return HttpResponseRedirect(url)
+        return HttpResponseRedirect(Utils.get_safe_return_url(request))
 
 
 class InvoicePaymentView(OTPRequiredMixin, PermissionRequiredMixin, ListView):
@@ -524,8 +516,4 @@ class StripcardDeleteView(OTPRequiredMixin, PermissionRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         stripcard = Stripcard.objects.get(pk=kwargs["pk"])
         stripcard.delete()
-        if "HTTP_REFERER" in request.META:
-            url = request.META["HTTP_REFERER"]
-        else:
-            url = reverse("members")
-        return HttpResponseRedirect(url)
+        return HttpResponseRedirect(Utils.get_safe_return_url(request))

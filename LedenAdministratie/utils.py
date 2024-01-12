@@ -2,7 +2,9 @@ from typing import Optional
 
 from django.core.mail import EmailMessage
 from django.http.request import HttpRequest
+from django.shortcuts import reverse
 from oauth2_provider.models import AccessToken
+from urllib.parse import urlparse
 
 from LedenAdministratie.models import Setting
 
@@ -42,3 +44,12 @@ class Utils:
         except AccessToken.DoesNotExist:
             return None
         return token
+
+    @staticmethod
+    def get_safe_return_url(request: HttpRequest) -> str:
+        if url := request.META.get("HTTP_REFERER", ""):
+            print(f"REFER: {url}")
+            path = urlparse(url).path
+            if path.startswith("/"):
+                return path
+        return reverse("members")
