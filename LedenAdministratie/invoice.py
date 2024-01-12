@@ -76,8 +76,7 @@ class InvoiceTool:
         invoice_type: InvoiceType,
     ) -> bytes:
         invoice_date = date.today().strftime("%d-%m-%Y")
-        due_date = (date.today() + timedelta(days=14)).strftime("%d-%m-%Y")
-        extra_text = InvoiceTool.get_extra_text_for_invoice_type(invoice_type)
+        due_date = (date.today() + timedelta(days=30)).strftime("%d-%m-%Y")
         title = InvoiceTool.get_title_for_invoice_type(invoice_type)
 
         grand_total = 0
@@ -95,7 +94,6 @@ class InvoiceTool:
             "invoice/invoice.html",
             context={
                 "lines": valid_lines,
-                "extra_text": extra_text,
                 "member": member,
                 "invoicenr": invoice_number,
                 "title": title,
@@ -118,21 +116,6 @@ class InvoiceTool:
         ]:
             title = "Aan de ouders/verzorgers van:"
         return title
-
-    @staticmethod
-    def get_extra_text_for_invoice_type(invoice_type: InvoiceType) -> str:
-        extra_text = ""
-        if invoice_type in [
-            InvoiceType.STANDARD,
-            InvoiceType.TWO_DAYS,
-            InvoiceType.SENIOR,
-        ] and date.today() < date(date.today().year, 5, 1):
-            extra_text = (
-                "Het is mogelijk om in 2 termijnen te betalen\n"
-                "De eerste helft van het bedrag graag binnen 14 dagen betalen.\n"
-                "Het tweede deel graag uiterlijk 30 april voldoen."
-            )
-        return extra_text
 
     @staticmethod
     def get_defaults_for_invoice_type(
