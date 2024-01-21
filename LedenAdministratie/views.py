@@ -446,9 +446,9 @@ class EmailSendView(OTPRequiredMixin, PermissionRequiredMixin, FormView):
 
     def send_notification(self, form, recipients):
         if len(recipients) == 0:
-            return None
+            return
         if not settings.NOTIFICATION_ENDPOINT:
-            return None
+            return
 
         requests.post(
             settings.NOTIFICATION_ENDPOINT,
