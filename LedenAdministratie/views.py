@@ -453,8 +453,8 @@ class EmailSendView(OTPRequiredMixin, PermissionRequiredMixin, FormView):
         requests.post(
             settings.NOTIFICATION_ENDPOINT,
             json={
-                "title": form.cleaned_data["subject"],
-                "description": form.cleaned_data["description"],
+                "title": "DJO Aankondigingen",
+                "description": form.cleaned_data["subject"],
                 "content": form.cleaned_data["body"],
                 "recipients": recipients,
             },
