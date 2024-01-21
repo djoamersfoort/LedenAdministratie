@@ -450,13 +450,16 @@ class EmailSendView(OTPRequiredMixin, PermissionRequiredMixin, FormView):
         if not settings.NOTIFICATION_ENDPOINT:
             return None
 
-        requests.post(settings.NOTIFICATION_ENDPOINT, json={
-            "title": form.cleaned_data["subject"],
-            "description": form.cleaned_data["description"],
-            "content": form.cleaned_data["body"],
-            "recipients": recipients
-        }, timeout=10)
-
+        requests.post(
+            settings.NOTIFICATION_ENDPOINT,
+            json={
+                "title": form.cleaned_data["subject"],
+                "description": form.cleaned_data["description"],
+                "content": form.cleaned_data["body"],
+                "recipients": recipients,
+            },
+            timeout=10,
+        )
 
     def form_valid(self, form):
         if "self" in form.cleaned_data["recipients"]:
