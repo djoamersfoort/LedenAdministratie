@@ -444,6 +444,23 @@ class EmailSendView(OTPRequiredMixin, PermissionRequiredMixin, FormView):
 
         return Utils.send_email(message)
 
+    def send_notification(self, form, recipients):
+        if len(recipients) == 0:
+            return
+        if not settings.NOTIFICATION_ENDPOINT:
+            return
+
+        requests.post(
+            settings.NOTIFICATION_ENDPOINT,
+            json={
+                "title": "DJO Aankondigingen",
+                "description": form.cleaned_data["subject"],
+                "content": form.cleaned_data["body"],
+                "recipients": recipients,
+            },
+            timeout=10,
+        )
+
     def form_valid(self, form):
         if "self" in form.cleaned_data["recipients"]:
             self.send_email(form, [self.request.user.email])
@@ -451,22 +468,27 @@ class EmailSendView(OTPRequiredMixin, PermissionRequiredMixin, FormView):
         recipients = Member.objects.filter(
             Q(afmeld_datum__gt=date.today()) | Q(afmeld_datum=None)
         )
+        to_user_list = []
         for recipient in recipients:
             to_list = []
             if recipient.is_begeleider() or recipient.is_aspirant():
                 if "begeleiders" in form.cleaned_data["recipients"]:
                     to_list.append(recipient.email_address)
+                    to_user_list.append(str(recipient.user.id))
             elif recipient.is_ondersteuner():
                 if "ondersteuning" in form.cleaned_data["recipients"]:
                     to_list.append(recipient.email_address)
+                    to_user_list.append(str(recipient.user.id))
             else:
                 if "parents" in form.cleaned_data["recipients"]:
                     for address in recipient.email_ouders.split(","):
                         to_list.append(address)
                 if "members" in form.cleaned_data["recipients"]:
                     to_list.append(recipient.email_address)
+                    to_user_list.append(str(recipient.user.id))
 
             self.send_email(form, to_list)
+        self.send_notification(form, list(set(to_user_list)))
 
         return HttpResponseRedirect(reverse_lazy("email_log"))
 
