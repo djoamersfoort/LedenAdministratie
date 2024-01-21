@@ -191,3 +191,4 @@ TINYMCE_DEFAULT_CONFIG = {
     "alignright alignjustify | bullist numlist outdent indent | code table "
     "removeformat link | help",
 }
+NOTIFICATION_ENDPOINT = None
