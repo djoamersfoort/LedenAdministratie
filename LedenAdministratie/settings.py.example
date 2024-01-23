@@ -99,6 +99,7 @@ OAUTH2_PROVIDER = {
     'OAUTH2_VALIDATOR_CLASS': 'LedenAdministratie.oidc.DJOOAuth2Validator',
     'OIDC_RSA_PRIVATE_KEY': "-----BEGIN PRIVATE KEY-----....",
     'REFRESH_TOKEN_EXPIRE_SECONDS': 86400,
+    'OAUTH2_SERVER_CLASS': 'LedenAdministratie.oauth_server.Server'
 }
 
 LOGIN_URL = 'two_factor:login'
