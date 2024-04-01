@@ -350,6 +350,24 @@ class InvoiceSendView(OTPRequiredMixin, PermissionRequiredMixin, FormView):
         return super().form_valid(form)
 
 
+class InvoiceSearchView(OTPRequiredMixin, PermissionRequiredMixin, FormView):
+    template_name = "invoice_search.html"
+    form_class = forms.InvoiceSearchForm
+    required_permission = "LedenAdministratie.view_invoice"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["types"] = MemberType.objects.all()
+        return context
+
+    def form_valid(self, form):
+        invoice_number = form.cleaned_data["invoice_number"]
+        invoice = Invoice.objects.filter(pk__contains=invoice_number).first()
+        return HttpResponseRedirect(
+            reverse("invoice_pay_part", kwargs={"pk": invoice.pk})
+        )
+
+
 class ExportView(OTPRequiredMixin, PermissionRequiredMixin, FormView):
     form_class = forms.ExportForm
     template_name = "export.html"
