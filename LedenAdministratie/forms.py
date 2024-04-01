@@ -2,6 +2,7 @@ from datetime import date
 
 from django import forms
 from django.conf import settings
+from django.core.exceptions import ValidationError
 from django.core.files.uploadedfile import UploadedFile
 from django.utils import timezone
 from tinymce.widgets import TinyMCE
@@ -80,6 +81,16 @@ class InvoiceSelectionForm(forms.Form):
     invoices = forms.ModelMultipleChoiceField(
         queryset=Invoice.objects.all(), widget=forms.CheckboxSelectMultiple
     )
+
+
+class InvoiceSearchForm(forms.Form):
+    invoice_number = forms.CharField(required=True, help_text="Factuur nummer")
+
+    def clean_invoice_number(self):
+        invoice_number = self.cleaned_data["invoice_number"]
+        if not Invoice.objects.filter(pk__contains=invoice_number).exists():
+            raise ValidationError("Factuur niet gevonden")
+        return self.cleaned_data["invoice_number"]
 
 
 class EmailSendForm(forms.Form):

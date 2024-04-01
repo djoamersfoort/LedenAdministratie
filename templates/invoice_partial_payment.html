@@ -14,11 +14,13 @@
                     Deelbetaling verwerken
                 </div>
                 <div class="card-body">
-                    <h5 class="card-title">Deelbetaling verwerken voor factuur: {{ invoice.invoice_number }}</h5>
+                    <h5 class="card-title">Deelbetaling verwerken voor factuur:
+                        <a href="{% url 'invoice_display' invoice.pk %}">{{ invoice.invoice_number }}</a>
+                    </h5>
 
                     <p>
-                        <b>Factuur voor</b>: {{ invoice.member.full_name }} <br>
-                        <b>Factuur nummer</b>: {{ invoice.invoice_number }} <br>
+                        <b>Factuur voor</b>: <a href="{% url 'lid_edit' invoice.member.pk %}"> {{ invoice.member.full_name }}</a> <br>
+                        <b>Factuur nummer</b>: <a href="{% url 'invoice_display' invoice.pk %}">{{ invoice.invoice_number }}</a><br>
                         <b>Totaal bedrag</b>: € {{ invoice.amount }} <br>
                         <b>Openstaand bedrag</b>: € {{ invoice.amount_unpaid }} <br>
                     </p>
@@ -32,10 +34,8 @@
                     </button>
                 </div>
             </div>
-
         </div>
     </div>
-
 </form>
 
 

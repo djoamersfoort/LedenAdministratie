@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+
+{% block content %}
+
+{% include 'alerts.html' %}
+
+<form method="post">
+    {% csrf_token %}
+
+    <div class="col-5">
+        <div class="card">
+            <div class="card-header">
+                Factuur zoeken
+            </div>
+            <div class="card-body">
+                <div class="form-row">
+                        {{ form.invoice_number|add_class:'form-control' }}
+                </div>
+                <div class="form-row mt-2">
+                    <button type="submit" class="btn btn-success">Zoeken</button>
+                    <button onclick="javascript:history.go(-1)" type="button" class="btn btn-secondary">Annuleren</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+
+{% endblock %}

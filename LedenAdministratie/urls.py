@@ -67,6 +67,7 @@ urlpatterns = [
     path(
         "invoice/payment/", views.InvoicePaymentView.as_view(), name="invoice_payment"
     ),
+    path("invoice/search/", views.InvoiceSearchView.as_view(), name="invoice_search"),
     path(
         "invoice/pay_full/<int:pk>",
         views.InvoicePayFullView.as_view(),
