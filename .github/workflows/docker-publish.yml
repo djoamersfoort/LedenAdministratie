@@ -33,6 +33,10 @@ jobs:
           push: true
           tags: ghcr.io/djoamersfoort/ledenadministratie/ledenadministratie:latest
 
+      - name: Redeploy
+        run: |
+          curl https://portainer.djoamersfoort.nl/hooks/update-docker-image?stack=leden_djoamersfoort_nl -H "X-Token: ${{ secrets.WEBHOOK_TOKEN }}"
+      
       - name: Clean up old images
         uses: actions/delete-package-versions@v4
         with:
