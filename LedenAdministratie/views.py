@@ -233,9 +233,9 @@ class InvoiceCreateView(OTPRequiredMixin, PermissionRequiredMixin, FormView):
         if self.kwargs.get("member_id"):
             context["member"] = Member.objects.get(pk=self.kwargs["member_id"])
         else:
-            context["form"].fields["members"].queryset = (
-                InvoiceTool.get_members_invoice_type(self.invoice_type)
-            )
+            context["form"].fields[
+                "members"
+            ].queryset = InvoiceTool.get_members_invoice_type(self.invoice_type)
 
         self.lines = self.LinesFormSet(
             initial=InvoiceTool.get_defaults_for_invoice_type(
