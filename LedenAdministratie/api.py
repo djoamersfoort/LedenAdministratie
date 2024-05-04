@@ -17,9 +17,13 @@ from LedenAdministratie.utils import Utils
 class ApiV1Smoelenboek(ProtectedResourceView):
     def get(self, request, *args, **kwargs):
         large = request.GET.get("large", "0")
-        members = Member.objects.filter(
-            Q(afmeld_datum__gt=timezone.now()) | Q(afmeld_datum=None)
-        ).order_by("first_name")
+        members = (
+            Member.objects.filter(
+                Q(afmeld_datum__gt=timezone.now()) | Q(afmeld_datum=None)
+            )
+            .order_by("first_name")
+            .defer("foto", "thumbnail")
+        )
 
         response = []
         expiry = int((timezone.now() + timezone.timedelta(days=1)).timestamp())
@@ -30,7 +34,6 @@ class ApiV1Smoelenboek(ProtectedResourceView):
                 settings.SECRET_KEY.encode(), url.encode(), hashlib.sha256
             ).hexdigest()
             url += f"&signature={signature}"
-
             memberdict = {
                 "id": member.id,
                 "user_id": f"idp-{member.user.pk}",
