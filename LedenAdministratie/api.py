@@ -22,7 +22,7 @@ class ApiV1Smoelenboek(ProtectedResourceView):
         ).order_by("first_name")
 
         response = []
-        expiry = int((timezone.now() + timezone.timedelta(hours=2)).timestamp())
+        expiry = int((timezone.now() + timezone.timedelta(days=1)).timestamp())
         for member in members:
             # Generate a signed URL for the image
             url = request.build_absolute_uri(f"{member.id}/{expiry}/?large={large}")
