@@ -26,7 +26,9 @@ class ApiV1Smoelenboek(ProtectedResourceView):
         for member in members:
             # Generate a signed URL for the image
             url = request.build_absolute_uri(f"{member.id}/{expiry}/?large={large}")
-            signature = hmac.new(settings.SECRET_KEY.encode(), url.encode(), hashlib.sha256).hexdigest()
+            signature = hmac.new(
+                settings.SECRET_KEY.encode(), url.encode(), hashlib.sha256
+            ).hexdigest()
             url += f"&signature={signature}"
 
             memberdict = {
@@ -47,7 +49,9 @@ class ApiV1SmoelenboekSigned(View):
         # Validate signature and expiry datetime
         signature = request.GET.get("signature", "")
         url = request.build_absolute_uri().replace(f"&signature={signature}", "")
-        new_signature = hmac.new(settings.SECRET_KEY.encode(), url.encode(), hashlib.sha256).hexdigest()
+        new_signature = hmac.new(
+            settings.SECRET_KEY.encode(), url.encode(), hashlib.sha256
+        ).hexdigest()
         if new_signature != signature:
             return HttpResponseForbidden()
         if timezone.now().timestamp() > kwargs.get("expiry", 0):
