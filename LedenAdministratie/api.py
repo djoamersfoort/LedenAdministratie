@@ -3,11 +3,10 @@ import hmac
 import imghdr
 
 from django.conf import settings
-from django.db.models import Q, ExpressionWrapper, BooleanField
+from django.db.models import Q
 from django.http import HttpResponse, JsonResponse, HttpResponseForbidden
 from django.utils import timezone
 from django.views import View
-from django.templatetags.static import static
 from oauth2_provider.views import ProtectedResourceView, ScopedProtectedResourceView
 
 from LedenAdministratie.models import Member
@@ -15,7 +14,7 @@ from LedenAdministratie.templatetags.photo_filter import img2base64
 from LedenAdministratie.utils import Utils
 
 
-class ApiV1Smoelenboek(View):
+class ApiV1Smoelenboek(ProtectedResourceView):
     def get(self, request, *args, **kwargs):
         large = request.GET.get("large", "0")
         members = (
@@ -24,9 +23,6 @@ class ApiV1Smoelenboek(View):
             )
             .order_by("first_name")
             .defer("foto", "thumbnail")
-            .annotate(
-                no_photo=ExpressionWrapper(Q(foto=None), output_field=BooleanField())
-            )
         )
 
         response = []
@@ -38,8 +34,6 @@ class ApiV1Smoelenboek(View):
                 settings.SECRET_KEY.encode(), url.encode(), hashlib.sha256
             ).hexdigest()
             url += f"&signature={signature}"
-            if member.no_photo:
-                url = request.build_absolute_uri(static("img/mm.png"))
             memberdict = {
                 "id": member.id,
                 "user_id": f"idp-{member.user.pk}",
@@ -70,6 +64,9 @@ class ApiV1SmoelenboekSigned(View):
         large = request.GET.get("large", "0") == "1"
         member = Member.objects.get(id=kwargs.get("pk"))
         photo = member.foto if large else member.thumbnail
+        if not photo:
+            with open("static/img/mm.png", "rb") as photo:
+                return HttpResponse(content=photo.read(), content_type="image/png")
         content_type = imghdr.what(None, photo)
         return HttpResponse(photo, content_type=f"image/{content_type}")
 
