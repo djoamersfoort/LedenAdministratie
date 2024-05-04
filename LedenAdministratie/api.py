@@ -1,6 +1,12 @@
+import hashlib
+import hmac
+import imghdr
+
+from django.conf import settings
 from django.db.models import Q
 from django.http import HttpResponse, JsonResponse, HttpResponseForbidden
 from django.utils import timezone
+from django.views import View
 from oauth2_provider.views import ProtectedResourceView, ScopedProtectedResourceView
 
 from LedenAdministratie.models import Member
@@ -10,19 +16,18 @@ from LedenAdministratie.utils import Utils
 
 class ApiV1Smoelenboek(ProtectedResourceView):
     def get(self, request, *args, **kwargs):
-        large = request.GET.get("large", "0") == "1"
+        large = request.GET.get("large", "0")
         members = Member.objects.filter(
             Q(afmeld_datum__gt=timezone.now()) | Q(afmeld_datum=None)
         ).order_by("first_name")
 
         response = []
+        expiry = int((timezone.now() + timezone.timedelta(hours=1)).timestamp())
         for member in members:
-            if large:
-                photo = member.foto
-            else:
-                photo = member.thumbnail
-                if photo is None:
-                    photo = member.foto
+            # Generate a signed URL for the image
+            url = request.build_absolute_uri(f"{member.id}/{expiry}/?large={large}")
+            signature = hmac.new(settings.SECRET_KEY.encode(), url.encode(), hashlib.sha256).hexdigest()
+            url += f"&signature={signature}"
 
             memberdict = {
                 "id": member.id,
@@ -30,11 +35,30 @@ class ApiV1Smoelenboek(ProtectedResourceView):
                 "first_name": member.first_name,
                 "last_name": member.last_name,
                 "types": ",".join([tmptype.slug for tmptype in member.types.all()]),
-                "photo": img2base64(photo),
+                "photo": url,
             }
             response.append(memberdict)
 
         return JsonResponse(data=response, safe=False)
+
+
+class ApiV1SmoelenboekSigned(View):
+    def get(self, request, *args, **kwargs):
+        # Validate signature and expiry datetime
+        signature = request.GET.get("signature", "")
+        url = request.build_absolute_uri().replace(f"&signature={signature}", "")
+        new_signature = hmac.new(settings.SECRET_KEY.encode(), url.encode(), hashlib.sha256).hexdigest()
+        if new_signature != signature:
+            return HttpResponseForbidden()
+        if timezone.now().timestamp() > kwargs.get("expiry", 0):
+            return HttpResponseForbidden()
+
+        # Return the image if all is OK
+        large = request.GET.get("large", "0") == "1"
+        member = Member.objects.get(id=kwargs.get("pk"))
+        photo = member.foto if large else member.thumbnail
+        content_type = imghdr.what(None, photo)
+        return HttpResponse(photo, content_type=f"image/{content_type}")
 
 
 class ApiV1SmoelenboekUser(ProtectedResourceView):
