@@ -13,6 +13,7 @@ Including another URLconf
     1. Add an import:  from blog import urls as blog_urls
     2. Add a URL to urlpatterns:  url(r'^blog/', include(blog_urls))
 """
+
 from django.contrib import admin
 from django.urls import path, include
 from two_factor.urls import urlpatterns as tf_urls
@@ -98,6 +99,11 @@ urlpatterns = [
     path("email/log/", views.EmailLogView.as_view(), name="email_log"),
     path("settings/", views.SettingsView.as_view(), name="settings"),
     path("api/v1/smoelenboek/", api.ApiV1Smoelenboek.as_view()),
+    path(
+        "api/v1/smoelenboek/<int:pk>/<int:expiry>/",
+        api.ApiV1SmoelenboekSigned.as_view(),
+        name="smoelenboek_signed",
+    ),
     path("api/v1/smoelenboek/<int:pk>/", api.ApiV1SmoelenboekUser.as_view()),
     path("api/v1/member/details", api.ApiV1UserDetails.as_view()),
     path("o/", include("oauth2_provider.urls", namespace="oauth2_provider")),

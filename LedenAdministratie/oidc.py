@@ -27,12 +27,14 @@ class DJOOAuth2Validator(OAuth2Validator):
             "media": lambda request: True,
             "account_type": lambda request: request.user.member.idp_types(),
             "days": lambda request: request.user.member.days,
-            "stripcard": lambda request: {
-                "count": request.user.member.active_stripcard.count,
-                "used": request.user.member.active_stripcard.used,
-            }
-            if request.user.member.active_stripcard
-            else None,
+            "stripcard": lambda request: (
+                {
+                    "count": request.user.member.active_stripcard.count,
+                    "used": request.user.member.active_stripcard.used,
+                }
+                if request.user.member.active_stripcard
+                else None
+            ),
         }
 
     def validate_user(
