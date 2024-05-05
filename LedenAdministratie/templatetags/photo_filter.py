@@ -1,5 +1,5 @@
 import base64
-import imghdr
+import filetype
 
 from django import template
 from django.core.files.uploadedfile import UploadedFile
@@ -93,6 +93,8 @@ def img2base64(field):
     if isinstance(foto, UploadedFile):
         foto = foto.file.read()
 
-    image_type = imghdr.what(None, foto)
+    if not (image_type := filetype.guess_mime(foto)):
+        return f"data:image/png;base64,{UNKOWN_PERSON}"
+
     base64img = base64.encodebytes(foto).decode("ascii")
-    return f"data:image/{image_type};base64,{base64img}"
+    return f"data:{image_type};base64,{base64img}"
