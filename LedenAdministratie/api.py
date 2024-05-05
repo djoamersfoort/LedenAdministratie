@@ -1,7 +1,8 @@
 import hashlib
 import hmac
-import imghdr
 
+import aiofiles
+import filetype
 from django.conf import settings
 from django.db.models import Q
 from django.http import HttpResponse, JsonResponse, HttpResponseForbidden
@@ -48,7 +49,7 @@ class ApiV1Smoelenboek(ProtectedResourceView):
 
 
 class ApiV1SmoelenboekSigned(View):
-    def get(self, request, *args, **kwargs):
+    async def get(self, request, *args, **kwargs):
         # Validate signature and expiry datetime
         signature = request.GET.get("signature", "")
         url = request.build_absolute_uri().replace(f"&signature={signature}", "")
@@ -62,13 +63,14 @@ class ApiV1SmoelenboekSigned(View):
 
         # Return the image if all is OK
         large = request.GET.get("large", "0") == "1"
-        member = Member.objects.get(id=kwargs.get("pk"))
-        photo = member.foto if large else member.thumbnail
-        if not photo:
-            with open("static/img/mm.png", "rb") as photo:
-                return HttpResponse(content=photo.read(), content_type="image/png")
-        content_type = imghdr.what(None, photo)
-        return HttpResponse(photo, content_type=f"image/{content_type}")
+        member = await Member.objects.aget(id=kwargs.get("pk"))
+        if not (photo := member.foto if large else member.thumbnail):
+            async with aiofiles.open("static/img/mm.png", "rb") as photo:
+                return HttpResponse(
+                    content=await photo.read(), content_type="image/png"
+                )
+        content_type = filetype.guess_mime(photo)
+        return HttpResponse(photo, content_type=content_type)
 
 
 class ApiV1SmoelenboekUser(ProtectedResourceView):

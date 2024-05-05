@@ -1,7 +1,7 @@
 #
 # Build image to create venv
 #
-FROM python:3.10-alpine AS build
+FROM python:3.11-alpine AS build
 
 # Set the file maintainer (your name - the file's author)
 MAINTAINER Ronald Moesbergen
@@ -18,7 +18,7 @@ RUN pip3 install --upgrade pip virtualenv && \
 #
 # Runtime image
 #
-FROM python:3.10-alpine
+FROM python:3.11-alpine
 
 RUN apk update && \
     apk add nginx mariadb-connector-c zlib jpeg freetype libffi pango ttf-dejavu dumb-init
