@@ -75,7 +75,7 @@ class MemberListView(OTPRequiredMixin, PermissionRequiredMixin, ListView):
     def get_queryset(self):
         queryset = Member.objects.filter(
             Q(afmeld_datum__gt=date.today()) | Q(afmeld_datum=None)
-        )
+        ).defer("foto", "thumbnail")
         filter_slug = self.kwargs.get("filter_slug", "")
 
         if filter_slug == "inactive":

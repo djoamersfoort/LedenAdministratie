@@ -24,6 +24,10 @@ class Member(models.Model):
     class Meta:
         ordering = ["first_name", "last_name"]
         verbose_name_plural = "Leden"
+        indexes = [
+            models.Index(fields=["last_name", "first_name"]),
+            models.Index(fields=["first_name"]),
+        ]
 
     def save(
         self, force_insert=False, force_update=False, using=None, update_fields=None
