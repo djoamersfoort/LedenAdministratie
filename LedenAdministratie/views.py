@@ -485,7 +485,7 @@ class EmailSendView(OTPRequiredMixin, PermissionRequiredMixin, FormView):
 
         recipients = Member.objects.filter(
             Q(afmeld_datum__gt=date.today()) | Q(afmeld_datum=None)
-        )
+        ).defer("foto", "thumbnail")
         to_user_list = []
         for recipient in recipients:
             to_list = []
