@@ -92,6 +92,7 @@ OAUTH2_PROVIDER = {
         'openid': 'Genereer een OpenID Connect JWT token',
         'aanmelden': 'De app kan namens jou aanmelden bij DJO',
         'media': "De app heeft toegang to DJO foto's en video's",
+        'corvee': "De app heeft toegang tot de Corvee applicatie",
     },
     'DEFAULT_SCOPES': ['user/basic'],
     'PKCE_REQUIRED': False,
