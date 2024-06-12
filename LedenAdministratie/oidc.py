@@ -14,6 +14,7 @@ class DJOOAuth2Validator(OAuth2Validator):
         "email": "user/email",
         "aanmelden": "aanmelden",
         "media": "media",
+        "corvee": "corvee",
     }
 
     # This needs to be without the 'request' parameter + lambda's to support claim discovery
@@ -35,6 +36,7 @@ class DJOOAuth2Validator(OAuth2Validator):
                 if request.user.member.active_stripcard
                 else None
             ),
+            "corvee": lambda request: True,
         }
 
     def validate_user(
