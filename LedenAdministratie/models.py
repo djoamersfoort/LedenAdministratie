@@ -71,7 +71,9 @@ class Member(models.Model):
         born = self.gebdat
         return (
             # pylint: disable=no-member
-            today.year - born.year - ((today.month, today.day) < (born.month, born.day))
+            today.year
+            - born.year
+            - ((today.month, today.day) < (born.month, born.day))
         )
 
     @property
