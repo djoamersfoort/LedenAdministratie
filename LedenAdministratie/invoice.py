@@ -154,7 +154,7 @@ class InvoiceTool:
         elif invoice_type == InvoiceType.STRIPCARD:
             defaults = [
                 {
-                    "description": f"Strippenkaart {date.today().year} DJO Amersfoort",
+                    "description": f"Strippenkaart {date.today().year} DJO Amersfoort, 2 jaar geldig",
                     "count": 10,
                     "amount": Decimal(Utils.get_setting("invoice_amount_day")),
                 }

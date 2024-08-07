@@ -1,5 +1,5 @@
 import uuid
-from datetime import date
+from datetime import date, datetime
 from io import BytesIO
 
 from PIL import Image
@@ -66,11 +66,14 @@ class Member(models.Model):
         self.user.is_active = self.is_active()
         self.user.save()
 
-    def _calculate_age(self, ondate=date.today()):
-        today = ondate
+    def _calculate_age(self, on_date=date.today()) -> int:
+        today = on_date
         born = self.gebdat
         return (
-            today.year - born.year - ((today.month, today.day) < (born.month, born.day))
+            # pylint: disable=no-member
+            today.year
+            - born.year
+            - ((today.month, today.day) < (born.month, born.day))
         )
 
     @property
@@ -78,13 +81,13 @@ class Member(models.Model):
         return self.stripcards.filter(used__lt=F("count")).first()
 
     @property
-    def full_name(self):
+    def full_name(self) -> str:
         return f"{self.first_name} {self.last_name}"
 
-    def get_types_display(self):
+    def get_types_display(self) -> str:
         return ",".join([tmptype.display_name for tmptype in self.types.all()])
 
-    def idp_types(self):
+    def idp_types(self) -> str:
         result = []
         for membertype in self.types.all():
             name = membertype.slug
@@ -95,38 +98,38 @@ class Member(models.Model):
             result.append(name)
         return ",".join(result)
 
-    def is_bestuur(self):
+    def is_bestuur(self) -> bool:
         slugs = [membertype.slug for membertype in self.types.all()]
         return "bestuur" in slugs
 
-    def is_begeleider(self):
+    def is_begeleider(self) -> bool:
         slugs = [membertype.slug for membertype in self.types.all()]
         return "begeleider" in slugs
 
-    def is_ondersteuner(self):
+    def is_ondersteuner(self) -> bool:
         slugs = [membertype.slug for membertype in self.types.all()]
         return "ondersteuning" in slugs
 
-    def is_aspirant(self):
+    def is_aspirant(self) -> bool:
         slugs = [membertype.slug for membertype in self.types.all()]
         return "aspirant" in slugs
 
-    def is_senior(self):
+    def is_senior(self) -> bool:
         slugs = [membertype.slug for membertype in self.types.all()]
         return "senior" in slugs
 
-    def is_stripcard(self):
+    def is_stripcard(self) -> bool:
         slugs = [membertype.slug for membertype in self.types.all()]
         return "strippenkaart" in slugs
 
-    def is_standard(self):
+    def is_standard(self) -> bool:
         slugs = [membertype.slug for membertype in self.types.all()]
         return "member" in slugs
 
-    def is_active(self):
+    def is_active(self) -> bool:
         return self.afmeld_datum is None or self.afmeld_datum > timezone.now().date()
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"{self.first_name} {self.last_name}"
 
     user = models.OneToOneField(
@@ -246,6 +249,9 @@ class Stripcard(models.Model):
     )
     count = models.IntegerField(verbose_name="Aantal", default=10)
     used = models.IntegerField(verbose_name="Gebruikt", default=0)
+    expiration_date = models.DateField(
+        verbose_name="Vervaldatum", default=datetime(year=2099, month=1, day=1)
+    )
 
     def __str__(self):
         member_name = (
