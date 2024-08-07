@@ -32,6 +32,7 @@ class DJOOAuth2Validator(OAuth2Validator):
                 {
                     "count": request.user.member.active_stripcard.count,
                     "used": request.user.member.active_stripcard.used,
+                    "expires": request.user.member.active_stripcard.expiration_date,
                 }
                 if request.user.member.active_stripcard
                 else None
