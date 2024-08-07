@@ -130,6 +130,7 @@ class ApiV1UserDetails(ScopedProtectedResourceView):
                     {
                         "stripcard_count": stripcard.count,
                         "stripcard_used": stripcard.used,
+                        "stripcard_expires": stripcard.expiration_date,
                     }
                 )
         if token.allow_scopes(["user/email"]):

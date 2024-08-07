@@ -1,5 +1,5 @@
 import uuid
-from datetime import date
+from datetime import date, datetime
 from io import BytesIO
 
 from PIL import Image
@@ -246,6 +246,9 @@ class Stripcard(models.Model):
     )
     count = models.IntegerField(verbose_name="Aantal", default=10)
     used = models.IntegerField(verbose_name="Gebruikt", default=0)
+    expiration_date = models.DateField(
+        verbose_name="Vervaldatum", default=datetime(year=2099, month=1, day=1)
+    )
 
     def __str__(self):
         member_name = (

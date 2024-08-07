@@ -7,6 +7,7 @@
                     <th>Door</th>
                     <th>Aantal slots</th>
                     <th>Gebruikt</th>
+                    <th>Vervaldatum</th>
                     <th></th>
                 </tr>
             </thead>
@@ -17,6 +18,7 @@
                     <td>{{ stripcard.issued_by|capfirst }}</td>
                     <td>{{ stripcard.count }}</td>
                     <td>{{ stripcard.used }}</td>
+                    <td>{{ stripcard.expiration_date|date:"d-m-Y" }}</td>
                     <td>
                         {% if perms.LedenAdministratie.delete_stripcard %}
                         <a href="#" data-toggle="modal" data-target="#showStripcardDeleteModal{{ stripcard.pk }}">

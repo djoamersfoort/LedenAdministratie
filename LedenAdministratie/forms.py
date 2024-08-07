@@ -162,11 +162,13 @@ class SettingsForm(forms.Form):
 class StripcardForm(forms.ModelForm):
     class Meta:
         model = Stripcard
-        fields = ["issue_date", "count", "create_invoice"]
+        fields = ["issue_date", "expiration_date", "count", "create_invoice"]
 
     create_invoice = forms.BooleanField(required=False, initial=True)
 
     def get_initial_for_field(self, field, field_name):
         if field_name == "issue_date":
             return timezone.now()
+        if field_name == "expiration_date":
+            return timezone.now() + timezone.timedelta(days=2 * 365)
         return super().get_initial_for_field(field, field_name)
