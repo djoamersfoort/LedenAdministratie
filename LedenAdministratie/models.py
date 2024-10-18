@@ -30,7 +30,12 @@ class Member(models.Model):
         ]
 
     def save(
-        self, force_insert=False, force_update=False, using=None, update_fields=None
+        self,
+        *args,
+        force_insert=False,
+        force_update=False,
+        using=None,
+        update_fields=None,
     ):
         if self.thumbnail is None and self.foto is not None:
             try:
