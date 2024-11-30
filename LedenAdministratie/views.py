@@ -476,7 +476,7 @@ class EmailSendView(OTPRequiredMixin, PermissionRequiredMixin, FormView):
                 "content": form.cleaned_data["body"],
                 "recipients": recipients,
             },
-            timeout=10,
+            timeout=60,
         )
 
     def form_valid(self, form):
