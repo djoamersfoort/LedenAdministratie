@@ -482,6 +482,7 @@ class EmailSendView(OTPRequiredMixin, PermissionRequiredMixin, FormView):
     def form_valid(self, form):
         if "self" in form.cleaned_data["recipients"]:
             self.send_email(form, [self.request.user.email])
+            self.send_notification(form, [self.request.user.id])
 
         recipients = Member.objects.filter(
             Q(afmeld_datum__gt=date.today()) | Q(afmeld_datum=None)
