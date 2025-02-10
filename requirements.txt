@@ -10,7 +10,7 @@ pillow==11.1.0
 python-dateutil==2.9.0.post0
 requests==2.32.3
 requests-oauthlib==2.0.0
-weasyprint==63.1
+weasyprint==64.0
 django-two-factor-auth[phonenumberslite,webauthn]==1.17.0
 uvicorn==0.34.0
 filetype==1.2.0
