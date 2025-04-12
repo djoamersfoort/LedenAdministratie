@@ -175,6 +175,13 @@ class Member(models.Model):
         default=1,
     )
     foto = models.BinaryField(blank=True, null=True, verbose_name="Foto", editable=True)
+    media_toestemming = models.IntegerField(
+        blank=False,
+        null=False,
+        choices=((1, "Toegestaan"), (2, "Onbekend"), (3, "Niet toegestaan")),
+        verbose_name="Media toestemming",
+        default=2,
+    )
     thumbnail = models.BinaryField(
         blank=True, null=True, verbose_name="Thumbnail", editable=True
     )
