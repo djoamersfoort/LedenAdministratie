@@ -1,5 +1,10 @@
 name: Docker
 
+permissions:
+  contents: read
+  packages: write
+  actions: read
+
 on:
   push:
     # Publish `djo` as Docker `latest` image.
