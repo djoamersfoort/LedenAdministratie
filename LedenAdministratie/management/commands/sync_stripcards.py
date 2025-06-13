@@ -2,7 +2,7 @@ import requests
 from django.core.management.base import BaseCommand
 from django.utils import timezone
 
-from LedenAdministratie.models import Stripcard
+from LedenAdministratie.models import Stripcard, Note
 
 
 class Command(BaseCommand):
@@ -45,5 +45,11 @@ class Command(BaseCommand):
         for stripcard in cards_to_delete:
             self.stdout.write(
                 self.style.SUCCESS(f"Deleting expired stripcard: {stripcard}")
+            )
+            Note.objects.create(
+                text=f"Deleting expired stripcard: {stripcard}",
+                member=stripcard.member_id,
+                username="System",
+                done=True,
             )
             stripcard.delete()
