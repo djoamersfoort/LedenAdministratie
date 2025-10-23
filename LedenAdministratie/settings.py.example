@@ -48,6 +48,7 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'oauth2_provider.middleware.OAuth2ExtraTokenMiddleware',
     'django_otp.middleware.OTPMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -102,6 +103,7 @@ OAUTH2_PROVIDER = {
     'REFRESH_TOKEN_EXPIRE_SECONDS': 86400,
     'OAUTH2_SERVER_CLASS': 'LedenAdministratie.oauth_server.Server'
 }
+SMOELENBOEK_API_ALLOWED_CLIENTS = []
 
 LOGIN_URL = 'two_factor:login'
 LOGIN_REDIRECT_URL = '/logged_in/'

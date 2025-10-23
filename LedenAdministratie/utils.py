@@ -1,10 +1,8 @@
-from typing import Optional
 from urllib.parse import urlparse
 
 from django.core.mail import EmailMessage
 from django.http.request import HttpRequest
 from django.shortcuts import reverse
-from oauth2_provider.models import AccessToken
 
 from LedenAdministratie.models import Setting
 
@@ -27,23 +25,6 @@ class Utils:
         except Setting.DoesNotExist:
             return ""
         return setting.value
-
-    @staticmethod
-    def get_access_token(request: HttpRequest) -> Optional[AccessToken]:
-        token = request.GET.get("access_token", "").strip()
-        if token == "":
-            parts = request.headers.get("authorization", "").split()
-            if len(parts) == 2 and parts[0].lower() == "bearer":
-                token = parts[1]
-
-        if token == "":
-            return None
-
-        try:
-            token = AccessToken.objects.get(token=token)
-        except AccessToken.DoesNotExist:
-            return None
-        return token
 
     @staticmethod
     def get_safe_return_url(request: HttpRequest) -> str:

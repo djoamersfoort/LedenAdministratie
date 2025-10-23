@@ -8,14 +8,16 @@ from django.db.models import Q
 from django.http import HttpResponse, JsonResponse, HttpResponseForbidden
 from django.utils import timezone
 from django.views import View
-from oauth2_provider.views import ProtectedResourceView, ScopedProtectedResourceView
+from oauth2_provider.views import ScopedProtectedResourceView
 
+from LedenAdministratie.mixins import AllowListedClientCredentialsMixin
 from LedenAdministratie.models import Member
 from LedenAdministratie.templatetags.photo_filter import img2base64
-from LedenAdministratie.utils import Utils
 
 
-class ApiV1Smoelenboek(ProtectedResourceView):
+class ApiV1Smoelenboek(AllowListedClientCredentialsMixin):
+    allowed_client_ids = settings.SMOELENBOEK_API_ALLOWED_CLIENTS
+
     def get(self, request, *args, **kwargs):
         large = request.GET.get("large", "0")
         members = (
@@ -73,7 +75,9 @@ class ApiV1SmoelenboekSigned(View):
         return HttpResponse(photo, content_type=content_type)
 
 
-class ApiV1SmoelenboekUser(ProtectedResourceView):
+class ApiV1SmoelenboekUser(AllowListedClientCredentialsMixin):
+    allowed_client_ids = settings.SMOELENBOEK_API_ALLOWED_CLIENTS
+
     def get(self, request, *args, **kwargs):
         large = request.GET.get("large", "0") == "1"
         userid = self.kwargs["pk"]
@@ -104,9 +108,7 @@ class ApiV1UserDetails(ScopedProtectedResourceView):
         return ["user/basic"]
 
     def get(self, request, *args, **kwargs):
-        token = Utils.get_access_token(request)
-        if token is None:
-            return HttpResponseForbidden()
+        token = request.access_token
 
         if not request.resource_owner or not hasattr(request.resource_owner, "member"):
             # Access token User does not have a linked Member record -> deny access
