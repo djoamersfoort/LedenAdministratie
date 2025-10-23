@@ -102,6 +102,8 @@ class ApiV1UserDetails(ScopedProtectedResourceView):
         return ["user/basic"]
 
     def get(self, request, *args, **kwargs):
+        if not hasattr(request, "access_token"):
+            return HttpResponseForbidden()
         token = request.access_token
 
         if not request.resource_owner or not hasattr(request.resource_owner, "member"):
