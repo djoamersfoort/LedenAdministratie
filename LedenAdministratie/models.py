@@ -2,7 +2,7 @@ import uuid
 from datetime import date, datetime
 from io import BytesIO
 
-from PIL import Image
+from PIL import Image, ImageOps
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.hashers import make_password
@@ -42,7 +42,8 @@ class Member(models.Model):
                 with BytesIO(self.foto) as f:
                     with Image.open(f, "r") as photo:
                         img_format = photo.format
-                        thumbnail = photo.copy()
+                        # Correct orientation
+                        thumbnail = ImageOps.exif_transpose(photo)
                         thumbnail.thumbnail((100, 150), Image.Resampling.LANCZOS)
                         thumbnail.format = img_format
                         encoded_thumb = BytesIO()
