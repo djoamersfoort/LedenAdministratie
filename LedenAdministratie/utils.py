@@ -1,5 +1,8 @@
+import hashlib
+import hmac
 from urllib.parse import urlparse
 
+from django.conf import settings
 from django.core.mail import EmailMessage
 from django.http.request import HttpRequest
 from django.shortcuts import reverse
@@ -34,3 +37,12 @@ class Utils:
             if path.startswith("/"):
                 return path
         return reverse("members")
+
+    @staticmethod
+    def get_signed_url(request: HttpRequest, path: str) -> str:
+        url = request.build_absolute_uri(path)
+        signature = hmac.new(
+            settings.SECRET_KEY.encode(), url.encode(), hashlib.sha256
+        ).hexdigest()
+        url += f"&signature={signature}"
+        return url

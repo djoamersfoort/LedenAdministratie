@@ -12,7 +12,7 @@ from oauth2_provider.views import ScopedProtectedResourceView
 
 from LedenAdministratie.mixins import AllowListedClientCredentialsMixin
 from LedenAdministratie.models import Member
-from LedenAdministratie.templatetags.photo_filter import img2base64
+from LedenAdministratie.utils import Utils
 
 
 class ApiV1Smoelenboek(AllowListedClientCredentialsMixin):
@@ -29,21 +29,19 @@ class ApiV1Smoelenboek(AllowListedClientCredentialsMixin):
         )
 
         response = []
-        expiry = int((timezone.now() + timezone.timedelta(days=1)).timestamp())
+        expiry = int((timezone.now() + timezone.timedelta(hours=2)).timestamp())
         for member in members:
             # Generate a signed URL for the image
-            url = request.build_absolute_uri(f"{member.id}/{expiry}/?large={large}")
-            signature = hmac.new(
-                settings.SECRET_KEY.encode(), url.encode(), hashlib.sha256
-            ).hexdigest()
-            url += f"&signature={signature}"
+            photo_url = Utils.get_signed_url(
+                request, f"{member.id}/{expiry}/?large={large}"
+            )
             memberdict = {
                 "id": member.id,
                 "user_id": f"idp-{member.user.pk}",
                 "first_name": member.first_name,
                 "last_name": member.last_name,
                 "types": ",".join([tmptype.slug for tmptype in member.types.all()]),
-                "photo": url,
+                "photo": photo_url,
             }
             response.append(memberdict)
 
@@ -86,19 +84,15 @@ class ApiV1SmoelenboekUser(AllowListedClientCredentialsMixin):
         except Member.DoesNotExist:
             return HttpResponse(status=404)
 
-        if large:
-            photo = member.foto
-        else:
-            photo = member.thumbnail
-            if photo is None:
-                photo = member.foto
+        expiry = int((timezone.now() + timezone.timedelta(hours=2)).timestamp())
+        photo_url = Utils.get_signed_url(request, f"{expiry}/?large={large}")
 
         memberdict = {
             "id": member.id,
             "first_name": member.first_name,
             "last_name": member.last_name,
             "types": ",".join([tmptype.slug for tmptype in member.types.all()]),
-            "photo": img2base64(photo),
+            "photo": photo_url,
         }
         return JsonResponse(data=memberdict)
 
