@@ -29,7 +29,7 @@ class ApiV1Smoelenboek(AllowListedClientCredentialsMixin):
         )
 
         response = []
-        expiry = int((timezone.now() + timezone.timedelta(hours=2)).timestamp())
+        expiry = int((timezone.now() + timezone.timedelta(hours=28)).timestamp())
         for member in members:
             # Generate a signed URL for the image
             photo_url = Utils.get_signed_url(
@@ -84,7 +84,7 @@ class ApiV1SmoelenboekUser(AllowListedClientCredentialsMixin):
         except Member.DoesNotExist:
             return HttpResponse(status=404)
 
-        expiry = int((timezone.now() + timezone.timedelta(hours=2)).timestamp())
+        expiry = int((timezone.now() + timezone.timedelta(hours=28)).timestamp())
         photo_url = Utils.get_signed_url(request, f"{expiry}/?large={large}")
 
         memberdict = {
