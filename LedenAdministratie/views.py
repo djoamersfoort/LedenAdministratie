@@ -1,5 +1,4 @@
 import csv
-import mimetypes
 from datetime import date
 
 import filetype
