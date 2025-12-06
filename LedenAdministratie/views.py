@@ -1,6 +1,7 @@
 import csv
 from datetime import date
 
+import filetype
 import requests
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -197,6 +198,19 @@ class MemberEditNoteView(OTPRequiredMixin, PermissionRequiredMixin, UpdateView):
 
     def get_success_url(self):
         return reverse("lid_edit", kwargs={"pk": self.object.member.id})
+
+
+class MemberDownloadNoteAttachmentView(OTPRequiredMixin, PermissionRequiredMixin, View):
+    required_permission = "LedenAdministratie.view_note"
+
+    def get(self, request, *args, **kwargs):
+        note = Note.objects.get(pk=kwargs["pk"])
+        mime_type = filetype.guess_mime(note.attachment)
+        response = HttpResponse(note.attachment, content_type=mime_type)
+        response["Content-Disposition"] = (
+            f'attachment; filename="{note.attachment.name}"'
+        )
+        return response
 
 
 class TodoListView(OTPRequiredMixin, PermissionRequiredMixin, ListView):

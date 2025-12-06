@@ -55,7 +55,7 @@ class ExportForm(forms.Form):
 class LidNoteForm(forms.ModelForm):
     class Meta:
         model = Note
-        fields = ["text", "done"]
+        fields = ["text", "done", "attachment"]
 
 
 class InvoiceCreateForm(forms.Form):

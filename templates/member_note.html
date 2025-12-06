@@ -3,7 +3,7 @@
 
 {% block content %}
 
-<form method="post">
+<form method="post" enctype="multipart/form-data">
     {% csrf_token %}
 
     <div class="card">
@@ -21,6 +21,25 @@
                     {{ form.text|add_class:'form-control' }}
                     <br/>
 
+                    <div>
+                        <h5 class="card-title">Bijlage</h5>
+                        <div>
+                            {% if object %}
+                                Attachment downloaden:
+                              <a href="{% url 'download_note_attachment' object.pk %}">{{ object.attachment.name }}</a>
+                            {% endif %}
+                        </div>
+                        <div class="custom-file" id="customFile" lang="nl">
+                            <input type="file" class="custom-file-input" id="id_attachment" name="attachment"
+                                   onchange="$(this).next('.custom-file-label').text($(this).val().split('\\').pop());">
+                            <label class="custom-file-label" for="id_attachment">
+                               Attachment uploaden...
+                            </label>
+                        </div>
+                    </div>
+
+                    <br/>
+                    <h5 class="card-title">Status</h5>
                     <div class="form-check mb-3">
                         {{ form.done|add_class:'form-check-input' }}
                         <label for="id_done">Is afgerond</label>

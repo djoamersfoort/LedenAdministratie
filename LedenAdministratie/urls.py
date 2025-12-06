@@ -48,6 +48,11 @@ urlpatterns = [
         views.MemberEditNoteView.as_view(),
         name="lid_editnote",
     ),
+    path(
+        "member/download_note_attachment/<int:pk>",
+        views.MemberDownloadNoteAttachmentView.as_view(),
+        name="download_note_attachment",
+    ),
     path("todolist/", views.TodoListView.as_view(), name="todolist"),
     path("invoice/create/", views.InvoiceCreateView.as_view(), name="invoice_create"),
     path(
