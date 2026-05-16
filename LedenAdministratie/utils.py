@@ -32,7 +32,6 @@ class Utils:
     @staticmethod
     def get_safe_return_url(request: HttpRequest) -> str:
         if url := request.META.get("HTTP_REFERER", ""):
-            print(f"REFER: {url}")
             path = urlparse(url).path
             if path.startswith("/"):
                 return path
