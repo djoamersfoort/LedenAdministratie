@@ -61,7 +61,10 @@ class Member(models.Model):
             self.user.save()
 
         super().save(
-            force_insert, force_update, using=using, update_fields=update_fields
+            force_insert=force_insert,
+            force_update=force_update,
+            using=using,
+            update_fields=update_fields,
         )
 
         # Update user fields
