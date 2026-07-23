@@ -233,7 +233,12 @@ class InvoiceTool:
 
         send_to_parents = invoice.member.is_stripcard() or invoice.member.is_standard()
         body = render_to_string(
-            template, context={"invoice": invoice, "send_to_parents": send_to_parents}
+            template,
+            context={
+                "invoice": invoice,
+                "send_to_parents": send_to_parents,
+                "email_invoice_name": settings.EMAIL_INVOICE_NAME,
+            },
         )
 
         message = EmailMessage()

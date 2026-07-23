@@ -118,6 +118,7 @@ EMAIL_HOST_PASSWORD='mailpass'
 EMAIL_SENDER = '"Mail Sender" <sender@example.nl>'
 EMAIL_LANPARTY = '"Lanparty" <lanparty@example.nl>'
 EMAIL_SENDER_INVOICE = '"Invoice Sender" <invoice@example.nl>'
+EMAIL_INVOICE_NAME = 'Henk Pecunia'
 EMAIL_USE_TLS = True
 EMAIL_BCC = ['bcc@example.nl']
 EMAIL_BACKEND = "mailer.backend.DbBackend"
