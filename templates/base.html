@@ -149,7 +149,14 @@
 
                  </ul>
                  <ul class="nav flex-column mt-4 mb-1">
-                    <li><a class="nav-link" href="{% url 'logout' %}"><span data-feather="log-out"></span>Uitloggen</a></li>
+                    <li class="nav-item">
+                        <form action="{% url 'logout' %}" method="post" class="d-inline">
+                            {% csrf_token %}
+                            <button type="submit" class="nav-link">
+                                <span data-feather="log-out"></span>Uitloggen
+                            </button>
+                        </form>
+                    </li>
                  </ul>
             </div>
         </nav>
