@@ -17,7 +17,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          pip install pylint==3.3.1 pylint-django==2.6.1 black==24.8.0
+          pip install pylint==4.0.6 pylint-django==2.8.0 black==26.5.1
 
       - name: Run pylint and black
         run: |
