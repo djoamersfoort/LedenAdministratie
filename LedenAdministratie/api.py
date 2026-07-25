@@ -119,6 +119,7 @@ class ApiV1UserDetails(ScopedProtectedResourceView):
                     "username": request.resource_owner.username,
                     "memberStatus": member.is_active(),
                     "accountType": member.idp_types(),
+                    "accountTypes": [mtype.slug for mtype in member.types.all()],
                     "backendID": str(member.id),
                     "days": member.days,
                 }
