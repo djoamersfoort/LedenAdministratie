@@ -2,7 +2,10 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <link href="invoice.css" media="print" rel="stylesheet">
+    <link href="invoice.css"  rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
     <title>Factuur</title>
   </head>
 
@@ -25,6 +28,8 @@
     </aside>
 
     <dl id="informations">
+      <dt>IBAN</dt>
+      <dd>NL30 ABNA 0119 7748 44</dd>
       <dt>Factuurnummer</dt>
       <dd>{{ invoicenr }}</dd>
       <dt>Datum</dt>
@@ -35,8 +40,8 @@
       <thead>
       <tr>
         <th>Omschrijving</th>
-        <th>Prijs</th>
         <th>Aantal</th>
+        <th>Prijs</th>
         <th>Subtotaal</th>
       </tr>
       </thead>
@@ -44,30 +49,18 @@
         {% for line in lines %}
         <tr>
           <td>{{ line.description }}</td>
-          <td id="amount">{{ line.amount|floatformat:2 }}</td>
           <td>{{ line.count }}</td>
+          <td id="amount">{{ line.amount|floatformat:2 }}</td>
           <td>€ {{ line.line_total|floatformat:2 }}</td>
         </tr>
         {% endfor %}
       </tbody>
     </table>
 
-    <table id="total">
-      <thead>
-      <tr>
-        <th>Te betalen voor</th>
-        <th>Rekening nummer</th>
-        <th>Totaal bedrag</th>
-      <tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>{{ due_date }}</td>
-          <td>NL30 ABNA 0119 7748 44</td>
-          <td>€ {{ grand_total|floatformat:2 }}</td>
-        </tr>
-      </tbody>
-    </table>
-
+    <footer>
+      <p>Wij verzoeken u om <b>vóór {{ due_date }}</b> het totaalbedrag
+        van € {{ grand_total|floatformat:2 }} te voldoen op onze rekening
+        onder vermelding van het factuurnummer.</p>
+    </footer>
   </body>
 </html>
