@@ -12,6 +12,6 @@ requests==2.34.2
 requests-oauthlib==2.0.0
 weasyprint==69.0
 django-two-factor-auth[phonenumberslite,webauthn]==1.18.1
-uvicorn==0.51.0
+uvicorn==0.52.0
 filetype==1.2.0
 aiofiles==25.1.0
