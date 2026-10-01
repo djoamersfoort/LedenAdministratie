@@ -48,7 +48,7 @@ class Command(BaseCommand):
             )
             Note.objects.create(
                 text=f"Deleting expired stripcard: {stripcard}",
-                member=stripcard.member_id,
+                member=stripcard.member,
                 username="System",
                 done=True,
             )
