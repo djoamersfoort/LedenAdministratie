@@ -1,5 +1,4 @@
 import dataclasses
-import os
 from datetime import date, timedelta
 from decimal import Decimal
 from enum import Enum
@@ -10,7 +9,7 @@ from django.core.mail import EmailMessage
 from django.db.models import Q
 from django.template.loader import render_to_string
 from django.utils import timezone
-from weasyprint import HTML, CSS, default_url_fetcher
+from weasyprint import HTML, CSS
 from weasyprint.text.fonts import FontConfiguration
 
 from LedenAdministratie.models import Member, Invoice
@@ -58,17 +57,6 @@ class InvoiceTool:
         return grand_total
 
     @staticmethod
-    def invoice_url_fetcher(url: str, timeout: int = 10) -> dict:
-        if url.startswith("local:"):
-            parts = url.split(":")
-            path = parts[1]
-            mime_type = parts[2]
-            path = os.path.join(settings.BASE_DIR, path)
-            file_obj = open(path, "rb")  # pylint: disable=consider-using-with
-            return {"file_obj": file_obj, "mime_type": mime_type}
-        return default_url_fetcher(url, timeout)
-
-    @staticmethod
     def render_invoice(
         member: Member,
         lines: list[InvoiceLine],
@@ -102,7 +90,7 @@ class InvoiceTool:
                 "grand_total": grand_total,
             },
         )
-        printer = HTML(string=html, url_fetcher=InvoiceTool.invoice_url_fetcher)
+        printer = HTML(string=html, base_url=settings.BASE_DIR)
         return printer.write_pdf(stylesheets=[css])
 
     @staticmethod
