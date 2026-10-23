@@ -24,3 +24,7 @@ jobs:
           black --check LedenAdministratie
           cp LedenAdministratie/settings.py.example LedenAdministratie/settings.py
           DJANGO_SETTINGS_MODULE="LedenAdministratie.settings" pylint --load-plugins=pylint_django LedenAdministratie
+
+      - name: Run tests
+        run: |
+          python manage.py test
