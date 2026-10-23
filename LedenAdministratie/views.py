@@ -179,7 +179,7 @@ class MemberAddNoteView(OTPRequiredMixin, PermissionRequiredMixin, CreateView):
 class MemberDeleteNoteView(OTPRequiredMixin, PermissionRequiredMixin, View):
     required_permission = "LedenAdministratie.delete_note"
 
-    def get(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
         note = Note.objects.get(pk=kwargs["pk"])
         note.delete()
         return HttpResponseRedirect(Utils.get_safe_return_url(request))
@@ -294,7 +294,7 @@ class InvoiceDisplayView(OTPRequiredMixin, PermissionRequiredMixin, BaseDetailVi
 class InvoiceDeleteView(OTPRequiredMixin, PermissionRequiredMixin, View):
     required_permission = "LedenAdministratie.delete_invoice"
 
-    def get(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
         invoice = Invoice.objects.get(pk=kwargs["pk"])
         invoice.delete()
         return HttpResponseRedirect(Utils.get_safe_return_url(request))
@@ -313,7 +313,7 @@ class InvoicePaymentView(OTPRequiredMixin, PermissionRequiredMixin, ListView):
 class InvoicePayFullView(OTPRequiredMixin, PermissionRequiredMixin, View):
     required_permission = "LedenAdministratie.view_invoice"
 
-    def get(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
         invoice = Invoice.objects.get(pk=kwargs["pk"])
         invoice.amount_payed = invoice.amount
         invoice.save()
@@ -601,7 +601,7 @@ class StripcardCreateView(OTPRequiredMixin, PermissionRequiredMixin, CreateView)
 class StripcardDeleteView(OTPRequiredMixin, PermissionRequiredMixin, View):
     required_permission = "LedenAdministratie.delete_stripcard"
 
-    def get(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
         stripcard = Stripcard.objects.get(pk=kwargs["pk"])
         stripcard.delete()
         return HttpResponseRedirect(Utils.get_safe_return_url(request))

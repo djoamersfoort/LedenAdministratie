@@ -38,7 +38,10 @@
                                 <p>Weet u zeker dat u de strippenkaart van {{ stripcard.issue_date }} wilt verwijderen?</p>
                               </div>
                               <div class="modal-footer">
-                                  <a class="btn btn-primary" href="{% url 'stripcard_delete' stripcard.pk %}">Verwijderen</a>
+                                  <form method="post" action="{% url 'stripcard_delete' stripcard.pk %}">
+                                      {% csrf_token %}
+                                      <button type="submit" class="btn btn-primary">Verwijderen</button>
+                                  </form>
                                   <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuleren</button>
                               </div>
                             </div>

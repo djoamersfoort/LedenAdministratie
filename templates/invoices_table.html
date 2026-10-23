@@ -52,7 +52,10 @@
                                 <p>Weet u zeker dat u de factuur {{ invoice.invoice_number }} wilt verwijderen?</p>
                               </div>
                               <div class="modal-footer">
-                                  <a class="btn btn-primary" href="{% url 'invoice_delete' invoice.pk %}">Verwijderen</a>
+                                  <form method="post" action="{% url 'invoice_delete' invoice.pk %}">
+                                      {% csrf_token %}
+                                      <button type="submit" class="btn btn-primary">Verwijderen</button>
+                                  </form>
                                   <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuleren</button>
                               </div>
                             </div>
