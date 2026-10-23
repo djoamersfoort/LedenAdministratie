@@ -20,9 +20,15 @@ class UtilsTests(TestCase):
 
     def test_get_safe_return_url_valid_referer(self):
         request = self.factory.get(
-            "/some/path/", HTTP_REFERER="https://example.com/invoice/search/"
+            "/some/path/", HTTP_REFERER="http://testserver/invoice/search/"
         )
         self.assertEqual(Utils.get_safe_return_url(request), "/invoice/search/")
+
+    def test_get_safe_return_url_external_referer_rejected(self):
+        request = self.factory.get(
+            "/some/path/", HTTP_REFERER="https://evil.com/invoice/search/"
+        )
+        self.assertEqual(Utils.get_safe_return_url(request), reverse("members"))
 
     def test_get_safe_return_url_no_referer(self):
         request = self.factory.get("/some/path/")
@@ -30,6 +36,18 @@ class UtilsTests(TestCase):
 
     def test_get_safe_return_url_empty_referer(self):
         request = self.factory.get("/some/path/", HTTP_REFERER="")
+        self.assertEqual(Utils.get_safe_return_url(request), reverse("members"))
+
+    def test_get_safe_return_url_rejects_scheme_relative_url(self):
+        request = self.factory.get(
+            "/some/path/", HTTP_REFERER="//attacker.com/malicious"
+        )
+        self.assertEqual(Utils.get_safe_return_url(request), reverse("members"))
+
+    def test_get_safe_return_url_rejects_double_slash_path(self):
+        request = self.factory.get(
+            "/some/path/", HTTP_REFERER="http://testserver//attacker.com/malicious"
+        )
         self.assertEqual(Utils.get_safe_return_url(request), reverse("members"))
 
     def test_get_signed_url(self):

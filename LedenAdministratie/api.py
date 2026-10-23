@@ -54,7 +54,7 @@ class ApiV1SmoelenboekSigned(View):
         new_signature = hmac.new(
             settings.SECRET_KEY.encode(), url.encode(), hashlib.sha256
         ).hexdigest()
-        if new_signature != signature:
+        if not hmac.compare_digest(new_signature, signature):
             return HttpResponseForbidden()
         if timezone.now().timestamp() > kwargs.get("expiry", 0):
             return HttpResponseForbidden()

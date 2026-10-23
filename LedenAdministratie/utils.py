@@ -6,6 +6,7 @@ from django.conf import settings
 from django.core.mail import EmailMessage
 from django.http.request import HttpRequest
 from django.shortcuts import reverse
+from django.utils.http import url_has_allowed_host_and_scheme
 
 from LedenAdministratie.models import Setting
 
@@ -32,9 +33,18 @@ class Utils:
     @staticmethod
     def get_safe_return_url(request: HttpRequest) -> str:
         if url := request.META.get("HTTP_REFERER", ""):
-            path = urlparse(url).path
-            if path.startswith("/"):
-                return path
+            if url_has_allowed_host_and_scheme(
+                url,
+                allowed_hosts={request.get_host()},
+                require_https=request.is_secure(),
+            ):
+                path = urlparse(url).path
+                if path and url_has_allowed_host_and_scheme(
+                    path,
+                    allowed_hosts=None,
+                    require_https=request.is_secure(),
+                ):
+                    return path
         return reverse("members")
 
     @staticmethod
