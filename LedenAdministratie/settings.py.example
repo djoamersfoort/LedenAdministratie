@@ -171,6 +171,7 @@ STATICFILES_DIRS = (
 
 # Session and cookie settings
 SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
 SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 CORS_ALLOWED_ORIGIN_REGEXES = [
     r"^https://\w+\.djoamersfoort\.nl$",

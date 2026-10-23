@@ -52,6 +52,6 @@ class DJOOAuth2Validator(OAuth2Validator):
         if request.user.member.is_active():
             return True
         # User end date has passed -> disable
-        request.user.active = False
+        request.user.is_active = False
         request.user.save()
         return False
