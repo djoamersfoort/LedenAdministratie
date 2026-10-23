@@ -16,8 +16,6 @@ from LedenAdministratie.utils import Utils
 
 
 class ApiV1Smoelenboek(AllowListedClientCredentialsMixin):
-    allowed_client_ids = settings.SMOELENBOEK_API_ALLOWED_CLIENTS
-
     def get(self, request, *args, **kwargs):
         large = request.GET.get("large", "0")
         members = (
@@ -74,8 +72,6 @@ class ApiV1SmoelenboekSigned(View):
 
 
 class ApiV1SmoelenboekUser(AllowListedClientCredentialsMixin):
-    allowed_client_ids = settings.SMOELENBOEK_API_ALLOWED_CLIENTS
-
     def get(self, request, *args, **kwargs):
         large = request.GET.get("large", "0") == "1"
         userid = self.kwargs["pk"]

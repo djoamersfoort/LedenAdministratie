@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.http import HttpResponseForbidden
 from oauth2_provider.views import ClientProtectedResourceView
@@ -20,7 +21,12 @@ class PermissionRequiredMixin(UserPassesTestMixin):
 
 
 class AllowListedClientCredentialsMixin(ClientProtectedResourceView):
-    allowed_client_ids = []
+    allowed_client_ids: list[str] | None = None
+
+    def get_allowed_client_ids(self):
+        if self.allowed_client_ids is not None:
+            return self.allowed_client_ids
+        return getattr(settings, "SMOELENBOEK_API_ALLOWED_CLIENTS", [])
 
     def dispatch(self, request, *args, **kwargs):
         if request.method.upper() == "OPTIONS":
@@ -31,6 +37,6 @@ class AllowListedClientCredentialsMixin(ClientProtectedResourceView):
             return HttpResponseForbidden()
 
         client_id = request.access_token.application.client_id
-        if client_id not in self.allowed_client_ids:
+        if client_id not in self.get_allowed_client_ids():
             return HttpResponseForbidden()
         return super().dispatch(request, *args, **kwargs)
