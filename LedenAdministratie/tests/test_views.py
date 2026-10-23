@@ -1,4 +1,5 @@
 from datetime import date
+from decimal import Decimal
 from unittest.mock import MagicMock
 
 from django.contrib.auth import get_user_model
@@ -7,8 +8,15 @@ from django.test import RequestFactory, TestCase, override_settings
 from django.urls import reverse
 
 from LedenAdministratie.mixins import PermissionRequiredMixin
-from LedenAdministratie.models import Member, MemberType
-from LedenAdministratie.views import LoggedInView, Profile
+from LedenAdministratie.models import Invoice, Member, MemberType, Note, Stripcard
+from LedenAdministratie.views import (
+    InvoiceDeleteView,
+    InvoicePayFullView,
+    LoggedInView,
+    MemberDeleteNoteView,
+    Profile,
+    StripcardDeleteView,
+)
 
 User = get_user_model()
 FAST_HASHERS = ["django.contrib.auth.hashers.MD5PasswordHasher"]
@@ -86,3 +94,141 @@ class ViewTests(TestCase):
         request.user = self.member.user
         response = Profile.as_view()(request)
         self.assertEqual(response.status_code, 403)
+
+    def test_member_delete_note_view_get_method_not_allowed(self):
+        note = Note.objects.create(
+            member=self.member, text="Test Note", username="admin"
+        )
+        perm = Permission.objects.get(codename="delete_note")
+        self.member.user.user_permissions.add(perm)
+
+        request = self.factory.get(f"/member/delnote/{note.pk}")
+        request.user = self.member.user
+        request.user.is_verified = lambda: True
+
+        response = MemberDeleteNoteView.as_view()(request, pk=note.pk)
+        self.assertEqual(response.status_code, 405)
+        self.assertTrue(Note.objects.filter(pk=note.pk).exists())
+
+    def test_member_delete_note_view_post_success(self):
+        note = Note.objects.create(
+            member=self.member, text="Test Note", username="admin"
+        )
+        perm = Permission.objects.get(codename="delete_note")
+        self.member.user.user_permissions.add(perm)
+
+        request = self.factory.post(f"/member/delnote/{note.pk}")
+        request.user = self.member.user
+        request.user.is_verified = lambda: True
+
+        response = MemberDeleteNoteView.as_view()(request, pk=note.pk)
+        self.assertEqual(response.status_code, 302)
+        self.assertFalse(Note.objects.filter(pk=note.pk).exists())
+
+    def test_invoice_delete_view_get_method_not_allowed(self):
+        invoice = Invoice.objects.create(
+            member=self.member,
+            amount=Decimal("20.00"),
+            username="admin",
+        )
+        perm = Permission.objects.get(codename="delete_invoice")
+        self.member.user.user_permissions.add(perm)
+
+        request = self.factory.get(f"/invoice/delete/{invoice.pk}")
+        request.user = self.member.user
+        request.user.is_verified = lambda: True
+
+        response = InvoiceDeleteView.as_view()(request, pk=invoice.pk)
+        self.assertEqual(response.status_code, 405)
+        self.assertTrue(Invoice.objects.filter(pk=invoice.pk).exists())
+
+    def test_invoice_delete_view_post_success(self):
+        invoice = Invoice.objects.create(
+            member=self.member,
+            amount=Decimal("20.00"),
+            username="admin",
+        )
+        perm = Permission.objects.get(codename="delete_invoice")
+        self.member.user.user_permissions.add(perm)
+
+        request = self.factory.post(f"/invoice/delete/{invoice.pk}")
+        request.user = self.member.user
+        request.user.is_verified = lambda: True
+
+        response = InvoiceDeleteView.as_view()(request, pk=invoice.pk)
+        self.assertEqual(response.status_code, 302)
+        self.assertFalse(Invoice.objects.filter(pk=invoice.pk).exists())
+
+    def test_invoice_pay_full_view_get_method_not_allowed(self):
+        invoice = Invoice.objects.create(
+            member=self.member,
+            amount=Decimal("20.00"),
+            amount_payed=Decimal("0.00"),
+            username="admin",
+        )
+        perm = Permission.objects.get(codename="view_invoice")
+        self.member.user.user_permissions.add(perm)
+
+        request = self.factory.get(f"/invoice/pay_full/{invoice.pk}")
+        request.user = self.member.user
+        request.user.is_verified = lambda: True
+
+        response = InvoicePayFullView.as_view()(request, pk=invoice.pk)
+        self.assertEqual(response.status_code, 405)
+        invoice.refresh_from_db()
+        self.assertEqual(invoice.amount_payed, Decimal("0.00"))
+
+    def test_invoice_pay_full_view_post_success(self):
+        invoice = Invoice.objects.create(
+            member=self.member,
+            amount=Decimal("20.00"),
+            amount_payed=Decimal("0.00"),
+            username="admin",
+        )
+        perm = Permission.objects.get(codename="view_invoice")
+        self.member.user.user_permissions.add(perm)
+
+        request = self.factory.post(f"/invoice/pay_full/{invoice.pk}")
+        request.user = self.member.user
+        request.user.is_verified = lambda: True
+
+        response = InvoicePayFullView.as_view()(request, pk=invoice.pk)
+        self.assertEqual(response.status_code, 302)
+        invoice.refresh_from_db()
+        self.assertEqual(invoice.amount_payed, Decimal("20.00"))
+
+    def test_stripcard_delete_view_get_method_not_allowed(self):
+        stripcard = Stripcard.objects.create(
+            member=self.member,
+            issue_date=date(2023, 1, 1),
+            issued_by="admin",
+            count=10,
+        )
+        perm = Permission.objects.get(codename="delete_stripcard")
+        self.member.user.user_permissions.add(perm)
+
+        request = self.factory.get(f"/stripcard/delete/{stripcard.pk}")
+        request.user = self.member.user
+        request.user.is_verified = lambda: True
+
+        response = StripcardDeleteView.as_view()(request, pk=stripcard.pk)
+        self.assertEqual(response.status_code, 405)
+        self.assertTrue(Stripcard.objects.filter(pk=stripcard.pk).exists())
+
+    def test_stripcard_delete_view_post_success(self):
+        stripcard = Stripcard.objects.create(
+            member=self.member,
+            issue_date=date(2023, 1, 1),
+            issued_by="admin",
+            count=10,
+        )
+        perm = Permission.objects.get(codename="delete_stripcard")
+        self.member.user.user_permissions.add(perm)
+
+        request = self.factory.post(f"/stripcard/delete/{stripcard.pk}")
+        request.user = self.member.user
+        request.user.is_verified = lambda: True
+
+        response = StripcardDeleteView.as_view()(request, pk=stripcard.pk)
+        self.assertEqual(response.status_code, 302)
+        self.assertFalse(Stripcard.objects.filter(pk=stripcard.pk).exists())
