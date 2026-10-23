@@ -16,11 +16,7 @@ User = get_user_model()
 Application = get_application_model()
 AccessToken = get_access_token_model()
 
-ALLOWED_CLIENT_ID = (
-    settings.SMOELENBOEK_API_ALLOWED_CLIENTS[0]
-    if getattr(settings, "SMOELENBOEK_API_ALLOWED_CLIENTS", None)
-    else "allowed_test_client_id"
-)
+ALLOWED_CLIENT_ID = "allowed_test_client_id"
 FAST_HASHERS = ["django.contrib.auth.hashers.MD5PasswordHasher"]
 
 
