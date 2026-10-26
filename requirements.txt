@@ -7,7 +7,7 @@ django-mailer==2.3.2
 gunicorn==26.2.0
 mysqlclient==2.3.0
 pillow==13.0.0
-python-dateutil==2.9.0.post0
+python-dateutil==3.0.0
 requests==2.34.2
 requests-oauthlib==2.0.0
 weasyprint==70.0
