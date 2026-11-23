@@ -5,7 +5,7 @@ django-tinymce==5.0.0
 django-widget-tweaks==1.5.1
 django-mailer==2.3.2
 gunicorn==27.0.1
-mysqlclient==2.3.1
+mysqlclient==2.3.2
 pillow==13.0.0
 python-dateutil==4.0.0
 requests==2.34.2
